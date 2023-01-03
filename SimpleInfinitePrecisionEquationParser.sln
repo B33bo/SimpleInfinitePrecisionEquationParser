@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32929.385
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleInfinitePrecisionEquationParser", "SimpleInfinitePrecisionEquationParser\SimpleInfinitePrecisionEquationParser.csproj", "{5525E23C-3D0E-47EE-BE92-EBADD841EFC9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SIPEP.Tests", "Tests\SIPEP.Tests.csproj", "{24D9AF15-419E-4722-A68C-BDC11CB26DB3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5525E23C-3D0E-47EE-BE92-EBADD841EFC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5525E23C-3D0E-47EE-BE92-EBADD841EFC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5525E23C-3D0E-47EE-BE92-EBADD841EFC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5525E23C-3D0E-47EE-BE92-EBADD841EFC9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24D9AF15-419E-4722-A68C-BDC11CB26DB3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24D9AF15-419E-4722-A68C-BDC11CB26DB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24D9AF15-419E-4722-A68C-BDC11CB26DB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24D9AF15-419E-4722-A68C-BDC11CB26DB3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {156E8571-30F9-43C8-88B6-C867BC307408}
+	EndGlobalSection
+EndGlobal

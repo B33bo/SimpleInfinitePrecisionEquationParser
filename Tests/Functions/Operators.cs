@@ -1,0 +1,86 @@
+﻿using System.Numerics;
+
+namespace SIPEP.Tests.Functions;
+
+[TestClass]
+public class Operators
+{
+    [TestMethod]
+    public void Add()
+    {
+        Assert.AreEqual(new BigComplex(4, 0), new Equation("1+3").Solve());
+        Assert.AreEqual(new BigComplex(4, 0), new Equation("Add(1,3)").Solve());
+        Assert.AreEqual(new BigComplex(3, 6), new Equation("Add(0i1,3i5)").Solve());
+        Assert.AreEqual(new BigComplex(8, 1), new Equation("Add(3,0i1,5)").Solve());
+        Assert.AreEqual(new BigComplex(3, 0), new Equation("Add(3)").Solve());
+        Assert.AreEqual(new BigComplex(0, 0), new Equation("Add()").Solve());
+    }
+
+    [TestMethod]
+    public void Subtract()
+    {
+        Assert.AreEqual(new BigComplex(-1, 0), new Equation("1-2").Solve());
+        Assert.AreEqual(new BigComplex(0, 0), new Equation("Subtract(1,1)").Solve());
+        Assert.AreEqual(new BigComplex(1, -1), new Equation("Subtract(1,0i1)").Solve());
+        Assert.AreEqual(new BigComplex(0, 0), new Equation("Subtract(5,3,2)").Solve());
+        Assert.AreEqual(new BigComplex(-3, 0), new Equation("Subtract(3)").Solve());
+        Assert.AreEqual(new BigComplex(0, 0), new Equation("Subtract()").Solve());
+    }
+
+    [TestMethod]
+    public void Multiply()
+    {
+        Assert.AreEqual(new BigComplex(12, 0), new Equation("4*3").Solve());
+        Assert.AreEqual(new BigComplex(120, 0), new Equation("Multiply(40,3)").Solve());
+        Assert.AreEqual(new BigComplex(-5, 3), new Equation("Multiply(0i1,3i5)").Solve());
+        Assert.AreEqual(new BigComplex(24, 0), new Equation("Multiply(2,3,4)").Solve());
+        Assert.AreEqual(new BigComplex(2, 0), new Equation("Multiply(2)").Solve());
+        Assert.AreEqual(new BigComplex(1, 0), new Equation("Multiply()").Solve());
+    }
+
+    [TestMethod]
+    public void Divide()
+    {
+        Assert.AreEqual(new BigComplex(BigRational.Parse(".5"), 0), new Equation("1/2").Solve());
+        Assert.AreEqual(new BigComplex(1, 0), new Equation("Divide(1,1)").Solve());
+        Assert.AreEqual(new BigComplex(0, -5), new Equation("Divide(5,0i1)").Solve());
+        Assert.AreEqual(new BigComplex(2, 0), new Equation("Divide(2)").Solve());
+        Assert.AreEqual(new BigComplex(0, 0), new Equation("Divide()").Solve());
+    }
+
+    [TestMethod]
+    public void Pow()
+    {
+        var pow1 = new Equation("4^3").Solve().Real;
+        var pow2 = new Equation("Pow(2,3)").Solve().Real;
+        var pow3 = new Equation("Pow(0i1,2)").Solve().Real;
+        var pow4 = new Equation("Pow(2,2,3)").Solve().Real;
+        var pow5 = new Equation("Pow(2)").Solve().Real;
+        var pow6 = new Equation("Pow()").Solve().Real;
+
+        Assert.IsTrue(pow1 > 63.9 && pow1 < 64.1);
+        Assert.IsTrue(pow2 > 7.9 && pow2 < 8.1);
+        Assert.IsTrue(pow3 > -1.1 && pow3 < -.9);
+        Assert.IsTrue(pow4 > 63.9 && pow3 < 64.1);
+        Assert.IsTrue(pow5 > 1.9 && pow3 < 2.1);
+        Assert.IsTrue(pow6 > -.1 && pow3 < .1);
+    }
+
+    [TestMethod]
+    public void Root()
+    {
+        var root1 = new Equation(@"2\25").Solve().Real;
+        var root2 = new Equation(@"Root(2,1)").Solve().Real;
+        var root3 = new Equation(@"Root(2,-1)").Solve().Imaginary;
+        var root4 = new Equation(@"Root(2,2,2)").Solve().Real;
+        var root5 = new Equation(@"Root(2)").Solve().Real;
+        var root6 = new Equation(@"Root()").Solve().Real;
+
+        Assert.IsTrue(root1 > 4.9 && root1 < 5.1);
+        Assert.IsTrue(root2 > .9 && root2 < 1.1);
+        Assert.IsTrue(root3 > .9 && root3 < 1.1);
+        Assert.IsTrue(root4 > 1.4 && root4 < 1.5);
+        Assert.IsTrue(root5 > 1.4 && root5 < 1.5);
+        Assert.IsTrue(root6 > -.1 && root6 < .1);
+    }
+}
