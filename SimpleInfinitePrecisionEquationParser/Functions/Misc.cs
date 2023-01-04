@@ -314,4 +314,27 @@ public static class Misc
             };
         }
     }
+
+    [Function("ToDegrees", Args = "ToDegrees(radians)")]
+    public static BigComplex ToDegrees(params BigComplex[] args)
+    {
+        if (args.Length == 0) return 0;
+        return args[0] * 180 / BigRational.Pi(Equation.DecimalPrecision);
+    }
+
+    [Function("Time", Args = "Time(unit)")]
+    public static BigComplex Time(params BigComplex[] args)
+    {
+        if (args.Length == 0)
+            return new BigComplex(DateTime.Now.Ticks, 0);
+        return new BigComplex(DateTime.Now.Ticks / args[0].Real, 0);
+    }
+
+    [Function("TimeUTC", Args = "TimeUTC(unit)")]
+    public static BigComplex TimeUTC(params BigComplex[] args)
+    {
+        if (args.Length == 0)
+            return new BigComplex(DateTime.UtcNow.Ticks, 0);
+        return new BigComplex(DateTime.UtcNow.Ticks / args[0].Real, 0);
+    }
 }

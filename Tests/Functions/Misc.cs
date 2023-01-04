@@ -222,4 +222,14 @@ public class Misc
         Assert.AreEqual(new BigComplex(5, 0), new Equation("ConvertTemperature(5)").Solve());
         Assert.AreEqual(new BigComplex(0, 0), new Equation("ConvertTemperature()").Solve());
     }
+
+    [TestMethod]
+    public static void ToDegrees()
+    {
+        var ans1 = new Equation("ToDegrees(pi)").Solve().Real;
+        var ans2 = new Equation("ToDegrees(pi * i)").Solve().Imaginary;
+        Assert.IsTrue(ans1 > 179 && ans1 < 181);
+        Assert.IsTrue(ans2 > 179 && ans2 < 181);
+        Assert.AreEqual(BigComplex.Zero, new Equation("ToDegrees()").Solve().Imaginary);
+    }
 }

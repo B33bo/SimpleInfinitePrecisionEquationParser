@@ -130,6 +130,7 @@ public static class Conversions
         { "century", BigRational.Parse("3155760000") },
         { "millennium", BigRational.Parse("31557600000") },
         { "plancktime", BigRational.Parse("5.3912e-44") },
+        { "tick", new BigComplex(TimeSpan.TicksPerSecond, 0) },
 
         { "january", 86400 * 31 },
         { "february", 86400 * 28 },

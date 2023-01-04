@@ -13,10 +13,11 @@ public class Equation
     public static int DecimalPrecision { get => BigRational.MaxDigits; set => BigRational.MaxDigits = value; }
 
     public Dictionary<string, BigComplex> Variables = Constants.Vars;
+    public string[] positionalVars = Array.Empty<string>();
 
     private List<(SectionType, object)> data = new();
 
-    public enum SectionType
+    public enum SectionType : byte
     {
         Number, //2, 424, 234i21, 12.3
         Variable, // pi, x, my_silly_variable_name
@@ -24,6 +25,7 @@ public class Equation
         Operators, // +, -, *, /, ^
         NestedEquation, // (2 + 1)
         Parameters, // sin ->(243, 12)<-
+        AssignVariable // (x) = 3
     }
 
     public Equation(string equationStr, Dictionary<string, BigComplex>? variables = null)
@@ -46,6 +48,69 @@ public class Equation
             if (Variables.ContainsKey(var.Key))
                 continue;
             Variables.Add(var.Key, var.Value);
+        }
+
+        LoadString(equationStr);
+
+        ;
+    }
+
+    public Equation(string equationStr, string args)
+    {
+        foreach (var item in args[1..^1].Split(','))
+            Variables.Add(item, 0);
+        LoadString(equationStr);
+    }
+
+    private void Instructional(string str)
+    {
+        str = str[3..].Replace(" ", ""); //removes the "let"
+
+        int indexOfEquals = -1;
+        for (int i = 0; i < str.Length; i++)
+        {
+            if (str[i] != '=')
+                continue;
+            indexOfEquals = i;
+            break;
+        }
+
+        if (indexOfEquals < 0)
+            throw new InvalidEquationException();
+
+        string varName = str[..(indexOfEquals)];
+        string equation = str[(indexOfEquals + 1)..];
+
+        if (varName.EndsWith(")"))
+        {
+            // it's a function
+            var functionName = varName.Split('(')[0];
+            var args = varName.Split('(')[1][..^1];
+
+            data = new List<(SectionType, object)>()
+            {
+                (SectionType.AssignVariable, functionName),
+                (SectionType.Parameters, args),
+                (SectionType.NestedEquation, equation),
+            };
+
+            return;
+        }
+
+        data = new List<(SectionType, object)>()
+        {
+            (SectionType.AssignVariable, varName),
+            (SectionType.Number, new Equation(equation).Solve()),
+        };
+    }
+
+    public void LoadString(string equationStr)
+    {
+        data.Clear();
+        if (equationStr.StartsWith("let "))
+        {
+            Instructional(equationStr);
+            return;
         }
 
         string current = "";
@@ -131,8 +196,6 @@ public class Equation
             var finaltype = GetTypeOfPart(current, out object finaldat);
             data.Add((finaltype, finaldat));
         }
-
-        ;
     }
 
     public BigComplex Solve()
@@ -140,6 +203,43 @@ public class Equation
         //first solve equations & functions
         for (int i = 0; i < data.Count; i++)
         {
+            if (data[i].Item1 == SectionType.AssignVariable)
+            {
+                if (data[i].Item2 is not string varName)
+                    throw new InvalidEquationException();
+                if (i + 1 >= data.Count)
+                    throw new InvalidEquationException();
+
+                if (data[i + 1].Item1 == SectionType.Number)
+                {
+                    if (data[i + 1].Item2 is not BigComplex number)
+                        throw new InvalidEquationException();
+
+                    if (Variables.ContainsKey(varName))
+                        Variables[varName] = number;
+                    else
+                        Variables.Add(varName, number);
+                    data.RemoveAt(i);
+                    i--;
+                }
+                else if (data[i + 1].Item1 == SectionType.Parameters)
+                {
+                    if (i + 2 >= data.Count)
+                        throw new InvalidEquationException();
+                    if (data[i + 1].Item2 is not string args)
+                        throw new InvalidEquationException();
+                    if (data[i + 2].Item2 is not string equation)
+                        throw new InvalidEquationException();
+
+                    FunctionLoader.AddFunction(varName, args, equation);
+                    data.RemoveAt(i + 1);
+                    data.RemoveAt(i + 1);
+                    data[i] = (SectionType.Number, new BigComplex(true));
+                }
+
+                continue;
+            }
+
             if (data[i].Item1 == SectionType.NestedEquation)
             {
                 if (data[i].Item2 is not string nestedEquationStr)

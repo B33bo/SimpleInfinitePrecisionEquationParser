@@ -8,12 +8,19 @@ public static class FunctionLoader
     public static int HighestOperatorOrder = 0;
 
     private static List<(FunctionAttribute, MethodInfo)>? loadedFunctions = null;
+    private static Dictionary<string, Func<BigComplex[], BigComplex>> customFunctions = new();
     private static Dictionary<char, int> getOperator = new();
+
+    public static void AddFunction(string name, string variableNameArgs, string equation)
+    {
+        customFunctions.Add(name, args => SolveCustomFunction(variableNameArgs, equation, args));
+    }
 
     public static BigComplex DoFunction(string functionName, string args, Dictionary<string, BigComplex> variables)
     {
         loadedFunctions ??= LoadFunctions();
         int indexOfFunction = 0;
+
         for (int i = 0; i < loadedFunctions.Count; i++)
         {
             if (loadedFunctions[i].Item1.FunctionName.ToLower() != functionName.ToLower())
@@ -28,11 +35,26 @@ public static class FunctionLoader
         for (int i = 0; i < equations.Length; i++)
             answers[i] = new Equation(equations[i], variables).Solve();
 
+        if (customFunctions.ContainsKey(functionName))
+            return customFunctions[functionName](answers);
+
         if (loadedFunctions[indexOfFunction].Item2.Invoke(null, new object[] { answers }) is BigComplex answer)
             return answer;
 
         //TODO: Invalid Equation Exception
         return BigComplex.Zero;
+    }
+
+    public static BigComplex SolveCustomFunction(string variableNameArgs, string equation, BigComplex[] args)
+    {
+        Equation realEquation = new("");
+        var varNameArgs = variableNameArgs.Split(',');
+
+        for (int i = 0; i < varNameArgs.Length; i++)
+            realEquation.Variables.Add(varNameArgs[i], args[i]);
+
+        realEquation.LoadString(equation);
+        return realEquation.Solve();
     }
 
     public static (FunctionAttribute oper, MethodInfo method) GetOperator(char op)

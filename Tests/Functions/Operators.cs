@@ -39,6 +39,28 @@ public class Operators
     }
 
     [TestMethod]
+    public void MultiplyOperator()
+    {
+        var c = new Equation("MultiplyOperator(180)").Solve();
+        var d = new Equation("180*").Solve();
+
+        Assert.AreEqual(new BigComplex(80, 0), new Equation("MultiplyOperator(40, 2)").Solve());
+        Assert.IsTrue(c.Real > 3.1 && c.Real < 3.2);
+        Assert.IsTrue(d.Real > 3.1 && d.Real < 3.2);
+        Assert.AreEqual(new BigComplex(1, 0), new Equation("MultiplyOperator()").Solve());
+        Assert.AreEqual(new BigComplex(6, 0), new Equation("MultiplyOperator(1, 2, 3)").Solve());
+    }
+
+    [TestMethod]
+    public void ToDegrees()
+    {
+        var c = new Equation("ToDegrees(pi)").Solve();
+
+        Assert.IsTrue(c.Real > 179 && c.Real < 181);
+        Assert.AreEqual(new BigComplex(0, 0), new Equation("ToDegrees()").Solve());
+    }
+
+    [TestMethod]
     public void Divide()
     {
         Assert.AreEqual(new BigComplex(BigRational.Parse(".5"), 0), new Equation("1/2").Solve());

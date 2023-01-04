@@ -27,13 +27,22 @@ public static class Operators
         return val;
     }
 
-    [Function("Multiply", Operator = '*', InverseFunctionName = "Divide", Priority = 2)]
+    [Function("Multiply", InverseFunctionName = "Divide")]
     public static BigComplex Multiply(params BigComplex[] args)
     {
         BigComplex val = 1;
         for (int i = 0; i < args.Length; i++)
             val *= args[i];
         return val;
+    }
+
+    // multiplyOperator because one input means to radians
+    [Function("MultiplyOperator", Operator = '*', InverseFunctionName = "Divide", Priority = 2, OperatorStyle = OperatorStyle.LeftAndRight | OperatorStyle.Left)]
+    public static BigComplex MultiplyOperator(params BigComplex[] args)
+    {
+        if (args.Length == 1)
+            return args[0] * BigRational.Pi(Equation.DecimalPrecision) / 180; //to radians
+        return Multiply(args);
     }
 
     [Function("Divide", Operator = '/', InverseFunctionName = "Multiply", Priority = 2)]

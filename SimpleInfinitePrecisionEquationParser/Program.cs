@@ -7,9 +7,11 @@ public class Program
 {
     public static void Main(string[] args)
     {
+        Equation eq = new("");
         while (true)
         {
-            Console.WriteLine(new Equation(Console.ReadLine()).Solve());
+            eq.LoadString(Console.ReadLine());
+            Console.WriteLine(eq.Solve());
         }
         //expected 1 + nestedEquation
     }
