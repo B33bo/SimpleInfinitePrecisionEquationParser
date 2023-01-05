@@ -25,5 +25,7 @@ public class VariableTesting
         Assert.AreEqual(new BigComplex(true), e.Solve());
         e.LoadString("funcTwo(5)");
         Assert.AreEqual(new BigComplex(24, 0), e.Solve());
+        e.LoadString("func(func(2, 3), 2)");
+        Assert.AreEqual(new BigComplex(6, 0), e.Solve());
     }
 }

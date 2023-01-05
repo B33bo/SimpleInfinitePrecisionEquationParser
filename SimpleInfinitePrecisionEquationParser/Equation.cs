@@ -10,6 +10,7 @@ namespace SIPEP;
 
 public class Equation
 {
+    public const int Version = 1;
     public static int DecimalPrecision { get => BigRational.MaxDigits; set => BigRational.MaxDigits = value; }
 
     public Dictionary<string, BigComplex> Variables = Constants.Vars;
@@ -336,13 +337,13 @@ public class Equation
         {
             return new object[] { nums }; //yup
         }
+    }
 
-        bool IsNumberOrVariable(int index)
-        {
-            if (index < 0 || index >= data.Count)
-                return false;
-            return data[index].Item1 == SectionType.Number || data[index].Item1 == SectionType.Variable;
-        }
+    private bool IsNumberOrVariable(int index)
+    {
+        if (index < 0 || index >= data.Count)
+            return false;
+        return data[index].Item1 == SectionType.Number || data[index].Item1 == SectionType.Variable;
     }
 
     public bool SolveBoolean()
@@ -387,5 +388,42 @@ public class Equation
         }
 
         return SectionType.Variable; //functions get converted later
+    }
+
+    public override string ToString()
+    {
+        string s = "";
+        for (int i = 0; i < data.Count; i++)
+        {
+            if (data[i].Item1 == SectionType.NestedEquation)
+            {
+                if (data[i].Item2 is null)
+                    return "";
+
+                var str = data[i].Item2.ToString();
+                if (str is null)
+                    continue;
+
+                s += "(" + new Equation(str).ToString() + ") ";
+                continue;
+            }
+
+            if (data[i].Item1 == SectionType.Number)
+            {
+                if (data[i].Item2 is BigComplex b)
+                {
+                    s += b.ToParsableString() + " ";
+                    continue;
+                }
+            }
+
+            if (data[i].Item1 == SectionType.Parameters)
+            {
+                s += "(" + data[i].Item2.ToString() + ")";
+            }
+
+            s += data[i].Item2.ToString() + " ";
+        }
+        return s;
     }
 }

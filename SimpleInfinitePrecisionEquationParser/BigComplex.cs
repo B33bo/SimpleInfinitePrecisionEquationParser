@@ -136,6 +136,8 @@ public struct BigComplex
                 foundPoint = true;
                 continue;
             }
+            if (s[i] == '\'')
+                continue;
 
             if (s[i] == '-' || s[i] == '+' || s[i] == 'e')
                 continue;
@@ -154,5 +156,16 @@ public struct BigComplex
         if (Imaginary == 0)
             return Real.ToString();
         return $"{Real} + {Imaginary}i";
+    }
+
+    public string ToParsableString()
+    {
+        if (IsBoolean)
+            return (Real > 0).ToString();
+
+        if (Imaginary == 0)
+            return Real.ToString();
+        string imag = Imaginary.ToString().Replace("-", "m");
+        return $"{Real}i{imag}";
     }
 }

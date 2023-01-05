@@ -7,19 +7,21 @@ public static class FunctionLoader
     public static string Operators = "";
     public static int HighestOperatorOrder = 0;
 
-    private static List<(FunctionAttribute, MethodInfo)>? loadedFunctions = null;
-    private static Dictionary<string, Func<BigComplex[], BigComplex>> customFunctions = new();
+    public static List<(FunctionAttribute, MethodInfo)>? loadedFunctions = null;
+    //public static Dictionary<string, Func<BigComplex[], BigComplex>> customFunctions = new();
+    public static Dictionary<string, (string equation, string varNameArgs)> customFunctions = new();
     private static Dictionary<char, int> getOperator = new();
 
     public static void AddFunction(string name, string variableNameArgs, string equation)
     {
-        customFunctions.Add(name, args => SolveCustomFunction(variableNameArgs, equation, args));
+        //customFunctions.Add(name, args => SolveCustomFunction(variableNameArgs, equation, args));
+        customFunctions.Add(name, (equation, variableNameArgs));
     }
 
     public static BigComplex DoFunction(string functionName, string args, Dictionary<string, BigComplex> variables)
     {
         loadedFunctions ??= LoadFunctions();
-        int indexOfFunction = 0;
+        int indexOfFunction = -1;
 
         for (int i = 0; i < loadedFunctions.Count; i++)
         {
@@ -36,7 +38,10 @@ public static class FunctionLoader
             answers[i] = new Equation(equations[i], variables).Solve();
 
         if (customFunctions.ContainsKey(functionName))
-            return customFunctions[functionName](answers);
+            return SolveCustomFunction(customFunctions[functionName].varNameArgs, customFunctions[functionName].equation, answers);//customFunctions[functionName](answers);
+
+        if (indexOfFunction < 0)
+            throw new InvalidEquationException();
 
         if (loadedFunctions[indexOfFunction].Item2.Invoke(null, new object[] { answers }) is BigComplex answer)
             return answer;
@@ -63,7 +68,10 @@ public static class FunctionLoader
         return loadedFunctions[getOperator[op]];
     }
 
-    public static void ReloadFunctions() => loadedFunctions = LoadFunctions();
+    public static void ReloadFunctions()
+    {
+        loadedFunctions ??= LoadFunctions();
+    }
 
     private static string[] SplitWithNonNestedEntries(string s)
     {

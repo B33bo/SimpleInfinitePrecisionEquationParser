@@ -96,7 +96,7 @@ public static class Operators
         }
     }
 
-    [Function("Root", Operator = '\\', InverseFunctionName = "Power", Args = "Root(root, number)", Priority = 1)]
+    [Function("Root", Operator = '\\', InverseFunctionName = "Power", Args = "Root(root, number)", Priority = 1, OperatorStyle = OperatorStyle.LeftAndRight | OperatorStyle.Right)]
     public static BigComplex Root(params BigComplex[] args)
     {
         if (args.Length == 0)

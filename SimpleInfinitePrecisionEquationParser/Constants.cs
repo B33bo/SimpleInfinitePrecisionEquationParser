@@ -6,6 +6,7 @@ internal static class Constants
 {
     public static BigRational E = BigRational.Parse("2.718281828459045");
     public static BigRational Pi = BigRational.Pi(Equation.DecimalPrecision);
+
     public static Dictionary<string, BigComplex> Vars => new()
     {
         { "e", E },
@@ -16,7 +17,8 @@ internal static class Constants
         { "one", 1 },
         { "zero", 0 },
         { "NaN", BigComplex.Zero / BigComplex.Zero },
-        { "true", true },
-        { "false", false },
+        { "true", BigComplex.True },
+        { "false", BigComplex.False },
+        { "version", Equation.Version },
     };
 }

@@ -15,4 +15,16 @@ public sealed class FunctionAttribute : Attribute
     public int Priority { get; set; } = 0;
     public bool CustomBuilt { get; set; } = false;
     public OperatorStyle OperatorStyle { get; set; } = OperatorStyle.LeftAndRight;
+
+    public override string ToString()
+    {
+        string functionExample = FunctionName + "()";
+        if (Args != "")
+            functionExample = Args;
+
+        if (Operator != '\0')
+            functionExample = Operator + " ( " + functionExample + " )";
+
+        return functionExample;
+    }
 }
