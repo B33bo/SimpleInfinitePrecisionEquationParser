@@ -18,6 +18,7 @@ public class Trig
         var num2 = new Equation("sin(pi/2)").Solve().Real;
         var num3 = new Equation("sin(5)").Solve().Real;
         var num4 = new Equation("sin(3i5)").Solve();
+        var num5 = new Equation("sin(-pi / 2)").Solve().Real;
 
         Assert.AreEqual(new BigComplex(0, 0), new Equation("sin()").Solve());
 
@@ -25,6 +26,7 @@ public class Trig
         Assert.IsTrue(num2 > .9 && num2 < 1.1); //1
         Assert.IsTrue(num3 > -1 && num3 < -.8); // .95...
         Assert.IsTrue(num4.Real > 10.4 && num4.Real < 10.5 && num4.Imaginary > -73.5 && num4.Imaginary < 73.4);
+        Assert.IsTrue(num5 > -1.1 && num5 < -.9);
     }
 
     [TestMethod]
@@ -68,6 +70,7 @@ public class Trig
         var num4 = new Equation("cos(3i5)").Solve();
 
         Assert.AreEqual(new BigComplex(0, 0), new Equation("cos()").Solve());
+        Assert.AreEqual(new Equation("cos(pi)").Solve(), new Equation("cos(-pi)").Solve());
 
         Assert.IsTrue(num1 > -1.1 && num1 < .9);
         Assert.IsTrue(num2 > -.1 && num2 < .1);

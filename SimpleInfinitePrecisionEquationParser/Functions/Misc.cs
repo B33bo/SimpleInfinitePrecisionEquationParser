@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Numerics;
 
 namespace SIPEP.Functions;
 
@@ -16,6 +11,23 @@ public static class Misc
             return 0;
         BigComplex val = args[0];
         return BigRational.Sqrt(val.Real * val.Real + val.Imaginary * val.Imaginary, Equation.DecimalPrecision);
+    }
+
+    [Function("AbsSigned")]
+    public static BigComplex AbsSigned(params BigComplex[] args)
+    {
+        if (args.Length == 0)
+            return 0;
+
+        var num = Abs(args[0]);
+        var abs1 = BigRational.Sign(args[0].Real);
+        var abs2 = BigRational.Sign(args[0].Imaginary);
+
+        if (abs1 != 0)
+            num *= abs1;
+        if (abs2 != 0)
+            num *= abs2;
+        return num;
     }
 
     [Function("Log", Args = "Log(number, ?Base)")]
@@ -107,11 +119,11 @@ public static class Misc
             return 0;
 
         var min = args[0];
-        BigRational minLength = Abs(min).Real;
+        BigRational minLength = AbsSigned(min).Real;
 
         for (int i = 1; i < args.Length; i++)
         {
-            var current = Abs(args[i]).Real;
+            var current = AbsSigned(args[i]).Real;
             if (current > minLength)
                 continue;
 
@@ -128,11 +140,11 @@ public static class Misc
             return 0;
 
         var max = args[0];
-        BigRational maxLength = Abs(max).Real;
+        BigRational maxLength = AbsSigned(max).Real;
 
         for (int i = 1; i < args.Length; i++)
         {
-            var current = Abs(args[i]).Real;
+            var current = AbsSigned(args[i]).Real;
             if (current < maxLength)
                 continue;
 

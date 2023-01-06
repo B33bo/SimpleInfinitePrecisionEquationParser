@@ -14,6 +14,19 @@ public static class Trig
     {
         if (args.Length == 0)
             return BigComplex.Zero;
+
+        if (args[0].Real < 0)
+        {
+            var res = Sin(args[0].Real * -1);
+            return new BigComplex(-res.Real, res.Imaginary);
+        }
+
+        if (args[0].Imaginary < 0)
+        {
+            var res = Sin(args[0].Imaginary * -1);
+            return new BigComplex(res.Real, -res.Imaginary);
+        }
+
         var p = BigRational.Exp(args[0].Imaginary, Equation.DecimalPrecision);
         var q = (BigRational)1 / p;
         var sinh = (p - q) / 2;
@@ -48,6 +61,19 @@ public static class Trig
     {
         if (args.Length == 0)
             return BigComplex.Zero;
+
+        if (args[0].Real < 0)
+        {
+            var res = Cos(args[0].Real * -1);
+            return new BigComplex(res.Real, res.Imaginary);
+        }
+
+        if (args[0].Imaginary < 0)
+        {
+            var res = Cos(args[0].Imaginary * -1);
+            return new BigComplex(res.Real, res.Imaginary);
+        }
+
         var p = BigRational.Exp(args[0].Imaginary, Equation.DecimalPrecision);
         var q = (BigRational)1 / p;
         BigRational sinh = (p - q) / 2;

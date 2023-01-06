@@ -91,6 +91,8 @@
             this.Controls.Add(this.button1);
             this.Controls.Add(this.funcs);
             this.Name = "FunctionsDialog";
+            this.ShowIcon = false;
+            this.ShowInTaskbar = false;
             this.Text = "Functions";
             this.ResumeLayout(false);
 

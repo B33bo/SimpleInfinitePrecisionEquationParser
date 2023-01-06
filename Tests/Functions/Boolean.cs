@@ -80,6 +80,8 @@ public class Boolean
     {
         Assert.IsTrue(new Equation("4.1 > 8 / 2").SolveBoolean());
         Assert.IsFalse(new Equation("1 + 1 > 2").SolveBoolean());
+        Assert.IsTrue(new Equation("5 > -6").SolveBoolean());
+        Assert.IsTrue(new Equation("0 > -0.2").SolveBoolean());
 
         Assert.IsFalse(new Equation("Greater(1,2)").SolveBoolean());
         Assert.IsTrue(new Equation("Greater(2, 1, 0)").SolveBoolean());
@@ -92,6 +94,9 @@ public class Boolean
     {
         Assert.IsTrue(new Equation("4.1 < 9 / 2").SolveBoolean());
         Assert.IsFalse(new Equation("1 + 1 < 2").SolveBoolean());
+
+        Assert.IsFalse(new Equation("5 < -6").SolveBoolean());
+        Assert.IsFalse(new Equation("0 < -0.2").SolveBoolean());
 
         Assert.IsFalse(new Equation("Less(2,1)").SolveBoolean());
         Assert.IsTrue(new Equation("Less(4, 6, 8)").SolveBoolean());

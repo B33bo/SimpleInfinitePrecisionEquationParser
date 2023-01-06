@@ -7,7 +7,7 @@ public partial class Calculator : Form
 {
     public static Calculator Instance { get; set; }
     public static Equation currentEquation;
-    public static int Version = 1;
+    public static int Version = 2;
 
     public Calculator()
     {
@@ -141,5 +141,10 @@ public partial class Calculator : Form
     public void SetTextColor(Color c)
     {
         equationTextBox.ForeColor = c;
+    }
+
+    private void Plot(object sender, EventArgs e)
+    {
+        new Graph().Show();
     }
 }

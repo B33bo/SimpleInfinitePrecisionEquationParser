@@ -50,7 +50,7 @@ public struct BigComplex
 
     public static implicit operator BigComplex(BigRational a) => new(a, 0);
     public static implicit operator BigComplex(int a) => new(a, 0);
-    public static implicit operator BigComplex(bool a) => new(a);
+    public static implicit operator BigComplex(bool a) => a ? True : False;
     public static explicit operator BigRational(BigComplex a) => a.Real;
 
     public static BigComplex operator /(BigComplex left, BigComplex right)
@@ -116,6 +116,9 @@ public struct BigComplex
             if (imaginary == 0 && splitByI[1] != "0")
                 return false;
         }
+
+        if (s == "e")
+            return false;
 
         result = new BigComplex(real, imaginary);
         return true;

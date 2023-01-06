@@ -72,6 +72,8 @@
             this.Controls.Add(this.okButton);
             this.Controls.Add(this.text);
             this.Name = "AddDialog";
+            this.ShowIcon = false;
+            this.ShowInTaskbar = false;
             this.Text = "Add Dialog";
             this.Load += new System.EventHandler(this.WhenLoaded);
             this.ResumeLayout(false);

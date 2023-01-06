@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -73,7 +74,7 @@ public static class Boolean
 
         for (int i = 1; i < args.Length; i++)
         {
-            if (Misc.Abs(args[i]).Real >= Misc.Abs(args[i - 1]).Real)
+            if (Misc.AbsSigned(args[i]).Real >= Misc.AbsSigned(args[i - 1]).Real)
                 return BigComplex.False;
         }
         return BigComplex.True;
@@ -86,9 +87,26 @@ public static class Boolean
             return BigComplex.False;
         for (int i = 1; i < args.Length; i++)
         {
-            if (Misc.Abs(args[i]).Real <= Misc.Abs(args[i - 1]).Real)
+            if (Misc.AbsSigned(args[i]).Real <= Misc.AbsSigned(args[i - 1]).Real)
                 return BigComplex.False;
         }
         return BigComplex.True;
+    }
+
+    [Function("Approx", Operator = '≈', Priority = 5)]
+    public static BigComplex Approx(params BigComplex[] args)
+    {
+        if (args.Length == 1 || args.Length == 0)
+            return BigComplex.True;
+        if (args.Length == 2)
+            return Approx(args[0], args[1], BigRational.Parse(".1"));
+
+        var diffReal = BigRational.Abs(args[0].Real - args[1].Real);
+        var diffImag = BigRational.Abs(args[0].Imaginary - args[1].Imaginary);
+
+        bool real = diffReal <= args[2].Real;
+        bool imag = diffImag <= args[2].Real;
+
+        return real && imag;
     }
 }

@@ -10,13 +10,13 @@ namespace SIPEP;
 
 public class Equation
 {
-    public const int Version = 1;
+    public const int Version = 2;
     public static int DecimalPrecision { get => BigRational.MaxDigits; set => BigRational.MaxDigits = value; }
 
     public Dictionary<string, BigComplex> Variables = Constants.Vars;
     public string[] positionalVars = Array.Empty<string>();
 
-    private List<(SectionType, object)> data = new();
+    private List<(SectionType, object)> _data = new();
 
     public enum SectionType : byte
     {
@@ -63,7 +63,7 @@ public class Equation
         LoadString(equationStr);
     }
 
-    private void Instructional(string str)
+    private static void Instructional(string str, ref List<(SectionType, object)> data)
     {
         str = str[3..].Replace(" ", ""); //removes the "let"
 
@@ -107,10 +107,10 @@ public class Equation
 
     public void LoadString(string equationStr)
     {
-        data.Clear();
+        _data.Clear();
         if (equationStr.StartsWith("let "))
         {
-            Instructional(equationStr);
+            Instructional(equationStr, ref _data);
             return;
         }
 
@@ -132,7 +132,7 @@ public class Equation
                         var type = GetTypeOfPart(current, out object dat);
                         if (type == SectionType.Variable)
                             type = SectionType.Function;
-                        data.Add((type, dat));
+                        _data.Add((type, dat));
                         current = "";
                     }
                 }
@@ -147,9 +147,9 @@ public class Equation
                 if (indentLevel == 0)
                 {
                     SectionType paramsOrEquation = SectionType.NestedEquation;
-                    if (data.Count != 0 && data[^1].Item1 == SectionType.Function)
+                    if (_data.Count != 0 && _data[^1].Item1 == SectionType.Function)
                         paramsOrEquation = SectionType.Parameters;
-                    data.Add((paramsOrEquation, current));
+                    _data.Add((paramsOrEquation, current));
                     current = "";
                     continue;
                 }
@@ -172,7 +172,7 @@ public class Equation
                         current += "-";
                         continue;
                     }
-                    else if (data.Count > 0 && data[^1].Item1 == SectionType.Operators)
+                    else if (_data.Count > 0 && _data[^1].Item1 == SectionType.Operators)
                     {
                         current += "-";
                         continue;
@@ -182,10 +182,10 @@ public class Equation
                 if (current != "")
                 {
                     var type = GetTypeOfPart(current, out object dat);
-                    data.Add((type, dat));
+                    _data.Add((type, dat));
                 }
                 current = "";
-                data.Add((SectionType.Operators, equationStr[i]));
+                _data.Add((SectionType.Operators, equationStr[i]));
                 continue;
             }
 
@@ -195,81 +195,85 @@ public class Equation
         if (current != "")
         {
             var finaltype = GetTypeOfPart(current, out object finaldat);
-            data.Add((finaltype, finaldat));
+            _data.Add((finaltype, finaldat));
         }
     }
 
     public BigComplex Solve()
     {
+        List<(SectionType, object)> currentData = new(this._data.Count);
+        for (int i = 0; i < _data.Count; i++)
+            currentData.Add(_data[i]);
+
         //first solve equations & functions
-        for (int i = 0; i < data.Count; i++)
+        for (int i = 0; i < currentData.Count; i++)
         {
-            if (data[i].Item1 == SectionType.AssignVariable)
+            if (currentData[i].Item1 == SectionType.AssignVariable)
             {
-                if (data[i].Item2 is not string varName)
+                if (currentData[i].Item2 is not string varName)
                     throw new InvalidEquationException();
-                if (i + 1 >= data.Count)
+                if (i + 1 >= currentData.Count)
                     throw new InvalidEquationException();
 
-                if (data[i + 1].Item1 == SectionType.Number)
+                if (currentData[i + 1].Item1 == SectionType.Number)
                 {
-                    if (data[i + 1].Item2 is not BigComplex number)
+                    if (currentData[i + 1].Item2 is not BigComplex number)
                         throw new InvalidEquationException();
 
                     if (Variables.ContainsKey(varName))
                         Variables[varName] = number;
                     else
                         Variables.Add(varName, number);
-                    data.RemoveAt(i);
+                    currentData.RemoveAt(i);
                     i--;
                 }
-                else if (data[i + 1].Item1 == SectionType.Parameters)
+                else if (currentData[i + 1].Item1 == SectionType.Parameters)
                 {
-                    if (i + 2 >= data.Count)
+                    if (i + 2 >= currentData.Count)
                         throw new InvalidEquationException();
-                    if (data[i + 1].Item2 is not string args)
+                    if (currentData[i + 1].Item2 is not string args)
                         throw new InvalidEquationException();
-                    if (data[i + 2].Item2 is not string equation)
+                    if (currentData[i + 2].Item2 is not string equation)
                         throw new InvalidEquationException();
 
                     FunctionLoader.AddFunction(varName, args, equation);
-                    data.RemoveAt(i + 1);
-                    data.RemoveAt(i + 1);
-                    data[i] = (SectionType.Number, new BigComplex(true));
+                    currentData.RemoveAt(i + 1);
+                    currentData.RemoveAt(i + 1);
+                    currentData[i] = (SectionType.Number, new BigComplex(true));
                 }
 
                 continue;
             }
 
-            if (data[i].Item1 == SectionType.NestedEquation)
+            if (currentData[i].Item1 == SectionType.NestedEquation)
             {
-                if (data[i].Item2 is not string nestedEquationStr)
+                if (currentData[i].Item2 is not string nestedEquationStr)
                     continue;
-                data[i] = (SectionType.Number, new Equation(nestedEquationStr, Variables).Solve());
+                currentData[i] = (SectionType.Number, new Equation(nestedEquationStr, Variables).Solve());
             }
 
-            else if (data[i].Item1 != SectionType.Function)
+            else if (currentData[i].Item1 != SectionType.Function)
                 continue;
 
-            if (data.Count == i - 1)
+            if (currentData.Count == i - 1)
                 throw new InvalidEquationException();
 
-            if (data[i].Item2 is not string functionName)
+            if (currentData[i].Item2 is not string functionName)
                 continue;
-            if (data[i + 1].Item2 is not string argsStr)
+            if (currentData[i + 1].Item2 is not string argsStr)
                 continue;
 
-            data[i] = (SectionType.Number, FunctionLoader.DoFunction(functionName, argsStr, Variables));
-            data.RemoveAt(i + 1);
+            currentData[i] = (SectionType.Number, FunctionLoader.DoFunction(functionName, argsStr, Variables));
+            currentData.RemoveAt(i + 1);
         }
 
         for (int currentPemdas = 0; currentPemdas <= FunctionLoader.HighestOperatorOrder; currentPemdas++)
         {
-            for (int i = 0; i < data.Count; i++)
+            for (int i = 0; i < currentData.Count; i++)
             {
-                if (data[i].Item1 != SectionType.Operators)
+                if (currentData[i].Item1 != SectionType.Operators)
                     continue;
-                if (data[i].Item2 is not char operatorChar)
+                if (currentData[i].Item2 is not char operatorChar)
                     continue;
 
                 var oper = FunctionLoader.GetOperator(operatorChar);
@@ -282,14 +286,14 @@ public class Equation
                 // 1 + 2
                 if ((oper.oper.OperatorStyle & OperatorStyle.LeftAndRight) == OperatorStyle.LeftAndRight)
                 {
-                    if (IsNumberOrVariable(i - 1) && IsNumberOrVariable(i + 1))
+                    if (IsNumberOrVariable(i - 1, currentData) && IsNumberOrVariable(i + 1, currentData))
                     {
-                        var result = oper.method.Invoke(null, GetAsObjArray(ToNumber(i - 1), ToNumber(i + 1)));
+                        var result = oper.method.Invoke(null, GetAsObjArray(ToNumber(i - 1, currentData), ToNumber(i + 1, currentData)));
                         if (result is null)
                             continue;
-                        data[i] = (SectionType.Number, result);
-                        data.RemoveAt(i - 1);
-                        data.RemoveAt(i);
+                        currentData[i] = (SectionType.Number, result);
+                        currentData.RemoveAt(i - 1);
+                        currentData.RemoveAt(i);
                         i--;
                         continue;
                     }
@@ -298,13 +302,13 @@ public class Equation
                 // 5!
                 if ((oper.oper.OperatorStyle & OperatorStyle.Left) == OperatorStyle.Left)
                 {
-                    if (IsNumberOrVariable(i - 1))
+                    if (IsNumberOrVariable(i - 1, currentData))
                     {
-                        var result = oper.method.Invoke(null, GetAsObjArray(ToNumber(i - 1)));
+                        var result = oper.method.Invoke(null, GetAsObjArray(ToNumber(i - 1, currentData)));
                         if (result is null)
                             throw new InvalidEquationException();
-                        data[i] = (SectionType.Number, result);
-                        data.RemoveAt(i - 1);
+                        currentData[i] = (SectionType.Number, result);
+                        currentData.RemoveAt(i - 1);
                         i--;
                     }
                 }
@@ -312,34 +316,34 @@ public class Equation
                 // -45
                 if ((oper.oper.OperatorStyle & OperatorStyle.Right) == OperatorStyle.Right)
                 {
-                    if (IsNumberOrVariable(i + 1))
+                    if (IsNumberOrVariable(i + 1, currentData))
                     {
-                        var result = oper.method.Invoke(null, GetAsObjArray(ToNumber(i + 1)));
+                        var result = oper.method.Invoke(null, GetAsObjArray(ToNumber(i + 1, currentData)));
                         if (result is null)
                             throw new InvalidEquationException();
-                        data[i] = (SectionType.Number, result);
-                        data.RemoveAt(i + 1);
+                        currentData[i] = (SectionType.Number, result);
+                        currentData.RemoveAt(i + 1);
                         i--;
                     }
                 }
             }
         }
 
-        if (data.Count == 0)
+        if (currentData.Count == 0)
             return BigComplex.Zero;
 
-        if (data.Count != 1)
+        if (currentData.Count != 1)
             throw new InvalidEquationException();
 
-        return ToNumber(0);
+        return ToNumber(0, currentData);
 
-        object[] GetAsObjArray(params BigComplex[] nums)
+        static object[] GetAsObjArray(params BigComplex[] nums)
         {
             return new object[] { nums }; //yup
         }
     }
 
-    private bool IsNumberOrVariable(int index)
+    private bool IsNumberOrVariable(int index, List<(SectionType, object)> data)
     {
         if (index < 0 || index >= data.Count)
             return false;
@@ -351,7 +355,7 @@ public class Equation
         return Solve().BoolValue;
     }
 
-    private BigComplex ToNumber(int index)
+    private BigComplex ToNumber(int index, List<(SectionType, object)> data)
     {
         if (data[index].Item1 == SectionType.Number)
         {
@@ -372,7 +376,7 @@ public class Equation
     {
         if (name.StartsWith("-"))
             return -Variables[name[1..]];
-        return Variables[name];
+       return Variables[name];
     }
 
     private static SectionType GetTypeOfPart(string s, out object data)
@@ -388,42 +392,5 @@ public class Equation
         }
 
         return SectionType.Variable; //functions get converted later
-    }
-
-    public override string ToString()
-    {
-        string s = "";
-        for (int i = 0; i < data.Count; i++)
-        {
-            if (data[i].Item1 == SectionType.NestedEquation)
-            {
-                if (data[i].Item2 is null)
-                    return "";
-
-                var str = data[i].Item2.ToString();
-                if (str is null)
-                    continue;
-
-                s += "(" + new Equation(str).ToString() + ") ";
-                continue;
-            }
-
-            if (data[i].Item1 == SectionType.Number)
-            {
-                if (data[i].Item2 is BigComplex b)
-                {
-                    s += b.ToParsableString() + " ";
-                    continue;
-                }
-            }
-
-            if (data[i].Item1 == SectionType.Parameters)
-            {
-                s += "(" + data[i].Item2.ToString() + ")";
-            }
-
-            s += data[i].Item2.ToString() + " ";
-        }
-        return s;
     }
 }

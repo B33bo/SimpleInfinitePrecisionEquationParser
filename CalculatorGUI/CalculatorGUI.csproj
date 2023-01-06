@@ -6,7 +6,13 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
+    <SignAssembly>False</SignAssembly>
+    <ApplicationIcon>Calc.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="Calc.ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\SimpleInfinitePrecisionEquationParser\SimpleInfinitePrecisionEquationParser.csproj" />

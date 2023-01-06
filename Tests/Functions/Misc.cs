@@ -24,6 +24,15 @@ public class Misc
     }
 
     [TestMethod]
+    public void AbsSigned()
+    {
+        Assert.AreEqual(-1, new Equation(@"abssigned(-1)").Solve().Real);
+        Assert.AreEqual(1, new Equation(@"abssigned(1)").Solve().Real);
+        Assert.AreEqual(1, new Equation(@"abssigned(i)").Solve().Real);
+        Assert.AreEqual(-1, new Equation(@"abssigned(-i)").Solve().Real);
+    }
+
+    [TestMethod]
     public void Log()
     {
         var num1 = new Equation("log(4)").Solve().Real;

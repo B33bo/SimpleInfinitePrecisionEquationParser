@@ -9,6 +9,7 @@ public class EquationTests
     public void Basic()
     {
         Assert.AreEqual(new BigComplex(2, 0), new Equation("1+    1").Solve());
+        Assert.AreEqual(new BigComplex(2, 0), new Equation("Add(1,1)").Solve());
     }
 
     [TestMethod]
@@ -24,5 +25,16 @@ public class EquationTests
         Assert.AreEqual(new BigComplex(2, 0), new Equation("one+one").Solve());
         Assert.AreEqual(new BigComplex(1, 0), new Equation("one").Solve());
         Assert.AreEqual(new BigComplex(25, 0), new Equation("num*num", new Dictionary<string, BigComplex>() { { "num", new BigComplex(5, 0)}  }).Solve());
+    }
+
+    [TestMethod]
+    public void Reusability()
+    {
+        Equation e = new("let x = 5");
+        e.Solve();
+        e.LoadString("x + 5");
+        Assert.AreEqual(new BigComplex(10, 0), e.Solve());
+        e.Variables["x"] = 3;
+        Assert.AreEqual(new BigComplex(8, 0), e.Solve());
     }
 }

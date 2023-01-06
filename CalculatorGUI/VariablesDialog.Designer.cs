@@ -103,6 +103,8 @@
             this.Controls.Add(this.button1);
             this.Controls.Add(this.vars);
             this.Name = "VariablesDialog";
+            this.ShowIcon = false;
+            this.ShowInTaskbar = false;
             this.Text = "Variables";
             this.ResumeLayout(false);
 

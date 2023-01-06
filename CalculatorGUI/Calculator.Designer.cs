@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Calculator));
             this.equationTextBox = new System.Windows.Forms.TextBox();
             this.AnswerLabel = new System.Windows.Forms.Label();
             this.GetAnswerButton = new System.Windows.Forms.Button();
@@ -38,6 +39,7 @@
             this.precision = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
             this.button3 = new System.Windows.Forms.Button();
+            this.button4 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.precision)).BeginInit();
             this.SuspendLayout();
             // 
@@ -50,7 +52,7 @@
             this.equationTextBox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
             this.equationTextBox.Location = new System.Drawing.Point(12, 41);
             this.equationTextBox.Name = "equationTextBox";
-            this.equationTextBox.Size = new System.Drawing.Size(776, 52);
+            this.equationTextBox.Size = new System.Drawing.Size(551, 52);
             this.equationTextBox.TabIndex = 0;
             this.equationTextBox.Text = "1+1";
             this.equationTextBox.TextChanged += new System.EventHandler(this.EquationChanged);
@@ -127,7 +129,7 @@
             // precision
             // 
             this.precision.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.precision.Location = new System.Drawing.Point(735, 14);
+            this.precision.Location = new System.Drawing.Point(510, 14);
             this.precision.Name = "precision";
             this.precision.Size = new System.Drawing.Size(53, 23);
             this.precision.TabIndex = 6;
@@ -144,7 +146,7 @@
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Segoe UI", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.label1.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.label1.Location = new System.Drawing.Point(564, 9);
+            this.label1.Location = new System.Drawing.Point(339, 9);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(165, 28);
             this.label1.TabIndex = 4;
@@ -161,22 +163,35 @@
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.Clear);
             // 
+            // button4
+            // 
+            this.button4.Font = new System.Drawing.Font("Segoe UI", 35F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.button4.Location = new System.Drawing.Point(414, 99);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(150, 89);
+            this.button4.TabIndex = 3;
+            this.button4.Text = "Plot";
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.Plot);
+            // 
             // Calculator
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.ClientSize = new System.Drawing.Size(800, 378);
+            this.ClientSize = new System.Drawing.Size(575, 378);
             this.Controls.Add(this.precision);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.IndentCountLabel);
+            this.Controls.Add(this.button4);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.CopyTextButton);
             this.Controls.Add(this.GetAnswerButton);
             this.Controls.Add(this.AnswerLabel);
             this.Controls.Add(this.equationTextBox);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Calculator";
             this.Text = "Calculator";
             this.Load += new System.EventHandler(this.OnCalcLoad);
@@ -198,5 +213,6 @@
         private NumericUpDown precision;
         private Label label1;
         private Button button3;
+        private Button button4;
     }
 }
