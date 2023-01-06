@@ -1,6 +1,6 @@
 ﻿using SIPEP;
+using System.Media;
 using System.Numerics;
-using System.Windows.Forms;
 
 namespace CalculatorGUI;
 
@@ -22,7 +22,14 @@ public partial class Graph : Form
 
     private void Draw(object sender, EventArgs e)
     {
-        Calculator.currentEquation.LoadString(equationBox.Text);
+        try
+        {
+            Calculator.currentEquation.LoadString(equationBox.Text);
+        }
+        catch (Exception)
+        {
+            SystemSounds.Beep.Play();
+        }
 
         loadingBar.Maximum = truewidth * trueheight;
         var img = Draw();
