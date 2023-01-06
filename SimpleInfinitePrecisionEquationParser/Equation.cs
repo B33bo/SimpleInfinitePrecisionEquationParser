@@ -119,7 +119,7 @@ public class Equation
 
         for (int i = 0; i < equationStr.Length; i++)
         {
-            if (equationStr[i] == ' ')
+            if (equationStr[i] == ' ' && indentLevel == 0)
                 continue;
             if (equationStr[i] == '(')
             {
