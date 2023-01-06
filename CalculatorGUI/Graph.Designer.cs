@@ -292,6 +292,7 @@
             this.Controls.Add(this.equationBox);
             this.Controls.Add(this.graphImageBox);
             this.Name = "Graph";
+            this.ShowIcon = false;
             this.Text = "Graph";
             ((System.ComponentModel.ISupportInitialize)(this.graphImageBox)).EndInit();
             this.ResumeLayout(false);
