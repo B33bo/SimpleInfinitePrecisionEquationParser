@@ -1,4 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using SIPEP.Functions;
+using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 
@@ -79,6 +81,25 @@ public struct BigComplex
 
     public static bool operator !=(BigComplex left, BigComplex right) =>
         !(left == right);
+
+    public static BigComplex operator %(BigComplex left, BigComplex right)
+    {
+        var div = left / right;
+        BigRational real = div.Real, imag = div.Imaginary;
+
+        if (real < 0)
+            real = Misc.Ceiling(div).Real;
+        else
+            real = Misc.Floor(div).Real;
+
+        if (real < 0)
+            imag = Misc.Ceiling(div).Imaginary;
+        else
+            imag = Misc.Floor(div).Imaginary;
+
+        div = new BigComplex(real, imag);
+        return left - right * (BigComplex)(div);
+    }
 
     public override bool Equals([NotNullWhen(true)] object? obj)
     {

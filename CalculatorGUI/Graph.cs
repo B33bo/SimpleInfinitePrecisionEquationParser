@@ -14,6 +14,7 @@ public partial class Graph : Form
     }
 
     private Mode mode = Mode.Coordinate;
+    private bool cancel = false;
 
     public Graph()
     {
@@ -22,6 +23,8 @@ public partial class Graph : Form
 
     private void Draw(object sender, EventArgs e)
     {
+        loadingBar.Show();
+
         try
         {
             Calculator.currentEquation.LoadString(equationBox.Text);
@@ -33,14 +36,20 @@ public partial class Graph : Form
 
         loadingBar.Maximum = truewidth * trueheight;
         var img = Draw();
+
+        loadingBar.Hide();
+        //cancelButton.Hide();
+
         if (img is null)
             return;
+
         graphImageBox.BackgroundImage?.Dispose();
         graphImageBox.BackgroundImage = img;
     }
 
     private Bitmap? Draw()
     {
+        cancel = false;
         loadingBar.Value = 0;
         if (!BigComplex.TryParse(XOffset.Text, out BigComplex xoffset))
             return null;
@@ -76,6 +85,9 @@ public partial class Graph : Form
         {
             for (int trueY = 0; trueY < trueheight; trueY++)
             {
+                if (cancel)
+                    return null;
+
                 loadingBar.Value++;
 
                 BigRational x = left + trueX * trueWidthToUnit;
@@ -87,16 +99,29 @@ public partial class Graph : Form
 
                 try
                 {
-                    if (Calculator.currentEquation.SolveBoolean())
-                        bitmap.SetPixel(trueX, trueY, Color.Red);
-                    else if (trueX == halfWayX || trueY == halfWayY)
-                        bitmap.SetPixel(trueX, trueY, Color.Gray);
+                    if (mode == Mode.Coordinate)
+                    {
+                        if (Calculator.currentEquation.SolveBoolean())
+                            bitmap.SetPixel(trueX, trueY, Color.Red);
+                        else if (trueX == halfWayX || trueY == halfWayY)
+                            bitmap.SetPixel(trueX, trueY, Color.Gray);
+                        else
+                            bitmap.SetPixel(trueX, trueY, Color.White);
+                    }
                     else
-                        bitmap.SetPixel(trueX, trueY, Color.White);
+                    {
+                        var pos = Calculator.currentEquation.Solve();
+                        int xPos = (int)((pos.Real - left) / width.Real * truewidth);
+                        int yPos = (int)((pos.Imaginary - down) / height.Real * truewidth);
+
+                        if (xPos < 0 || xPos >= truewidth || yPos < 0 || yPos > trueheight)
+                            continue;
+                        bitmap.SetPixel(xPos, trueY - yPos - 1, Color.Red);
+                    }
                 }
                 catch (Exception)
                 {
-                    bitmap.SetPixel(trueX, trueY, Color.Purple);
+                    return null;
                 }
             }
         }
@@ -114,6 +139,8 @@ public partial class Graph : Form
     private void ChangeRes(object sender, EventArgs e)
     {
         if (!int.TryParse(resBox.Text, out int newRes))
+            return;
+        if (newRes <= 0)
             return;
 
         truewidth = newRes;
@@ -148,6 +175,16 @@ public partial class Graph : Form
                 break;
         }
         drawing?.Dispose();
+    }
+
+    private void ComplexModeToggle(object sender, EventArgs e)
+    {
+        //mode = complexMode.Checked ? Mode.Imaginary : Mode.Coordinate;
+    }
+
+    private void CancelLoading(object sender, EventArgs e)
+    {
+        cancel = true;
     }
 
     private void ChangeAxis(object sender, EventArgs e)

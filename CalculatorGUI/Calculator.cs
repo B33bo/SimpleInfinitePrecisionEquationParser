@@ -5,9 +5,12 @@ namespace CalculatorGUI;
 
 public partial class Calculator : Form
 {
+#nullable disable //it was annoying me
     public static Calculator Instance { get; set; }
     public static Equation currentEquation;
     public static int Version = 2;
+    private static bool answerPreview = true;
+#nullable enable
 
     public Calculator()
     {
@@ -19,26 +22,27 @@ public partial class Calculator : Form
     private void EquationChanged(object sender, EventArgs e)
     {
         UpdateIndentCount();
+
+        if (!answerPreview)
+            return;
+        try
+        {
+            currentEquation.LoadString(equationTextBox.Text);
+            AnswerLabel.Text = currentEquation.Solve().ToString();
+        }
+        catch (Exception)
+        {
+            AnswerLabel.Text = "";
+        }
     }
 
     private void GetAnswer(object sender, EventArgs e)
     {
-        try
-        {
-            currentEquation.LoadString(equationTextBox.Text);
-        }
-        catch (Exception)
-        {
-            AnswerLabel.Text = "Error";
-            AnswerLabel.ForeColor = Color.Red;
-            return;
-        }
-
-        //equationTextBox.Text = currentEquation.ToString();
         BigComplex answer;
 
         try
         {
+            currentEquation.LoadString(equationTextBox.Text);
             answer = currentEquation.Solve();
         }
         catch (Exception)
@@ -48,6 +52,11 @@ public partial class Calculator : Form
             return;
         }
 
+        if (currentEquation.Variables.ContainsKey("ans"))
+            currentEquation.Variables["ans"] = answer;
+        else
+            currentEquation.Variables.Add("ans", answer);
+
         AnswerLabel.Text = answer.ToString();
         AnswerLabel.ForeColor = Color.White;
         precision.Value = Equation.DecimalPrecision;
@@ -55,6 +64,8 @@ public partial class Calculator : Form
 
     private void CopyToClipboard(object sender, EventArgs e)
     {
+        if (string.IsNullOrEmpty(AnswerLabel.Text))
+            return;
         Clipboard.SetText(AnswerLabel.Text);
     }
 
@@ -73,9 +84,21 @@ public partial class Calculator : Form
         new VariablesDialog().Show();
     }
 
-    private void ChangePrecision(object sender, EventArgs e)
+    private void RefreshSettings(object sender, EventArgs e)
     {
         Equation.DecimalPrecision = (int)precision.Value;
+        TopMost = keepOnTopToggle.Checked;
+        answerPreview = answerPrev.Checked;
+
+        if (answerPreview)
+        {
+            try
+            {
+                currentEquation.LoadString(equationTextBox.Text);
+                AnswerLabel.Text = currentEquation.Solve().ToString();
+            }
+            catch (Exception) { }
+        }
     }
 
     private void Clear(object sender, EventArgs e)
@@ -146,5 +169,15 @@ public partial class Calculator : Form
     private void Plot(object sender, EventArgs e)
     {
         new Graph().Show();
+    }
+
+    private void ResetAnswerWidth(object sender, EventArgs e)
+    {
+        AnswerLabel.MaximumSize = new Size(Width, 0);
+    }
+
+    private void LoadMisc(object sender, EventArgs e)
+    {
+        new Misc().Show();
     }
 }

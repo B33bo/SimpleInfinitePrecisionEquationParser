@@ -241,4 +241,11 @@ public class Misc
         Assert.IsTrue(ans2 > 179 && ans2 < 181);
         Assert.AreEqual(BigComplex.Zero, new Equation("ToDegrees()").Solve().Imaginary);
     }
+
+    [TestMethod]
+    public void Remainder()
+    {
+        Assert.AreEqual((BigComplex)1, new Equation("Remainder(10,3)").Solve());
+        Assert.AreEqual((BigComplex)(-1), new Equation("Remainder(-10,3)").Solve());
+    }
 }

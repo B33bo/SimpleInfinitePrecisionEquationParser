@@ -107,7 +107,7 @@ public static class Operators
         return Pow(args[1], 1 / args[0]);
     }
 
-    [Function("Mod", Operator = '%', Priority = 4)]
+    [Function("Mod")]
     public static BigComplex Mod(params BigComplex[] args)
     {
         if (args.Length == 0)
@@ -118,13 +118,25 @@ public static class Operators
         var number = args[0];
         for (int i = 1; i < args.Length; i++)
         {
-            var real = number.Real;
-            var imag = number.Imaginary;
-
-            real %= args[i].Real;
-            imag %= args[i].Imaginary;
-            number = new BigComplex(real, imag);
+            var divide = Misc.Floor(number / args[i]);
+            number -= (divide * args[i]);
         }
         return number;
+    }
+
+    [Function("Percent")]
+    public static BigComplex Percent(params BigComplex[] args)
+    {
+        if (args.Length == 0)
+            return 0;
+        return args[0] / 100;
+    }
+
+    [Function("ModOrPercent", Operator = '%', Priority = 4, OperatorStyle = OperatorStyle.Left | OperatorStyle.LeftAndRight)]
+    public static BigComplex ModOrPercent(params BigComplex[] args)
+    {
+        if (args.Length == 1)
+            return Percent(args);
+        return Mod(args);
     }
 }

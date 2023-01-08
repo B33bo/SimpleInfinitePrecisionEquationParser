@@ -105,4 +105,11 @@ public class Operators
         Assert.IsTrue(root5 > 1.4 && root5 < 1.5);
         Assert.IsTrue(root6 > -.1 && root6 < .1);
     }
+
+    [TestMethod]
+    public void Mod()
+    {
+        Assert.AreEqual((BigComplex)2, new Equation("11 % 3").Solve());
+        Assert.AreEqual((BigComplex)2, new Equation("-10 % 3").Solve());
+    }
 }

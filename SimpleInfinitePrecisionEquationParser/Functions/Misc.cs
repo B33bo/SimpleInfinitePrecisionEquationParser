@@ -13,6 +13,20 @@ public static class Misc
         return BigRational.Sqrt(val.Real * val.Real + val.Imaginary * val.Imaginary, Equation.DecimalPrecision);
     }
 
+    [Function("Remainder")]
+    public static BigComplex Remainder(params BigComplex[] args)
+    {
+        if (args.Length == 0)
+            return 0;
+        if (args.Length == 1)
+            return args[0];
+
+        var number = args[0];
+        for (int i = 1; i < args.Length; i++)
+            number %= args[i];
+        return number;
+    }
+
     [Function("AbsSigned")]
     public static BigComplex AbsSigned(params BigComplex[] args)
     {
@@ -28,6 +42,17 @@ public static class Misc
         if (abs2 != 0)
             num *= abs2;
         return num;
+    }
+
+    [Function("Sign")]
+    public static BigComplex Sign(params BigComplex[] args)
+    {
+        //sign = abs(x) / x
+        if (args.Length == 0)
+            return 0;
+        if (args[0] == 0)
+            return 0;
+        return Abs(args[0]) / args[0];
     }
 
     [Function("Log", Args = "Log(number, ?Base)")]

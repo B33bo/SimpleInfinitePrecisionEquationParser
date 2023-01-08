@@ -40,6 +40,9 @@
             this.label1 = new System.Windows.Forms.Label();
             this.button3 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
+            this.answerPrev = new System.Windows.Forms.CheckBox();
+            this.keepOnTopToggle = new System.Windows.Forms.CheckBox();
+            this.button5 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.precision)).BeginInit();
             this.SuspendLayout();
             // 
@@ -59,15 +62,18 @@
             // 
             // AnswerLabel
             // 
-            this.AnswerLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.AnswerLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.AnswerLabel.AutoSize = true;
             this.AnswerLabel.Font = new System.Drawing.Font("Segoe UI", 30F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.AnswerLabel.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.AnswerLabel.Location = new System.Drawing.Point(12, 200);
+            this.AnswerLabel.MaximumSize = new System.Drawing.Size(550, 0);
             this.AnswerLabel.Name = "AnswerLabel";
-            this.AnswerLabel.Size = new System.Drawing.Size(153, 54);
+            this.AnswerLabel.Size = new System.Drawing.Size(45, 54);
             this.AnswerLabel.TabIndex = 1;
-            this.AnswerLabel.Text = "Answer";
+            this.AnswerLabel.Text = "2";
+            this.AnswerLabel.UseMnemonic = false;
             // 
             // GetAnswerButton
             // 
@@ -128,8 +134,8 @@
             // 
             // precision
             // 
-            this.precision.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.precision.Location = new System.Drawing.Point(510, 14);
+            this.precision.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.precision.Location = new System.Drawing.Point(371, 343);
             this.precision.Name = "precision";
             this.precision.Size = new System.Drawing.Size(53, 23);
             this.precision.TabIndex = 6;
@@ -138,17 +144,17 @@
             0,
             0,
             0});
-            this.precision.ValueChanged += new System.EventHandler(this.ChangePrecision);
+            this.precision.ValueChanged += new System.EventHandler(this.RefreshSettings);
             // 
             // label1
             // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Segoe UI", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.label1.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.label1.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.label1.Location = new System.Drawing.Point(339, 9);
+            this.label1.Location = new System.Drawing.Point(430, 345);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(165, 28);
+            this.label1.Size = new System.Drawing.Size(133, 21);
             this.label1.TabIndex = 4;
             this.label1.Text = "Decimal Precision";
             // 
@@ -174,13 +180,59 @@
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.Plot);
             // 
+            // answerPrev
+            // 
+            this.answerPrev.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.answerPrev.AutoSize = true;
+            this.answerPrev.Checked = true;
+            this.answerPrev.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.answerPrev.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.answerPrev.ForeColor = System.Drawing.Color.White;
+            this.answerPrev.Location = new System.Drawing.Point(371, 281);
+            this.answerPrev.Name = "answerPrev";
+            this.answerPrev.Size = new System.Drawing.Size(140, 25);
+            this.answerPrev.TabIndex = 7;
+            this.answerPrev.Text = "Answer Preview";
+            this.answerPrev.UseVisualStyleBackColor = true;
+            this.answerPrev.CheckedChanged += new System.EventHandler(this.RefreshSettings);
+            // 
+            // keepOnTopToggle
+            // 
+            this.keepOnTopToggle.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.keepOnTopToggle.AutoSize = true;
+            this.keepOnTopToggle.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.keepOnTopToggle.ForeColor = System.Drawing.Color.White;
+            this.keepOnTopToggle.Location = new System.Drawing.Point(371, 312);
+            this.keepOnTopToggle.Name = "keepOnTopToggle";
+            this.keepOnTopToggle.Size = new System.Drawing.Size(116, 25);
+            this.keepOnTopToggle.TabIndex = 7;
+            this.keepOnTopToggle.Text = "Keep On Top";
+            this.keepOnTopToggle.UseVisualStyleBackColor = true;
+            this.keepOnTopToggle.CheckedChanged += new System.EventHandler(this.RefreshSettings);
+            // 
+            // button5
+            // 
+            this.button5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.button5.AutoSize = true;
+            this.button5.Font = new System.Drawing.Font("Segoe UI", 50F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.button5.Location = new System.Drawing.Point(254, 267);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(107, 99);
+            this.button5.TabIndex = 5;
+            this.button5.Text = "...";
+            this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.LoadMisc);
+            // 
             // Calculator
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.ClientSize = new System.Drawing.Size(575, 378);
+            this.Controls.Add(this.keepOnTopToggle);
+            this.Controls.Add(this.answerPrev);
             this.Controls.Add(this.precision);
+            this.Controls.Add(this.button5);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.label1);
@@ -195,6 +247,7 @@
             this.Name = "Calculator";
             this.Text = "Calculator";
             this.Load += new System.EventHandler(this.OnCalcLoad);
+            this.ClientSizeChanged += new System.EventHandler(this.ResetAnswerWidth);
             ((System.ComponentModel.ISupportInitialize)(this.precision)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -214,5 +267,8 @@
         private Label label1;
         private Button button3;
         private Button button4;
+        private CheckBox answerPrev;
+        private CheckBox keepOnTopToggle;
+        private Button button5;
     }
 }
