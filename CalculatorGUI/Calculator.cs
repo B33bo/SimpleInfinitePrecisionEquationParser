@@ -8,7 +8,7 @@ public partial class Calculator : Form
 #nullable disable //it was annoying me
     public static Calculator Instance { get; set; }
     public static Equation currentEquation;
-    public static int Version = 2;
+    public static int Version = 3;
     private static bool answerPreview = true;
 #nullable enable
 
@@ -17,6 +17,7 @@ public partial class Calculator : Form
         InitializeComponent();
         currentEquation = new Equation("");
         Instance = this;
+        currentEquation.Variables.Add("calcversion", Version);
     }
 
     private void EquationChanged(object sender, EventArgs e)
