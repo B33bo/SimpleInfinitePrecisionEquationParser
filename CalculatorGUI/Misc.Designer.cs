@@ -30,11 +30,13 @@
         {
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabs = new System.Windows.Forms.TabPage();
+            this.manualPrimeFactors = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.primeFactorsText = new System.Windows.Forms.TextBox();
             this.numberText = new System.Windows.Forms.TextBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.manualListFactors = new System.Windows.Forms.Button();
             this.FactorsList = new System.Windows.Forms.ListBox();
             this.factor_number = new System.Windows.Forms.TextBox();
             this.tabPage1 = new System.Windows.Forms.TabPage();
@@ -66,6 +68,7 @@
             // tabs
             // 
             this.tabs.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.tabs.Controls.Add(this.manualPrimeFactors);
             this.tabs.Controls.Add(this.label2);
             this.tabs.Controls.Add(this.label1);
             this.tabs.Controls.Add(this.primeFactorsText);
@@ -76,6 +79,16 @@
             this.tabs.Size = new System.Drawing.Size(792, 417);
             this.tabs.TabIndex = 0;
             this.tabs.Text = "Prime Factors";
+            // 
+            // manualPrimeFactors
+            // 
+            this.manualPrimeFactors.Location = new System.Drawing.Point(155, 6);
+            this.manualPrimeFactors.Name = "manualPrimeFactors";
+            this.manualPrimeFactors.Size = new System.Drawing.Size(109, 40);
+            this.manualPrimeFactors.TabIndex = 3;
+            this.manualPrimeFactors.Text = "Get Prime Factors";
+            this.manualPrimeFactors.UseVisualStyleBackColor = true;
+            this.manualPrimeFactors.Click += new System.EventHandler(this.PrimeFactors_ForceUpdate);
             // 
             // label2
             // 
@@ -106,12 +119,10 @@
             this.primeFactorsText.Font = new System.Drawing.Font("Segoe UI", 25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.primeFactorsText.Location = new System.Drawing.Point(6, 156);
             this.primeFactorsText.Name = "primeFactorsText";
+            this.primeFactorsText.ReadOnly = true;
             this.primeFactorsText.Size = new System.Drawing.Size(776, 52);
             this.primeFactorsText.TabIndex = 1;
             this.primeFactorsText.Text = "1";
-            this.primeFactorsText.TextChanged += new System.EventHandler(this.PrimeFactors_ChangedFactors);
-            this.primeFactorsText.Enter += new System.EventHandler(this.MouseEnterText);
-            this.primeFactorsText.Leave += new System.EventHandler(this.MouseExitText);
             // 
             // numberText
             // 
@@ -124,12 +135,11 @@
             this.numberText.TabIndex = 0;
             this.numberText.Text = "1";
             this.numberText.TextChanged += new System.EventHandler(this.PrimeFactors_ChangedNumber);
-            this.numberText.Enter += new System.EventHandler(this.MouseEnterText);
-            this.numberText.Leave += new System.EventHandler(this.MouseExitText);
             // 
             // tabPage2
             // 
             this.tabPage2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.tabPage2.Controls.Add(this.manualListFactors);
             this.tabPage2.Controls.Add(this.FactorsList);
             this.tabPage2.Controls.Add(this.factor_number);
             this.tabPage2.Location = new System.Drawing.Point(4, 24);
@@ -138,6 +148,16 @@
             this.tabPage2.Size = new System.Drawing.Size(792, 417);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Factors";
+            // 
+            // manualListFactors
+            // 
+            this.manualListFactors.Location = new System.Drawing.Point(666, 344);
+            this.manualListFactors.Name = "manualListFactors";
+            this.manualListFactors.Size = new System.Drawing.Size(118, 39);
+            this.manualListFactors.TabIndex = 3;
+            this.manualListFactors.Text = "List Factors";
+            this.manualListFactors.UseVisualStyleBackColor = true;
+            this.manualListFactors.Click += new System.EventHandler(this.Factors_ForceUpdate);
             // 
             // FactorsList
             // 
@@ -204,6 +224,7 @@
             this.conversionToUnit.Size = new System.Drawing.Size(350, 23);
             this.conversionToUnit.TabIndex = 1;
             this.conversionToUnit.SelectedIndexChanged += new System.EventHandler(this.ChangedVariableOrText);
+            this.conversionToUnit.TextUpdate += new System.EventHandler(this.ChangedVariableOrText);
             // 
             // conversionFromUnit
             // 
@@ -214,6 +235,7 @@
             this.conversionFromUnit.Size = new System.Drawing.Size(350, 23);
             this.conversionFromUnit.TabIndex = 1;
             this.conversionFromUnit.SelectedIndexChanged += new System.EventHandler(this.ChangedVariableOrText);
+            this.conversionFromUnit.TextUpdate += new System.EventHandler(this.ChangedVariableOrText);
             // 
             // conversionOutput
             // 
@@ -273,5 +295,7 @@
         private ComboBox conversionFromUnit;
         private ComboBox conversionToUnit;
         private ComboBox conversionType;
+        private Button manualPrimeFactors;
+        private Button manualListFactors;
     }
 }

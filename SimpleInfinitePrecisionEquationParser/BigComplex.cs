@@ -1,8 +1,6 @@
 ﻿using SIPEP.Functions;
-using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
-using System.Runtime.CompilerServices;
 
 namespace SIPEP;
 
@@ -85,7 +83,7 @@ public struct BigComplex
     public static BigComplex operator %(BigComplex left, BigComplex right)
     {
         var div = left / right;
-        BigRational real = div.Real, imag = div.Imaginary;
+        BigRational real = div.Real, imag;
 
         if (real < 0)
             real = Misc.Ceiling(div).Real;
@@ -98,7 +96,7 @@ public struct BigComplex
             imag = Misc.Floor(div).Imaginary;
 
         div = new BigComplex(real, imag);
-        return left - right * (BigComplex)(div);
+        return left - right * div;
     }
 
     public override bool Equals([NotNullWhen(true)] object? obj)

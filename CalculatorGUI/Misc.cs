@@ -1,13 +1,12 @@
-﻿using SIPEP;
+﻿using CalculatorGUI.MiscFeatures;
+using SIPEP;
+using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 
 namespace CalculatorGUI;
 
 public partial class Misc : Form
 {
-    private bool mouseOverNumber;
-    private bool mouseOverFactors;
-
     public Misc()
     {
         InitializeComponent();
@@ -15,160 +14,50 @@ public partial class Misc : Form
 
     private void PrimeFactors_ChangedNumber(object sender, EventArgs e)
     {
-        if (!BigComplex.TryParse(numberText.Text, out BigComplex bc))
-            return;
-        if (bc.Imaginary != 0)
-            return;
-        if (bc.Real % 1 != 0)
-            return;
-        if (!mouseOverNumber)
-            return;
-
-        var primeFactors = GetPrimeFactors((BigInteger)bc.Real);
-
-        if (primeFactors is null)
+        if (numberText.Text.Length > 5)
         {
-            primeFactorsText.Text = "Error";
+            manualPrimeFactors.Show();
             return;
         }
-
-        Sort(ref primeFactors);
-        Dictionary<BigInteger, int> primeFactorsDict = new();
-
-        for (int i = 0; i < primeFactors.Length; i++)
-        {
-            if (primeFactorsDict.ContainsKey(primeFactors[i]))
-                primeFactorsDict[primeFactors[i]]++;
-            else
-                primeFactorsDict.Add(primeFactors[i], 1);
-        }
-
-        string s = "";
-        foreach (var primeFactor in primeFactorsDict)
-        {
-            if (primeFactor.Value == 1)
-                s += " * " + primeFactor.Key;
-            else
-                s += " * " + primeFactor.Key + "^" + primeFactor.Value;
-        }
-
-        primeFactorsText.Text = s[3..];
-
-        static void Sort(ref BigInteger[] primeFactors)
-        {
-            bool didSwap;
-            do
-            {
-                didSwap = false;
-                for (int i = 1; i < primeFactors.Length; i++)
-                {
-                    if (primeFactors[i] >= primeFactors[i - 1])
-                        continue;
-
-                    (primeFactors[i - 1], primeFactors[i]) = (primeFactors[i], primeFactors[i - 1]);
-                    didSwap = true;
-                }
-            } while (didSwap);
-        }
+        manualPrimeFactors.Hide();
+        
+        primeFactorsText.Text = PrimeFactors.GetPrimeFactors(numberText.Text);
     }
 
-    private void PrimeFactors_ChangedFactors(object sender, EventArgs e)
-    {
-        if (!mouseOverFactors)
-            return;
-        try
-        {
-            Calculator.currentEquation.LoadString(primeFactorsText.Text);
-            numberText.Text = Calculator.currentEquation.Solve().ToString();
-        }
-        catch (Exception)
-        {
-            numberText.Text = "NaN";
-        }
-    }
-
-    private BigInteger[] GetFactors(BigRational number)
-    {
-        List<BigInteger> bigIntegers = new();
-        BigInteger max = (BigInteger)BigRational.Sqrt(number, Equation.DecimalPrecision);
-
-        for (BigRational i = 1; i <= max; i++)
-        {
-            BigInteger num = (BigInteger)i;
-            if (number % num != 0)
-                continue;
-            bigIntegers.Add(num);
-        }
-        return bigIntegers.ToArray();
-    }
-
-    private static BigInteger[]? GetPrimeFactors(BigInteger n)
-    {
-        if (n == 0)
-            return new BigInteger[] { 0 };
-        if (n == 1)
-            return new BigInteger[] { 1 };
-        if (n < 0)
-            return null;
-
-        List<BigInteger> primeFactors = new();
-        while (n % 2 == 0)
-        {
-            primeFactors.Add(2);
-            n /= 2;
-        }
-
-        var max = (BigInteger)BigRational.Sqrt(n, Equation.DecimalPrecision);
-        for (BigInteger i = 3; i <= max; i += 2)
-        {
-            while (n % i == 0)
-            {
-                primeFactors.Add(i);
-                n /= i;
-            }
-        }
-        if (n > 2)
-        {
-            primeFactors.Add(n);
-        }
-        return primeFactors.ToArray();
-    }
-
-    private void MouseEnterText(object sender, EventArgs e)
-    {
-        if (sender == numberText)
-            mouseOverNumber = true;
-        else if (sender == primeFactorsText)
-            mouseOverFactors = true;
-    }
-
-    private void MouseExitText(object sender, EventArgs e)
-    {
-        if (sender == numberText)
-            mouseOverNumber = false;
-        else if (sender == primeFactorsText)
-            mouseOverFactors = false;
-    }
+    private void PrimeFactors_ForceUpdate(object sender, EventArgs e) =>
+        primeFactorsText.Text = PrimeFactors.GetPrimeFactors(numberText.Text);
 
     private void Factors_FactorChange(object sender, EventArgs e)
     {
-        if (!BigComplex.TryParse(factor_number.Text, out BigComplex num))
-            return;
-
-        var numInt = (BigInteger)num.Real;
-        var factors = GetFactors(numInt);
-        FactorsList.Items.Clear();
-
-        for (int i = 0; i < factors.Length; i++)
+        if (factor_number.Text.Length > 5)
         {
-            FactorsList.Items.Add($"{factors[i]} * {numInt / factors[i]}");
+            manualListFactors.Show();
+            return;
         }
+        manualListFactors.Hide();
+
+        var factors = Factors.GetFactors(factor_number.Text);
+        FactorsList.Items.Clear();
+        for (int i = 0; i < factors.Count; i++)
+            FactorsList.Items.Add(factors[i]);
     }
 
-    private static Dictionary<string, Dictionary<string, BigComplex>> conversions = new();
+    private void Factors_ForceUpdate(object sender, EventArgs e)
+    {
+        var factors = Factors.GetFactors(factor_number.Text);
+        FactorsList.Items.Clear();
+        for (int i = 0; i < factors.Count; i++)
+            FactorsList.Items.Add(factors[i]);
+    }
+
+    private static Dictionary<string, Dictionary<string, BigComplex>?> conversions = new();
     private void Misc_Load(object sender, EventArgs e)
     {
         conversionType.Items.Clear();
+        conversions.Clear();
+        conversions.Add("Number", null);
+        conversionType.Items.Add("Number");
+
         var fields = typeof(Conversions).GetFields();
         for (int i = 0; i < fields.Length; i++)
         {
@@ -187,10 +76,30 @@ public partial class Misc : Form
 
         conversionType.SelectedIndex = 0;
         ReloadAnswer();
+
+        if (numberText.Text.Length > 5)
+            manualPrimeFactors.Show();
+        else
+            manualPrimeFactors.Hide();
+
+        if (factor_number.Text.Length > 5)
+            manualListFactors.Show();
+        else
+            manualListFactors.Hide();
     }
 
     private void ReloadAnswer()
     {
+        if (conversionType.Text == "Number")
+        {
+            if (!int.TryParse(conversionFromUnit.Text, out int from))
+                return;
+            if (!int.TryParse(conversionToUnit.Text, out int to))
+                return;
+            conversionOutput.Text = Base.ConvertBase(conversionInput.Text, from, to);
+            return;
+        }
+
         try
         {
             string equationStr;
@@ -213,6 +122,12 @@ public partial class Misc : Form
 
     private void ChangedVariableOrText(object sender, EventArgs e)
     {
+        if (conversionType.Text == "Number")
+        {
+            ReloadAnswer();
+            return;
+        }
+
         if (_fromVarName != _toVarName)
         {
             if (conversionFromUnit.SelectedIndex == _toVarName)
@@ -233,6 +148,24 @@ public partial class Misc : Form
 
         conversionFromUnit.Items.Clear();
         conversionToUnit.Items.Clear();
+
+        if (units is null)
+        {
+            conversionFromUnit.DropDownStyle = ComboBoxStyle.Simple;
+            conversionToUnit.DropDownStyle = ComboBoxStyle.Simple;
+
+            if (conversionType.Text == "Number")
+            {
+                conversionFromUnit.Text = "10";
+                conversionToUnit.Text = "2";
+                ReloadAnswer();
+            }
+
+            return;
+        }
+
+        conversionFromUnit.DropDownStyle = ComboBoxStyle.DropDownList;
+        conversionToUnit.DropDownStyle = ComboBoxStyle.DropDownList;
 
         _fromVarName = 0;
         _toVarName = 1;
