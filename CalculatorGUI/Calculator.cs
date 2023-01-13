@@ -8,7 +8,7 @@ public partial class Calculator : Form
 #nullable disable //it was annoying me
     public static Calculator Instance { get; set; }
     public static Equation currentEquation;
-    public static int Version = 3;
+    public static int Version = 4;
     private static bool answerPreview = true;
 #nullable enable
 

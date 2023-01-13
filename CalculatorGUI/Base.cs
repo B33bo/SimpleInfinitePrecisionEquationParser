@@ -13,7 +13,7 @@ public static class Base
             if (num.Length == 0)
                 return "0";
             if (num[0] == '-')
-                return ConvertBase(num.Substring(1), fromBase, toBase);
+                return ConvertBase(num[1..], fromBase, toBase);
 
             for (int i = 0; i < num.Length; i++)
             {
@@ -39,7 +39,7 @@ public static class Base
         if (decimalPartInDecimal.StartsWith("0."))
             decimalPartInDecimal = decimalPartInDecimal[1..];
 
-        string decimalInDecimal = intPartInDecimal + decimalPartInDecimal;
+        string decimalInDecimal = intPartInDecimal + "." + decimalPartInDecimal;
         return ConvertDecimalToBase(decimalInDecimal, toBase);
     }
 
@@ -58,12 +58,12 @@ public static class Base
 
     static string ConvertDecimalToDecimal(string num, int baseNum)
     {
-        double decimalNum = 0;
+        BigRational decimalNum = 0;
         int exponent = -1;
         for (int i = 0; i < num.Length; i++)
         {
             int digit = GetDigit(num[i]);
-            decimalNum += digit * Math.Pow(baseNum, exponent);
+            decimalNum += digit * Pow(baseNum, exponent);
             exponent--;
         }
         return decimalNum.ToString();
@@ -76,7 +76,7 @@ public static class Base
             parts[1] = "." + parts[1];
 
         int intPart = int.Parse(parts[0]);
-        double decimalPart = parts.Length > 1 ? double.Parse(parts[1]) : 0;
+        BigRational decimalPart = parts.Length > 1 ? BigRational.Parse(parts[1]) : 0;
         StringBuilder result = new StringBuilder();
         result.Append(ConvertIntToBase(intPart, baseNum));
         result.Append(".");
@@ -96,17 +96,20 @@ public static class Base
         return result.ToString();
     }
 
-    static string ConvertDecimalToBase(double num, int baseNum)
+    static string ConvertDecimalToBase(BigRational num, int baseNum)
     {
         StringBuilder result = new StringBuilder();
-        for (int i = 0; i < 10; i++)
+
+        for (int i = 0; i < Equation.DecimalPrecision; i++)
         {
             num *= baseNum;
             int digit = (int)num;
             result.Append(GetChar(digit));
             num -= digit;
+
             if (num == 0) break;
         }
+        
         return result.ToString();
     }
 
