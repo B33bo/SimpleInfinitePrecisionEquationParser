@@ -28,6 +28,14 @@ public class EquationTests
     }
 
     [TestMethod]
+    public void Negative()
+    {
+        Assert.AreEqual(new BigComplex(-2, 0), new Equation("-2").Solve());
+        Assert.AreEqual(new BigComplex(-2, 0), new Equation("-(2)").Solve());
+        Assert.AreEqual(new BigComplex(-2, -6), new Equation("-2i-6").Solve());
+    }
+
+    [TestMethod]
     public void Reusability()
     {
         Equation e = new("let x = 5");

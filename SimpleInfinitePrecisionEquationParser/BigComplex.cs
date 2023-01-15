@@ -42,6 +42,8 @@ public struct BigComplex
 
     public static BigComplex operator *(BigComplex left, BigComplex right)
     {
+        if (left == 0 || right == 0)
+            return 0;
         // Multiplication:  (a + bi)(c + di) = (ac -bd) + (bc + ad)i
         BigRational result_realpart = (left.Real * right.Real) - (left.Imaginary * right.Imaginary);
         BigRational result_imaginarypart = (left.Imaginary * right.Real) + (left.Real * right.Imaginary);
@@ -130,10 +132,7 @@ public struct BigComplex
             if (!IsNumber(splitByI[1]))
                 return false;
 
-            splitByI[1] = splitByI[1].Replace("m", "-");
             imaginary = BigRational.Parse(splitByI[1]);
-            if (imaginary == 0 && splitByI[1] != "0")
-                return false;
         }
 
         if (s == "e")

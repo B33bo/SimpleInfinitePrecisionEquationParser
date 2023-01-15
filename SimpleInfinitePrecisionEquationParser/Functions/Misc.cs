@@ -363,8 +363,8 @@ public static class Misc
     public static BigComplex Time(params BigComplex[] args)
     {
         if (args.Length == 0)
-            return new BigComplex(DateTime.Now.Ticks, 0);
-        return new BigComplex(DateTime.Now.Ticks / args[0].Real, 0);
+            return new BigComplex(DateTime.Now.Ticks / TimeSpan.TicksPerSecond, 0);
+        return new BigComplex(DateTime.Now.Ticks / TimeSpan.TicksPerSecond / args[0].Real, 0);
     }
 
     [Function("TimeUTC", Args = "TimeUTC(unit)")]

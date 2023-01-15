@@ -79,13 +79,15 @@ public class Operators
         var pow4 = new Equation("Pow(2,2,3)").Solve().Real;
         var pow5 = new Equation("Pow(2)").Solve().Real;
         var pow6 = new Equation("Pow()").Solve().Real;
+        var pow7 = new Equation("Pow(3i5, 2)").Solve(); //-16 30
 
         Assert.IsTrue(pow1 > 63.9 && pow1 < 64.1);
         Assert.IsTrue(pow2 > 7.9 && pow2 < 8.1);
         Assert.IsTrue(pow3 > -1.1 && pow3 < -.9);
-        Assert.IsTrue(pow4 > 63.9 && pow3 < 64.1);
-        Assert.IsTrue(pow5 > 1.9 && pow3 < 2.1);
-        Assert.IsTrue(pow6 > -.1 && pow3 < .1);
+        Assert.IsTrue(pow4 > 63.9 && pow4 < 64.1);
+        Assert.IsTrue(pow5 > 1.9 && pow5 < 2.1);
+        Assert.IsTrue(pow6 > -.1 && pow6 < .1);
+        Assert.IsTrue(pow7.Real > -16.1 && pow7.Real < -15.9 && pow7.Imaginary < 30.1 && pow7.Imaginary > -29.9);
     }
 
     [TestMethod]

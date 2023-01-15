@@ -20,7 +20,7 @@ public partial class Misc : Form
             return;
         }
         manualPrimeFactors.Hide();
-        
+
         primeFactorsText.Text = PrimeFactors.GetPrimeFactors(numberText.Text);
     }
 

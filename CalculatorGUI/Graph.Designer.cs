@@ -261,7 +261,7 @@
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(258, 23);
             this.button2.TabIndex = 2;
-            this.button2.Text = "Export to PNG";
+            this.button2.Text = "Save as Image";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.SaveAsPNG);
             // 

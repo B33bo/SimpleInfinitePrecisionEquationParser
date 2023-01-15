@@ -165,17 +165,26 @@ public class Equation
 
             if (FunctionLoader.Operators.Contains(equationStr[i]))
             {
-                if (equationStr[i] == '-' && current.Length == 0)
+                if (equationStr[i] == '-')
                 {
-                    if (i == 0) //example: -4 + 1
+                    if (current.EndsWith("i"))
                     {
                         current += "-";
                         continue;
                     }
-                    else if (_data.Count > 0 && _data[^1].Item1 == SectionType.Operators)
+
+                    if (current.Length == 0)
                     {
-                        current += "-";
-                        continue;
+                        if (i == 0) //example: -4 + 1
+                        {
+                            current += "-";
+                            continue;
+                        }
+                        else if (_data.Count > 0 && _data[^1].Item1 == SectionType.Operators)
+                        {
+                            current += "-";
+                            continue;
+                        }
                     }
                 }
 
@@ -343,7 +352,7 @@ public class Equation
         }
     }
 
-    private bool IsNumberOrVariable(int index, List<(SectionType, object)> data)
+    private static bool IsNumberOrVariable(int index, List<(SectionType, object)> data)
     {
         if (index < 0 || index >= data.Count)
             return false;
@@ -384,6 +393,12 @@ public class Equation
         data = s;
         if (s.StartsWith("(") && s.EndsWith(")"))
             return SectionType.NestedEquation;
+
+        if (s == "-")
+        {
+            data = '-';
+            return SectionType.Operators;
+        }
 
         if (BigComplex.TryParse(s, out BigComplex numData))
         {
