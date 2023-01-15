@@ -43,7 +43,9 @@
             this.answerPrev = new System.Windows.Forms.CheckBox();
             this.keepOnTopToggle = new System.Windows.Forms.CheckBox();
             this.button5 = new System.Windows.Forms.Button();
+            this.secretBox = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.precision)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.secretBox)).BeginInit();
             this.SuspendLayout();
             // 
             // equationTextBox
@@ -223,12 +225,23 @@
             this.button5.UseVisualStyleBackColor = true;
             this.button5.Click += new System.EventHandler(this.LoadMisc);
             // 
+            // secretBox
+            // 
+            this.secretBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.secretBox.Location = new System.Drawing.Point(549, 0);
+            this.secretBox.Name = "secretBox";
+            this.secretBox.Size = new System.Drawing.Size(28, 22);
+            this.secretBox.TabIndex = 8;
+            this.secretBox.TabStop = false;
+            this.secretBox.Click += new System.EventHandler(this.DebugBoxClicked);
+            // 
             // Calculator
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.ClientSize = new System.Drawing.Size(575, 378);
+            this.Controls.Add(this.secretBox);
             this.Controls.Add(this.keepOnTopToggle);
             this.Controls.Add(this.answerPrev);
             this.Controls.Add(this.precision);
@@ -249,6 +262,7 @@
             this.Load += new System.EventHandler(this.OnCalcLoad);
             this.ClientSizeChanged += new System.EventHandler(this.ResetAnswerWidth);
             ((System.ComponentModel.ISupportInitialize)(this.precision)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.secretBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -270,5 +284,6 @@
         private CheckBox answerPrev;
         private CheckBox keepOnTopToggle;
         private Button button5;
+        private PictureBox secretBox;
     }
 }

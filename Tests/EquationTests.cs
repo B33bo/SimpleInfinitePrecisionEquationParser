@@ -36,6 +36,19 @@ public class EquationTests
     }
 
     [TestMethod]
+    public void VarAssignment()
+    {
+        var e = new Equation("let x = 3");
+        Assert.AreEqual(new BigComplex(3, 0), e.Solve());
+        e.LoadString("let y = x + 1");
+        Assert.AreEqual(new BigComplex(4, 0), e.Solve());
+        e.LoadString("let f(q) = y + q");
+        e.Solve();
+        e.LoadString("f(4)");
+        Assert.AreEqual(new BigComplex(8, 0), e.Solve());
+    }
+
+    [TestMethod]
     public void Reusability()
     {
         Equation e = new("let x = 5");

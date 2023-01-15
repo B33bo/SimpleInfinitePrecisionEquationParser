@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http.Headers;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Numerics;
 
 namespace SIPEP;
 
 public class Equation
 {
-    public const int Version = 3;
+    public const int Version = 4;
     public static int DecimalPrecision { get => BigRational.MaxDigits; set => BigRational.MaxDigits = value; }
 
     public Dictionary<string, BigComplex> Variables = Constants.Vars;
@@ -63,7 +57,7 @@ public class Equation
         LoadString(equationStr);
     }
 
-    private static void Instructional(string str, ref List<(SectionType, object)> data)
+    private void Instructional(string str, ref List<(SectionType, object)> data)
     {
         str = str[3..].Replace(" ", ""); //removes the "let"
 
@@ -101,7 +95,7 @@ public class Equation
         data = new List<(SectionType, object)>()
         {
             (SectionType.AssignVariable, varName),
-            (SectionType.Number, new Equation(equation).Solve()),
+            (SectionType.Number, new Equation(equation, Variables).Solve()),
         };
     }
 
@@ -219,38 +213,7 @@ public class Equation
         {
             if (currentData[i].Item1 == SectionType.AssignVariable)
             {
-                if (currentData[i].Item2 is not string varName)
-                    throw new InvalidEquationException();
-                if (i + 1 >= currentData.Count)
-                    throw new InvalidEquationException();
-
-                if (currentData[i + 1].Item1 == SectionType.Number)
-                {
-                    if (currentData[i + 1].Item2 is not BigComplex number)
-                        throw new InvalidEquationException();
-
-                    if (Variables.ContainsKey(varName))
-                        Variables[varName] = number;
-                    else
-                        Variables.Add(varName, number);
-                    currentData.RemoveAt(i);
-                    i--;
-                }
-                else if (currentData[i + 1].Item1 == SectionType.Parameters)
-                {
-                    if (i + 2 >= currentData.Count)
-                        throw new InvalidEquationException();
-                    if (currentData[i + 1].Item2 is not string args)
-                        throw new InvalidEquationException();
-                    if (currentData[i + 2].Item2 is not string equation)
-                        throw new InvalidEquationException();
-
-                    FunctionLoader.AddFunction(varName, args, equation);
-                    currentData.RemoveAt(i + 1);
-                    currentData.RemoveAt(i + 1);
-                    currentData[i] = (SectionType.Number, new BigComplex(true));
-                }
-
+                SolveInstructional(currentData, ref i);
                 continue;
             }
 
@@ -349,6 +312,41 @@ public class Equation
         static object[] GetAsObjArray(params BigComplex[] nums)
         {
             return new object[] { nums }; //yup
+        }
+    }
+
+    private void SolveInstructional(List<(SectionType, object)> currentData, ref int i)
+    {
+        if (currentData[i].Item2 is not string varName)
+            throw new InvalidEquationException();
+        if (i + 1 >= currentData.Count)
+            throw new InvalidEquationException();
+
+        if (currentData[i + 1].Item1 == SectionType.Number)
+        {
+            if (currentData[i + 1].Item2 is not BigComplex number)
+                throw new InvalidEquationException();
+
+            if (Variables.ContainsKey(varName))
+                Variables[varName] = number;
+            else
+                Variables.Add(varName, number);
+            currentData.RemoveAt(i);
+            i--;
+        }
+        else if (currentData[i + 1].Item1 == SectionType.Parameters)
+        {
+            if (i + 2 >= currentData.Count)
+                throw new InvalidEquationException();
+            if (currentData[i + 1].Item2 is not string args)
+                throw new InvalidEquationException();
+            if (currentData[i + 2].Item2 is not string equation)
+                throw new InvalidEquationException();
+
+            FunctionLoader.AddFunction(varName, args, equation);
+            currentData.RemoveAt(i + 1);
+            currentData.RemoveAt(i + 1);
+            currentData[i] = (SectionType.Number, new BigComplex(true));
         }
     }
 

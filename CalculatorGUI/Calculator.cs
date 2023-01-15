@@ -8,8 +8,9 @@ public partial class Calculator : Form
 #nullable disable //it was annoying me
     public static Calculator Instance { get; set; }
     public static Equation currentEquation;
-    public static int Version = 4;
+    public const int Version = 5;
     private static bool answerPreview = true;
+    private bool debugMode;
 #nullable enable
 
     public Calculator()
@@ -41,16 +42,24 @@ public partial class Calculator : Form
     {
         BigComplex answer;
 
-        try
+        if (debugMode)
         {
             currentEquation.LoadString(equationTextBox.Text);
             answer = currentEquation.Solve();
         }
-        catch (Exception)
+        else
         {
-            AnswerLabel.Text = "Error";
-            AnswerLabel.ForeColor = Color.Red;
-            return;
+            try
+            {
+                currentEquation.LoadString(equationTextBox.Text);
+                answer = currentEquation.Solve();
+            }
+            catch (Exception)
+            {
+                AnswerLabel.Text = "Error";
+                AnswerLabel.ForeColor = Color.Red;
+                return;
+            }
         }
 
         if (currentEquation.Variables.ContainsKey("ans"))
@@ -180,5 +189,14 @@ public partial class Calculator : Form
     private void LoadMisc(object sender, EventArgs e)
     {
         new Misc().Show();
+    }
+
+    private void DebugBoxClicked(object sender, EventArgs e)
+    {
+        debugMode = !debugMode;
+        if (debugMode)
+            secretBox.BackColor = Color.Red;
+        else
+            secretBox.BackColor = Color.Transparent;
     }
 }

@@ -15,7 +15,10 @@ public static class FunctionLoader
     public static void AddFunction(string name, string variableNameArgs, string equation)
     {
         //customFunctions.Add(name, args => SolveCustomFunction(variableNameArgs, equation, args));
-        customFunctions.Add(name, (equation, variableNameArgs));
+        if (customFunctions.ContainsKey(name))
+            customFunctions[name] = (equation, variableNameArgs);
+        else
+            customFunctions.Add(name, (equation, variableNameArgs));
     }
 
     public static BigComplex DoFunction(string functionName, string args, Dictionary<string, BigComplex> variables)
@@ -38,7 +41,7 @@ public static class FunctionLoader
             answers[i] = new Equation(equations[i], variables).Solve();
 
         if (customFunctions.ContainsKey(functionName))
-            return SolveCustomFunction(customFunctions[functionName].varNameArgs, customFunctions[functionName].equation, answers);//customFunctions[functionName](answers);
+            return SolveCustomFunction(customFunctions[functionName].varNameArgs, customFunctions[functionName].equation, answers, variables);//customFunctions[functionName](answers);
 
         if (indexOfFunction < 0)
             throw new InvalidEquationException();
@@ -50,13 +53,18 @@ public static class FunctionLoader
         return BigComplex.Zero;
     }
 
-    public static BigComplex SolveCustomFunction(string variableNameArgs, string equation, BigComplex[] args)
+    public static BigComplex SolveCustomFunction(string variableNameArgs, string equation, BigComplex[] args, Dictionary<string, BigComplex> variables)
     {
-        Equation realEquation = new("");
+        Equation realEquation = new("", variables);
         var varNameArgs = variableNameArgs.Split(',');
 
         for (int i = 0; i < varNameArgs.Length; i++)
-            realEquation.Variables.Add(varNameArgs[i], args[i]);
+        {
+            if (realEquation.Variables.ContainsKey(varNameArgs[i]))
+                realEquation.Variables[varNameArgs[i]] = args[i];
+            else
+                realEquation.Variables.Add(varNameArgs[i], args[i]);
+        }
 
         realEquation.LoadString(equation);
         return realEquation.Solve();
