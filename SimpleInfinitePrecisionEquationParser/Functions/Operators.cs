@@ -67,7 +67,15 @@ public static class Operators
 
         BigComplex current = args[0];
         for (int i = 1; i < args.Length; i++)
+        {
+            bool isInt = args[i].Real - args[i].Real % 1 == args[i].Real;
+            if (args[i].Imaginary == 0 && isInt && args[i].Real > 0)
+            {
+                current = IntPow(current, (BigInteger)args[i].Real);
+                continue;
+            }
             current = Power(current, args[i]);
+        }
 
         return current;
 
@@ -93,6 +101,14 @@ public static class Operators
             BigRational t = BigRational.Pow(rho, exponentReal, precistion) * BigRational.Pow(Constants.E, -exponentImaginary * theta, Equation.DecimalPrecision);
 
             return new BigComplex(t * BigRational.Cos(newRho, Equation.DecimalPrecision), t * BigRational.Sin(newRho, Equation.DecimalPrecision));
+        }
+
+        static BigComplex IntPow(BigComplex value, BigInteger exponent)
+        {
+            BigComplex currVal = 1;
+            for (int i = 0; i < exponent; i++)
+                currVal *= value;
+            return currVal;
         }
     }
 

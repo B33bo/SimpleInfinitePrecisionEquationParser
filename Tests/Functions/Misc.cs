@@ -245,7 +245,26 @@ public class Misc
     [TestMethod]
     public void Remainder()
     {
-        Assert.AreEqual((BigComplex)1, new Equation("Remainder(10,3)").Solve());
-        Assert.AreEqual((BigComplex)(-1), new Equation("Remainder(-10,3)").Solve());
+        Assert.AreEqual(1, new Equation("Remainder(10,3)").Solve());
+        Assert.AreEqual(-1, new Equation("Remainder(-10,3)").Solve());
+    }
+
+    [TestMethod]
+    public void Int()
+    {
+        Assert.AreEqual(10, new Equation("Int(10.3)").Solve());
+        Assert.AreEqual(10, new Equation("Int(10)").Solve());
+        Assert.AreEqual(0, new Equation("Int(0)").Solve());
+        Assert.AreEqual(new BigComplex(0, -4), new Equation("Int(0.1i-4.2)").Solve());
+        Assert.AreEqual(0, new Equation("Int()").Solve());
+    }
+
+    [TestMethod]
+    public void Frac()
+    {
+        Assert.AreEqual(BigRational.Parse(".2"), new Equation("Frac(2.2)").Solve());
+        Assert.AreEqual(0, new Equation("Frac(2)").Solve());
+        Assert.AreEqual(0, new Equation("Frac()").Solve());
+        Assert.AreEqual(new BigComplex(0, BigRational.Parse("-.1")), new Equation("Frac(3i-3.1)").Solve());
     }
 }

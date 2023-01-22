@@ -374,4 +374,20 @@ public static class Misc
             return new BigComplex(DateTime.UtcNow.Ticks, 0);
         return new BigComplex(DateTime.UtcNow.Ticks / args[0].Real, 0);
     }
+
+    [Function("Int")]
+    public static BigComplex Int(params BigComplex[] args)
+    {
+        if (args.Length == 0)
+            return new BigComplex(0, 0);
+        return new BigComplex(args[0].Real - args[0].Real % 1, args[0].Imaginary - args[0].Imaginary % 1);
+    }
+
+    [Function("Frac")]
+    public static BigComplex Frac(params BigComplex[] args)
+    {
+        if (args.Length == 0)
+            return new BigComplex(0, 0);
+        return new BigComplex(args[0].Real % 1, args[0].Imaginary % 1);
+    }
 }

@@ -88,6 +88,7 @@ public class Operators
         Assert.IsTrue(pow5 > 1.9 && pow5 < 2.1);
         Assert.IsTrue(pow6 > -.1 && pow6 < .1);
         Assert.IsTrue(pow7.Real > -16.1 && pow7.Real < -15.9 && pow7.Imaginary < 30.1 && pow7.Imaginary > -29.9);
+        Assert.AreEqual(25, new Equation("5^2").Solve());
     }
 
     [TestMethod]

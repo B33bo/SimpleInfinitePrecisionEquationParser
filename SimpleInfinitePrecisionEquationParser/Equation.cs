@@ -4,7 +4,7 @@ namespace SIPEP;
 
 public class Equation
 {
-    public const int Version = 4;
+    public const int Version = 5;
     public static int DecimalPrecision { get => BigRational.MaxDigits; set => BigRational.MaxDigits = value; }
 
     public Dictionary<string, BigComplex> Variables = Constants.Vars;
