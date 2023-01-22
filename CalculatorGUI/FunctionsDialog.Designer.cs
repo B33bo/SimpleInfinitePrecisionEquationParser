@@ -67,7 +67,7 @@
             this.button2.Location = new System.Drawing.Point(93, 415);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 1;
+            this.button2.TabIndex = 2;
             this.button2.Text = "Remove";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.RemoveFunction);
@@ -78,7 +78,7 @@
             this.button3.Location = new System.Drawing.Point(282, 415);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(75, 23);
-            this.button3.TabIndex = 1;
+            this.button3.TabIndex = 3;
             this.button3.Text = "Use";
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.SelectFunction);

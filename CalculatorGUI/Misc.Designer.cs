@@ -85,7 +85,7 @@
             this.manualPrimeFactors.Location = new System.Drawing.Point(155, 6);
             this.manualPrimeFactors.Name = "manualPrimeFactors";
             this.manualPrimeFactors.Size = new System.Drawing.Size(109, 40);
-            this.manualPrimeFactors.TabIndex = 3;
+            this.manualPrimeFactors.TabIndex = 0;
             this.manualPrimeFactors.Text = "Get Prime Factors";
             this.manualPrimeFactors.UseVisualStyleBackColor = true;
             this.manualPrimeFactors.Click += new System.EventHandler(this.PrimeFactors_ForceUpdate);
@@ -98,7 +98,7 @@
             this.label2.Location = new System.Drawing.Point(6, 107);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(222, 46);
-            this.label2.TabIndex = 2;
+            this.label2.TabIndex = 3;
             this.label2.Text = "Prime Factors";
             // 
             // label1
@@ -109,7 +109,7 @@
             this.label1.Location = new System.Drawing.Point(6, 3);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(143, 46);
-            this.label1.TabIndex = 2;
+            this.label1.TabIndex = 4;
             this.label1.Text = "Number";
             // 
             // primeFactorsText
@@ -121,7 +121,7 @@
             this.primeFactorsText.Name = "primeFactorsText";
             this.primeFactorsText.ReadOnly = true;
             this.primeFactorsText.Size = new System.Drawing.Size(776, 52);
-            this.primeFactorsText.TabIndex = 1;
+            this.primeFactorsText.TabIndex = 2;
             this.primeFactorsText.Text = "1";
             // 
             // numberText
@@ -132,7 +132,7 @@
             this.numberText.Location = new System.Drawing.Point(6, 52);
             this.numberText.Name = "numberText";
             this.numberText.Size = new System.Drawing.Size(776, 52);
-            this.numberText.TabIndex = 0;
+            this.numberText.TabIndex = 1;
             this.numberText.Text = "1";
             this.numberText.TextChanged += new System.EventHandler(this.PrimeFactors_ChangedNumber);
             // 
@@ -211,7 +211,7 @@
             this.conversionType.Location = new System.Drawing.Point(8, 138);
             this.conversionType.Name = "conversionType";
             this.conversionType.Size = new System.Drawing.Size(776, 29);
-            this.conversionType.TabIndex = 1;
+            this.conversionType.TabIndex = 4;
             this.conversionType.SelectedIndexChanged += new System.EventHandler(this.ChangedConversionType);
             // 
             // conversionToUnit
@@ -222,7 +222,7 @@
             this.conversionToUnit.Location = new System.Drawing.Point(434, 98);
             this.conversionToUnit.Name = "conversionToUnit";
             this.conversionToUnit.Size = new System.Drawing.Size(350, 23);
-            this.conversionToUnit.TabIndex = 1;
+            this.conversionToUnit.TabIndex = 3;
             this.conversionToUnit.SelectedIndexChanged += new System.EventHandler(this.ChangedVariableOrText);
             this.conversionToUnit.TextUpdate += new System.EventHandler(this.ChangedVariableOrText);
             // 
@@ -245,7 +245,7 @@
             this.conversionOutput.Name = "conversionOutput";
             this.conversionOutput.ReadOnly = true;
             this.conversionOutput.Size = new System.Drawing.Size(350, 52);
-            this.conversionOutput.TabIndex = 0;
+            this.conversionOutput.TabIndex = 2;
             // 
             // conversionInput
             // 

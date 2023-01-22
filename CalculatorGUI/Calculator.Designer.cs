@@ -34,15 +34,15 @@
             this.GetAnswerButton = new System.Windows.Forms.Button();
             this.IndentCountLabel = new System.Windows.Forms.Label();
             this.CopyTextButton = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.funcsBtn = new System.Windows.Forms.Button();
+            this.varBtn = new System.Windows.Forms.Button();
             this.precision = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
-            this.button3 = new System.Windows.Forms.Button();
-            this.button4 = new System.Windows.Forms.Button();
+            this.clearBtn = new System.Windows.Forms.Button();
+            this.plotBtn = new System.Windows.Forms.Button();
             this.answerPrev = new System.Windows.Forms.CheckBox();
             this.keepOnTopToggle = new System.Windows.Forms.CheckBox();
-            this.button5 = new System.Windows.Forms.Button();
+            this.moreBtn = new System.Windows.Forms.Button();
             this.secretBox = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.precision)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.secretBox)).BeginInit();
@@ -83,7 +83,7 @@
             this.GetAnswerButton.Location = new System.Drawing.Point(12, 99);
             this.GetAnswerButton.Name = "GetAnswerButton";
             this.GetAnswerButton.Size = new System.Drawing.Size(84, 89);
-            this.GetAnswerButton.TabIndex = 3;
+            this.GetAnswerButton.TabIndex = 1;
             this.GetAnswerButton.Text = "=";
             this.GetAnswerButton.UseVisualStyleBackColor = true;
             this.GetAnswerButton.Click += new System.EventHandler(this.GetAnswer);
@@ -96,7 +96,7 @@
             this.IndentCountLabel.Location = new System.Drawing.Point(12, 9);
             this.IndentCountLabel.Name = "IndentCountLabel";
             this.IndentCountLabel.Size = new System.Drawing.Size(151, 28);
-            this.IndentCountLabel.TabIndex = 4;
+            this.IndentCountLabel.TabIndex = 12;
             this.IndentCountLabel.Text = "Indent Count:  0";
             // 
             // CopyTextButton
@@ -105,34 +105,34 @@
             this.CopyTextButton.Location = new System.Drawing.Point(102, 99);
             this.CopyTextButton.Name = "CopyTextButton";
             this.CopyTextButton.Size = new System.Drawing.Size(150, 89);
-            this.CopyTextButton.TabIndex = 3;
+            this.CopyTextButton.TabIndex = 2;
             this.CopyTextButton.Text = "Copy";
             this.CopyTextButton.UseVisualStyleBackColor = true;
             this.CopyTextButton.Click += new System.EventHandler(this.CopyToClipboard);
             // 
-            // button1
+            // funcsBtn
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.button1.Font = new System.Drawing.Font("Segoe UI", 35F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.button1.Location = new System.Drawing.Point(12, 267);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(115, 99);
-            this.button1.TabIndex = 5;
-            this.button1.Text = "F(x)";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.LoadFunctions);
+            this.funcsBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.funcsBtn.Font = new System.Drawing.Font("Segoe UI", 35F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.funcsBtn.Location = new System.Drawing.Point(12, 267);
+            this.funcsBtn.Name = "funcsBtn";
+            this.funcsBtn.Size = new System.Drawing.Size(115, 99);
+            this.funcsBtn.TabIndex = 5;
+            this.funcsBtn.Text = "F(x)";
+            this.funcsBtn.UseVisualStyleBackColor = true;
+            this.funcsBtn.Click += new System.EventHandler(this.LoadFunctions);
             // 
-            // button2
+            // varBtn
             // 
-            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.button2.Font = new System.Drawing.Font("Segoe UI", 50F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.button2.Location = new System.Drawing.Point(133, 267);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(115, 99);
-            this.button2.TabIndex = 5;
-            this.button2.Text = "n";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.LoadVars);
+            this.varBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.varBtn.Font = new System.Drawing.Font("Segoe UI", 50F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.varBtn.Location = new System.Drawing.Point(133, 267);
+            this.varBtn.Name = "varBtn";
+            this.varBtn.Size = new System.Drawing.Size(115, 99);
+            this.varBtn.TabIndex = 6;
+            this.varBtn.Text = "n";
+            this.varBtn.UseVisualStyleBackColor = true;
+            this.varBtn.Click += new System.EventHandler(this.LoadVars);
             // 
             // precision
             // 
@@ -140,7 +140,7 @@
             this.precision.Location = new System.Drawing.Point(371, 343);
             this.precision.Name = "precision";
             this.precision.Size = new System.Drawing.Size(53, 23);
-            this.precision.TabIndex = 6;
+            this.precision.TabIndex = 10;
             this.precision.Value = new decimal(new int[] {
             30,
             0,
@@ -157,30 +157,30 @@
             this.label1.Location = new System.Drawing.Point(430, 345);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(133, 21);
-            this.label1.TabIndex = 4;
+            this.label1.TabIndex = 11;
             this.label1.Text = "Decimal Precision";
             // 
-            // button3
+            // clearBtn
             // 
-            this.button3.Font = new System.Drawing.Font("Segoe UI", 35F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.button3.Location = new System.Drawing.Point(258, 99);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(150, 89);
-            this.button3.TabIndex = 3;
-            this.button3.Text = "Clear";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.Clear);
+            this.clearBtn.Font = new System.Drawing.Font("Segoe UI", 35F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.clearBtn.Location = new System.Drawing.Point(258, 99);
+            this.clearBtn.Name = "clearBtn";
+            this.clearBtn.Size = new System.Drawing.Size(150, 89);
+            this.clearBtn.TabIndex = 3;
+            this.clearBtn.Text = "Clear";
+            this.clearBtn.UseVisualStyleBackColor = true;
+            this.clearBtn.Click += new System.EventHandler(this.Clear);
             // 
-            // button4
+            // plotBtn
             // 
-            this.button4.Font = new System.Drawing.Font("Segoe UI", 35F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.button4.Location = new System.Drawing.Point(414, 99);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(150, 89);
-            this.button4.TabIndex = 3;
-            this.button4.Text = "Plot";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.Plot);
+            this.plotBtn.Font = new System.Drawing.Font("Segoe UI", 35F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.plotBtn.Location = new System.Drawing.Point(414, 99);
+            this.plotBtn.Name = "plotBtn";
+            this.plotBtn.Size = new System.Drawing.Size(150, 89);
+            this.plotBtn.TabIndex = 4;
+            this.plotBtn.Text = "Plot";
+            this.plotBtn.UseVisualStyleBackColor = true;
+            this.plotBtn.Click += new System.EventHandler(this.Plot);
             // 
             // answerPrev
             // 
@@ -193,7 +193,7 @@
             this.answerPrev.Location = new System.Drawing.Point(371, 281);
             this.answerPrev.Name = "answerPrev";
             this.answerPrev.Size = new System.Drawing.Size(140, 25);
-            this.answerPrev.TabIndex = 7;
+            this.answerPrev.TabIndex = 8;
             this.answerPrev.Text = "Answer Preview";
             this.answerPrev.UseVisualStyleBackColor = true;
             this.answerPrev.CheckedChanged += new System.EventHandler(this.RefreshSettings);
@@ -207,23 +207,23 @@
             this.keepOnTopToggle.Location = new System.Drawing.Point(371, 312);
             this.keepOnTopToggle.Name = "keepOnTopToggle";
             this.keepOnTopToggle.Size = new System.Drawing.Size(116, 25);
-            this.keepOnTopToggle.TabIndex = 7;
+            this.keepOnTopToggle.TabIndex = 9;
             this.keepOnTopToggle.Text = "Keep On Top";
             this.keepOnTopToggle.UseVisualStyleBackColor = true;
             this.keepOnTopToggle.CheckedChanged += new System.EventHandler(this.RefreshSettings);
             // 
-            // button5
+            // moreBtn
             // 
-            this.button5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.button5.AutoSize = true;
-            this.button5.Font = new System.Drawing.Font("Segoe UI", 50F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.button5.Location = new System.Drawing.Point(254, 267);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(107, 99);
-            this.button5.TabIndex = 5;
-            this.button5.Text = "...";
-            this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.LoadMisc);
+            this.moreBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.moreBtn.AutoSize = true;
+            this.moreBtn.Font = new System.Drawing.Font("Segoe UI", 50F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.moreBtn.Location = new System.Drawing.Point(254, 267);
+            this.moreBtn.Name = "moreBtn";
+            this.moreBtn.Size = new System.Drawing.Size(107, 99);
+            this.moreBtn.TabIndex = 7;
+            this.moreBtn.Text = "...";
+            this.moreBtn.UseVisualStyleBackColor = true;
+            this.moreBtn.Click += new System.EventHandler(this.LoadMisc);
             // 
             // secretBox
             // 
@@ -245,13 +245,13 @@
             this.Controls.Add(this.keepOnTopToggle);
             this.Controls.Add(this.answerPrev);
             this.Controls.Add(this.precision);
-            this.Controls.Add(this.button5);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.moreBtn);
+            this.Controls.Add(this.varBtn);
+            this.Controls.Add(this.funcsBtn);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.IndentCountLabel);
-            this.Controls.Add(this.button4);
-            this.Controls.Add(this.button3);
+            this.Controls.Add(this.plotBtn);
+            this.Controls.Add(this.clearBtn);
             this.Controls.Add(this.CopyTextButton);
             this.Controls.Add(this.GetAnswerButton);
             this.Controls.Add(this.AnswerLabel);
@@ -271,19 +271,19 @@
         #endregion
 
         private TextBox equationTextBox;
-        private Label AnswerLabel;
         private Button GetAnswerButton;
-        private Label IndentCountLabel;
         private Button CopyTextButton;
-        private Button button1;
-        private Button button2;
+        private Button clearBtn;
+        private Label AnswerLabel;
+        private Label IndentCountLabel;
+        private Button funcsBtn;
+        private Button varBtn;
         private NumericUpDown precision;
         private Label label1;
-        private Button button3;
-        private Button button4;
+        private Button plotBtn;
         private CheckBox answerPrev;
         private CheckBox keepOnTopToggle;
-        private Button button5;
+        private Button moreBtn;
         private PictureBox secretBox;
     }
 }

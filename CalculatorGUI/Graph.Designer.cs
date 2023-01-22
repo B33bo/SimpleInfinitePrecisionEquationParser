@@ -71,7 +71,7 @@
             this.equationBox.Location = new System.Drawing.Point(530, 12);
             this.equationBox.Name = "equationBox";
             this.equationBox.Size = new System.Drawing.Size(258, 23);
-            this.equationBox.TabIndex = 1;
+            this.equationBox.TabIndex = 0;
             // 
             // button1
             // 
@@ -79,7 +79,7 @@
             this.button1.Location = new System.Drawing.Point(530, 41);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(258, 23);
-            this.button1.TabIndex = 2;
+            this.button1.TabIndex = 1;
             this.button1.Text = "Draw";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.Draw);
@@ -140,7 +140,7 @@
             this.widthText.Location = new System.Drawing.Point(588, 70);
             this.widthText.Name = "widthText";
             this.widthText.Size = new System.Drawing.Size(200, 23);
-            this.widthText.TabIndex = 5;
+            this.widthText.TabIndex = 2;
             this.widthText.Text = "1";
             this.widthText.TextChanged += new System.EventHandler(this.ChangeAxis);
             // 
@@ -150,7 +150,7 @@
             this.heightText.Location = new System.Drawing.Point(588, 97);
             this.heightText.Name = "heightText";
             this.heightText.Size = new System.Drawing.Size(200, 23);
-            this.heightText.TabIndex = 5;
+            this.heightText.TabIndex = 3;
             this.heightText.Text = "1";
             this.heightText.TextChanged += new System.EventHandler(this.ChangeAxis);
             // 
@@ -160,7 +160,7 @@
             this.XOffset.Location = new System.Drawing.Point(601, 126);
             this.XOffset.Name = "XOffset";
             this.XOffset.Size = new System.Drawing.Size(187, 23);
-            this.XOffset.TabIndex = 5;
+            this.XOffset.TabIndex = 4;
             this.XOffset.Text = "0";
             this.XOffset.TextChanged += new System.EventHandler(this.ChangeAxis);
             // 
@@ -250,7 +250,7 @@
             this.resBox.Location = new System.Drawing.Point(620, 185);
             this.resBox.Name = "resBox";
             this.resBox.Size = new System.Drawing.Size(168, 23);
-            this.resBox.TabIndex = 5;
+            this.resBox.TabIndex = 6;
             this.resBox.Text = "128";
             this.resBox.TextChanged += new System.EventHandler(this.ChangeRes);
             // 
@@ -260,7 +260,7 @@
             this.button2.Location = new System.Drawing.Point(530, 214);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(258, 23);
-            this.button2.TabIndex = 2;
+            this.button2.TabIndex = 7;
             this.button2.Text = "Save as Image";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.SaveAsPNG);
