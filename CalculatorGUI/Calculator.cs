@@ -11,6 +11,7 @@ public partial class Calculator : Form
     public const int Version = 6;
     private static bool answerPreview = true;
     private bool debugMode;
+    private int OutputDP;
 #nullable enable
 
     public Calculator()
@@ -19,6 +20,7 @@ public partial class Calculator : Form
         currentEquation = new Equation("");
         Instance = this;
         currentEquation.Variables.Add("calcversion", Version);
+        OutputDP = (int)outputDPVar.Value;
     }
 
     private void EquationChanged(object sender, EventArgs e)
@@ -30,7 +32,8 @@ public partial class Calculator : Form
         try
         {
             currentEquation.LoadString(equationTextBox.Text);
-            AnswerLabel.Text = currentEquation.Solve().ToString();
+            AnswerLabel.Text = currentEquation.Solve().ToString(OutputDP);
+            precision.Value = Equation.DecimalPrecision;
         }
         catch (Exception)
         {
@@ -67,7 +70,7 @@ public partial class Calculator : Form
         else
             currentEquation.Variables.Add("ans", answer);
 
-        AnswerLabel.Text = answer.ToString();
+        AnswerLabel.Text = answer.ToString(OutputDP);
         AnswerLabel.ForeColor = Color.White;
         precision.Value = Equation.DecimalPrecision;
     }
@@ -99,13 +102,14 @@ public partial class Calculator : Form
         Equation.DecimalPrecision = (int)precision.Value;
         TopMost = keepOnTopToggle.Checked;
         answerPreview = answerPrev.Checked;
+        OutputDP = (int)outputDPVar.Value;
 
         if (answerPreview)
         {
             try
             {
                 currentEquation.LoadString(equationTextBox.Text);
-                AnswerLabel.Text = currentEquation.Solve().ToString();
+                AnswerLabel.Text = currentEquation.Solve().ToString(OutputDP);
             }
             catch (Exception) { }
         }
@@ -194,6 +198,7 @@ public partial class Calculator : Form
     private void DebugBoxClicked(object sender, EventArgs e)
     {
         debugMode = !debugMode;
+        debugModeText.Visible = debugMode;
         if (debugMode)
             secretBox.BackColor = Color.Red;
         else

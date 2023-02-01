@@ -44,8 +44,12 @@
             this.keepOnTopToggle = new System.Windows.Forms.CheckBox();
             this.moreBtn = new System.Windows.Forms.Button();
             this.secretBox = new System.Windows.Forms.PictureBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.outputDPVar = new System.Windows.Forms.NumericUpDown();
+            this.debugModeText = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.precision)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.secretBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.outputDPVar)).BeginInit();
             this.SuspendLayout();
             // 
             // equationTextBox
@@ -114,9 +118,9 @@
             // 
             this.funcsBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.funcsBtn.Font = new System.Drawing.Font("Segoe UI", 35F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.funcsBtn.Location = new System.Drawing.Point(12, 267);
+            this.funcsBtn.Location = new System.Drawing.Point(12, 270);
             this.funcsBtn.Name = "funcsBtn";
-            this.funcsBtn.Size = new System.Drawing.Size(115, 99);
+            this.funcsBtn.Size = new System.Drawing.Size(115, 108);
             this.funcsBtn.TabIndex = 5;
             this.funcsBtn.Text = "F(x)";
             this.funcsBtn.UseVisualStyleBackColor = true;
@@ -126,9 +130,9 @@
             // 
             this.varBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.varBtn.Font = new System.Drawing.Font("Segoe UI", 50F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.varBtn.Location = new System.Drawing.Point(133, 267);
+            this.varBtn.Location = new System.Drawing.Point(133, 270);
             this.varBtn.Name = "varBtn";
-            this.varBtn.Size = new System.Drawing.Size(115, 99);
+            this.varBtn.Size = new System.Drawing.Size(115, 108);
             this.varBtn.TabIndex = 6;
             this.varBtn.Text = "n";
             this.varBtn.UseVisualStyleBackColor = true;
@@ -137,7 +141,7 @@
             // precision
             // 
             this.precision.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.precision.Location = new System.Drawing.Point(371, 343);
+            this.precision.Location = new System.Drawing.Point(367, 326);
             this.precision.Name = "precision";
             this.precision.Size = new System.Drawing.Size(53, 23);
             this.precision.TabIndex = 10;
@@ -154,11 +158,11 @@
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.label1.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.label1.Location = new System.Drawing.Point(430, 345);
+            this.label1.Location = new System.Drawing.Point(426, 328);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(133, 21);
+            this.label1.Size = new System.Drawing.Size(73, 21);
             this.label1.TabIndex = 11;
-            this.label1.Text = "Decimal Precision";
+            this.label1.Text = "Precision";
             // 
             // clearBtn
             // 
@@ -190,7 +194,7 @@
             this.answerPrev.CheckState = System.Windows.Forms.CheckState.Checked;
             this.answerPrev.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.answerPrev.ForeColor = System.Drawing.Color.White;
-            this.answerPrev.Location = new System.Drawing.Point(371, 281);
+            this.answerPrev.Location = new System.Drawing.Point(367, 264);
             this.answerPrev.Name = "answerPrev";
             this.answerPrev.Size = new System.Drawing.Size(140, 25);
             this.answerPrev.TabIndex = 8;
@@ -204,7 +208,7 @@
             this.keepOnTopToggle.AutoSize = true;
             this.keepOnTopToggle.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.keepOnTopToggle.ForeColor = System.Drawing.Color.White;
-            this.keepOnTopToggle.Location = new System.Drawing.Point(371, 312);
+            this.keepOnTopToggle.Location = new System.Drawing.Point(367, 295);
             this.keepOnTopToggle.Name = "keepOnTopToggle";
             this.keepOnTopToggle.Size = new System.Drawing.Size(116, 25);
             this.keepOnTopToggle.TabIndex = 9;
@@ -217,9 +221,9 @@
             this.moreBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.moreBtn.AutoSize = true;
             this.moreBtn.Font = new System.Drawing.Font("Segoe UI", 50F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.moreBtn.Location = new System.Drawing.Point(254, 267);
+            this.moreBtn.Location = new System.Drawing.Point(254, 270);
             this.moreBtn.Name = "moreBtn";
-            this.moreBtn.Size = new System.Drawing.Size(107, 99);
+            this.moreBtn.Size = new System.Drawing.Size(107, 108);
             this.moreBtn.TabIndex = 7;
             this.moreBtn.Text = "...";
             this.moreBtn.UseVisualStyleBackColor = true;
@@ -228,25 +232,66 @@
             // secretBox
             // 
             this.secretBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.secretBox.Location = new System.Drawing.Point(549, 0);
+            this.secretBox.Location = new System.Drawing.Point(555, 0);
             this.secretBox.Name = "secretBox";
-            this.secretBox.Size = new System.Drawing.Size(28, 22);
+            this.secretBox.Size = new System.Drawing.Size(22, 17);
             this.secretBox.TabIndex = 8;
             this.secretBox.TabStop = false;
             this.secretBox.Click += new System.EventHandler(this.DebugBoxClicked);
+            // 
+            // label2
+            // 
+            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.label2.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.label2.Location = new System.Drawing.Point(426, 357);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(83, 21);
+            this.label2.TabIndex = 12;
+            this.label2.Text = "Output DP";
+            // 
+            // outputDPVar
+            // 
+            this.outputDPVar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.outputDPVar.Location = new System.Drawing.Point(367, 355);
+            this.outputDPVar.Name = "outputDPVar";
+            this.outputDPVar.Size = new System.Drawing.Size(53, 23);
+            this.outputDPVar.TabIndex = 11;
+            this.outputDPVar.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.outputDPVar.ValueChanged += new System.EventHandler(this.RefreshSettings);
+            // 
+            // debugModeText
+            // 
+            this.debugModeText.AutoSize = true;
+            this.debugModeText.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.debugModeText.ForeColor = System.Drawing.Color.Red;
+            this.debugModeText.Location = new System.Drawing.Point(468, 2);
+            this.debugModeText.Name = "debugModeText";
+            this.debugModeText.Size = new System.Drawing.Size(86, 15);
+            this.debugModeText.TabIndex = 13;
+            this.debugModeText.Text = "DEBUG MODE";
+            this.debugModeText.Visible = false;
             // 
             // Calculator
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.ClientSize = new System.Drawing.Size(575, 378);
+            this.ClientSize = new System.Drawing.Size(575, 390);
+            this.Controls.Add(this.debugModeText);
             this.Controls.Add(this.secretBox);
             this.Controls.Add(this.keepOnTopToggle);
             this.Controls.Add(this.answerPrev);
+            this.Controls.Add(this.outputDPVar);
             this.Controls.Add(this.precision);
             this.Controls.Add(this.moreBtn);
             this.Controls.Add(this.varBtn);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.funcsBtn);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.IndentCountLabel);
@@ -263,6 +308,7 @@
             this.ClientSizeChanged += new System.EventHandler(this.ResetAnswerWidth);
             ((System.ComponentModel.ISupportInitialize)(this.precision)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.secretBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.outputDPVar)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -285,5 +331,8 @@
         private CheckBox keepOnTopToggle;
         private Button moreBtn;
         private PictureBox secretBox;
+        private Label label2;
+        private NumericUpDown outputDPVar;
+        private Label debugModeText;
     }
 }

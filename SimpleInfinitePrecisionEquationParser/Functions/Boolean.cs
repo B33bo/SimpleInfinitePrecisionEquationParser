@@ -53,7 +53,7 @@ public static class Boolean
         return new BigComplex(!args[0].BoolValue);
     }
 
-    [Function("Equals", Operator = '=', Priority = 5)]
+    [Function("Equals", Operator = '=', Priority = 5, HandlesInfinity = true)]
     public static BigComplex Equals(params BigComplex[] args)
     {
         if (args.Length == 1 || args.Length == 0)
@@ -66,27 +66,38 @@ public static class Boolean
         return BigComplex.True;
     }
 
-    [Function("Greater", Operator = '>', Priority = 5)]
+    [Function("Greater", Operator = '>', Priority = 5, HandlesInfinity = true)]
     public static BigComplex Greater(params BigComplex[] args)
     {
         if (args.Length == 1 || args.Length == 0)
             return BigComplex.False;
 
+        if (args[0].IsInfinity)
+            return args[0].Real > 0;
+
         for (int i = 1; i < args.Length; i++)
         {
+            if (args[i].IsInfinity && args[i].Real > 0)
+                return BigComplex.False;
             if (Misc.AbsSigned(args[i]).Real >= Misc.AbsSigned(args[i - 1]).Real)
                 return BigComplex.False;
         }
         return BigComplex.True;
     }
 
-    [Function("Less", Operator = '<', Priority = 5)]
+    [Function("Less", Operator = '<', Priority = 5, HandlesInfinity = true)]
     public static BigComplex Less(params BigComplex[] args)
     {
         if (args.Length == 1 || args.Length == 0)
             return BigComplex.False;
+
+        if (args[0].IsInfinity)
+            return args[0].Real < 0;
+
         for (int i = 1; i < args.Length; i++)
         {
+            if (args[i].IsInfinity && args[i].Real > 0)
+                return BigComplex.True;
             if (Misc.AbsSigned(args[i]).Real <= Misc.AbsSigned(args[i - 1]).Real)
                 return BigComplex.False;
         }
@@ -100,6 +111,15 @@ public static class Boolean
             return BigComplex.True;
         if (args.Length == 2)
             return Approx(args[0], args[1], BigRational.Parse(".1"));
+
+        if (args[0].IsInfinity)
+        {
+            if (args[1].IsInfinity)
+                return args[0].Real == args[1].Real;
+            return false;
+        }
+        if (args[1].IsInfinity)
+            return false;
 
         var diffReal = BigRational.Abs(args[0].Real - args[1].Real);
         var diffImag = BigRational.Abs(args[0].Imaginary - args[1].Imaginary);

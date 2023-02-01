@@ -46,6 +46,15 @@ public static class FunctionLoader
         if (indexOfFunction < 0)
             throw new InvalidEquationException();
 
+        if (!loadedFunctions[indexOfFunction].Item1.HandlesInfinity)
+        {
+            for (int i = 0; i < answers.Length; i++)
+            {
+                if (answers[i].IsInfinity)
+                    return Constants.Vars["NaN"];
+            }
+        }
+
         if (loadedFunctions[indexOfFunction].Item2.Invoke(null, new object[] { answers }) is BigComplex answer)
             return answer;
 

@@ -11,17 +11,21 @@ public struct BigComplex
     public static readonly BigComplex ImaginaryOne = new(0, 1);
     public static readonly BigComplex True = new(true);
     public static readonly BigComplex False = new(false);
+    public static readonly BigComplex Infinity = new(true, 1, 0);
 
     public BigRational Real { get; set; }
     public BigRational Imaginary { get; set; }
     public bool BoolValue { get => Real > 0; set => Real = value ? 1 : -1; }
+    public bool IsInfinity { get; set; }
     public bool IsBoolean = false;
+    public bool IsInteger => Imaginary == 0 && Real % 1 == 0;
 
     public BigComplex(BigRational real, BigRational imaginary)
     {
         Real = real;
         Imaginary = imaginary;
         IsBoolean = false;
+        IsInfinity = false;
     }
 
     public BigComplex(bool value)
@@ -29,19 +33,53 @@ public struct BigComplex
         IsBoolean = true;
         Real = new BigRational(value ? 1 : -1);
         Imaginary = new BigRational(0);
+        IsInfinity = false;
     }
 
-    public static BigComplex operator +(BigComplex left, BigComplex right) =>
-        new(left.Real + right.Real, left.Imaginary + right.Imaginary);
+    public BigComplex(bool isInfinity, BigRational real, BigRational imag)
+    {
+        Real = real;
+        Imaginary = imag;
+        IsInfinity = isInfinity;
+    }
 
-    public static BigComplex operator -(BigComplex left, BigComplex right) =>
-        new(left.Real - right.Real, left.Imaginary - right.Imaginary);
+    public static BigComplex operator +(BigComplex left, BigComplex right)
+    {
+        if (left.IsInfinity || right.IsInfinity)
+        {
+            if (left.IsInfinity && right.IsInfinity)
+                return new(true, left.Real * right.Real, 0);
+            if (left.IsInfinity)
+                return left;
+            return right;
+        }
+        return new(left.Real + right.Real, left.Imaginary + right.Imaginary);
+    }
+
+    public static BigComplex operator -(BigComplex left, BigComplex right)
+    {
+        if (left.IsInfinity || right.IsInfinity)
+        {
+            if (left.IsInfinity && right.IsInfinity)
+                return new(true, left.Real * right.Real * -1, 0);
+            if (left.IsInfinity)
+                return left;
+            return -right;
+        }
+        return new(left.Real - right.Real, left.Imaginary - right.Imaginary);
+    }
 
     public static BigComplex operator -(BigComplex num) =>
-        new(-num.Real, -num.Imaginary);
+        new(num.IsInfinity, -num.Real, -num.Imaginary);
 
     public static BigComplex operator *(BigComplex left, BigComplex right)
     {
+        if (left.IsInfinity || right.IsInfinity)
+        {
+            if (left.IsInfinity && right == 0 || right.IsInfinity && left == 0)
+                return 0;
+            return new BigComplex(true, left.Real * right.Real, 0);
+        }
         if (left == 0 || right == 0)
             return 0;
         // Multiplication:  (a + bi)(c + di) = (ac -bd) + (bc + ad)i
@@ -57,6 +95,12 @@ public struct BigComplex
 
     public static BigComplex operator /(BigComplex left, BigComplex right)
     {
+        if (left.IsInfinity)
+            return new BigComplex(true, left.Real * right.Real, left.Imaginary);
+
+        if (right.IsInfinity)
+            return 0;
+
         // Division : Smith's formula.
         BigRational a = left.Real;
         BigRational b = left.Imaginary;
@@ -76,14 +120,33 @@ public struct BigComplex
         }
     }
 
-    public static bool operator ==(BigComplex left, BigComplex right) =>
-        left.Real == right.Real && left.Imaginary == right.Imaginary;
+    public static bool operator ==(BigComplex left, BigComplex right)
+    {
+        if (left.IsInfinity)
+        {
+            if (!right.IsInfinity)
+                return false;
+            if (left.Real >= 0 && right.Real >= 0)
+                return true;
+            if (left.Real < 0 && right.Real < 0)
+                return true;
+            return false;
+        }
+        if (right.IsInfinity)
+            return false;
+        return left.Real == right.Real && left.Imaginary == right.Imaginary;
+    }
 
     public static bool operator !=(BigComplex left, BigComplex right) =>
         !(left == right);
 
     public static BigComplex operator %(BigComplex left, BigComplex right)
     {
+        if (left.IsInfinity)
+            return 0;
+        if (right.IsInfinity)
+            return 0;
+
         var div = left / right;
         BigRational real = div.Real, imag;
 
@@ -103,7 +166,15 @@ public struct BigComplex
 
     public override bool Equals([NotNullWhen(true)] object? obj)
     {
-        return base.Equals(obj);
+        if (obj is int intVal)
+            return this == intVal;
+        if (obj is bool boolVal)
+            return this == boolVal;
+        if (obj is BigRational rationalVal)
+            return this == rationalVal;
+        if (obj is BigComplex other)
+            return this == other;
+        return false;
     }
 
     public override int GetHashCode()
@@ -171,22 +242,43 @@ public struct BigComplex
 
     public override string ToString()
     {
+        if (BigRational.IsNaN(Real) || BigRational.IsNaN(Imaginary))
+            return "NaN";
+
         if (IsBoolean)
             return (Real > 0).ToString();
+
+        if (IsInfinity)
+            return Real >= 0 ? "infinity" : "-infinity";
 
         if (Imaginary == 0)
             return Real.ToString();
         return $"{Real} + {Imaginary}i";
     }
 
-    public string ToParsableString()
+    public string ToString(int precision)
     {
+        if (Real == Constants.Vars["NaN"].Real || Imaginary == Constants.Vars["NaN"].Real)
+            return "NaN";
+
         if (IsBoolean)
             return (Real > 0).ToString();
 
+        string precisionText = "#.";
+        for (int i = 0; i < precision; i++)
+            precisionText += '#';
+
+        if (IsInfinity)
+            return Real >= 0 ? "infinity" : "-infinity";
+
+        if (this == 0)
+            return "0";
+
         if (Imaginary == 0)
-            return Real.ToString();
-        string imag = Imaginary.ToString().Replace("-", "m");
-        return $"{Real}i{imag}";
+            return Real.ToString(precisionText);
+        if (Real == 0)
+            return $"{Imaginary.ToString(precisionText)}i";
+
+        return $"{Real.ToString(precisionText)} + {Imaginary.ToString(precisionText)}i";
     }
 }

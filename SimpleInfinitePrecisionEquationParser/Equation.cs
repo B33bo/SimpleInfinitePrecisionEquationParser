@@ -46,15 +46,6 @@ public class Equation
         }
 
         LoadString(equationStr);
-
-        ;
-    }
-
-    public Equation(string equationStr, string args)
-    {
-        foreach (var item in args[1..^1].Split(','))
-            Variables.Add(item, 0);
-        LoadString(equationStr);
     }
 
     private void Instructional(string str, ref List<(SectionType, object)> data)

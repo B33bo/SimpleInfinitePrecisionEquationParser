@@ -73,6 +73,10 @@ public class Boolean
         Assert.IsFalse(new Equation("Equals(1,2)").SolveBoolean());
         Assert.IsTrue(new Equation("Equals(1)").SolveBoolean());
         Assert.IsTrue(new Equation("Equals()").SolveBoolean());
+
+        Assert.IsTrue(new Equation("inf=inf").SolveBoolean());
+        Assert.IsFalse(new Equation("inf=-inf").SolveBoolean());
+        Assert.IsFalse(new Equation("inf=1").SolveBoolean());
     }
 
     [TestMethod]
@@ -87,6 +91,11 @@ public class Boolean
         Assert.IsTrue(new Equation("Greater(2, 1, 0)").SolveBoolean());
         Assert.IsFalse(new Equation("Greater(1)").SolveBoolean());
         Assert.IsFalse(new Equation("Greater()").SolveBoolean());
+
+        Assert.IsTrue(new Equation("Greater(inf, 1, 0, -inf)").SolveBoolean());
+        Assert.IsFalse(new Equation("-inf > 1").SolveBoolean());
+        Assert.IsTrue(new Equation("inf > inf").SolveBoolean());
+        Assert.IsFalse(new Equation("-inf > inf").SolveBoolean());
     }
 
     [TestMethod]
@@ -102,5 +111,29 @@ public class Boolean
         Assert.IsTrue(new Equation("Less(4, 6, 8)").SolveBoolean());
         Assert.IsFalse(new Equation("Less(1)").SolveBoolean());
         Assert.IsFalse(new Equation("Less()").SolveBoolean());
+
+        Assert.IsTrue(new Equation("Less(-inf, 1, 2, inf)").SolveBoolean());
+        Assert.IsTrue(new Equation("-inf < 1").SolveBoolean());
+        Assert.IsFalse(new Equation("inf < inf").SolveBoolean());
+        Assert.IsFalse(new Equation("inf < -inf").SolveBoolean());
+    }
+
+    [TestMethod]
+    public void Approx()
+    {
+        Assert.IsTrue(new Equation("4 ≈ 8 / 2").SolveBoolean());
+        Assert.IsFalse(new Equation("1 + 1 ≈ 3").SolveBoolean());
+        Assert.IsFalse(new Equation("1 + 1 ≈ 3").SolveBoolean());
+
+        Assert.IsFalse(new Equation("Approx(1,2)").SolveBoolean());
+        Assert.IsTrue(new Equation("Approx(0.1, 0.12)").SolveBoolean());
+        Assert.IsFalse(new Equation("Approx(0.1, 0.12, 0.003)").SolveBoolean());
+        Assert.IsTrue(new Equation("Approx(1)").SolveBoolean());
+        Assert.IsTrue(new Equation("Approx()").SolveBoolean());
+
+        Assert.IsTrue(new Equation("inf≈inf").SolveBoolean());
+        Assert.IsFalse(new Equation("inf≈1").SolveBoolean());
+        Assert.IsFalse(new Equation("inf≈-inf").SolveBoolean());
+        Assert.IsFalse(new Equation("inf≈1").SolveBoolean());
     }
 }

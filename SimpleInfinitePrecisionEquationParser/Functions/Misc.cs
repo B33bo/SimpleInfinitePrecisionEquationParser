@@ -4,16 +4,18 @@ namespace SIPEP.Functions;
 
 public static class Misc
 {
-    [Function("Abs")]
+    [Function("Abs", HandlesInfinity = true)]
     public static BigComplex Abs(params BigComplex[] args)
     {
         if (args.Length == 0)
             return 0;
+        if (args[0].IsInfinity)
+            return new BigComplex(true, 1, 0);
         BigComplex val = args[0];
         return BigRational.Sqrt(val.Real * val.Real + val.Imaginary * val.Imaginary, Equation.DecimalPrecision);
     }
 
-    [Function("Remainder")]
+    [Function("Remainder", HandlesInfinity = true)]
     public static BigComplex Remainder(params BigComplex[] args)
     {
         if (args.Length == 0)
@@ -27,7 +29,7 @@ public static class Misc
         return number;
     }
 
-    [Function("AbsSigned")]
+    [Function("AbsSigned", HandlesInfinity = true)]
     public static BigComplex AbsSigned(params BigComplex[] args)
     {
         if (args.Length == 0)
@@ -44,7 +46,7 @@ public static class Misc
         return num;
     }
 
-    [Function("Sign")]
+    [Function("Sign", HandlesInfinity = true)]
     public static BigComplex Sign(params BigComplex[] args)
     {
         //sign = abs(x) / x
@@ -52,16 +54,24 @@ public static class Misc
             return 0;
         if (args[0] == 0)
             return 0;
+        if (args[0].IsInfinity)
+            return args[0].Real >= 0 ? 1 : -1;
+
         return Abs(args[0]) / args[0];
     }
 
-    [Function("Log", Args = "Log(number, ?Base)")]
+    [Function("Log", Args = "Log(number, ?Base)", HandlesInfinity = true)]
     public static BigComplex Log(params BigComplex[] args)
     {
         if (args.Length == 0)
             return 0;
         if (args.Length == 1)
             return Log(args[0], 10);
+
+        if (args[0].IsInfinity)
+            return args[0];
+        if (args[1].IsInfinity)
+            return Constants.Vars["NaN"];
 
         return logQuick(args[0]) / logQuick(args[1]);
 
@@ -71,7 +81,7 @@ public static class Misc
         }
     }
 
-    [Function("Exp")]
+    [Function("Exp", HandlesInfinity = true)]
     public static BigComplex Exp(params BigComplex[] args)
     {
         if (args.Length == 0)
@@ -134,20 +144,26 @@ public static class Misc
         return Equation.DecimalPrecision;
     }
 
-    [Function("Echo")]
-    public static BigComplex Echo(params BigComplex[] args) => args[0];
+    [Function("Echo", HandlesInfinity = true)]
+    public static BigComplex Echo(params BigComplex[] args) => args.Length > 0 ? args[0] : 0;
 
-    [Function("Min")]
+    [Function("Min", HandlesInfinity = true)]
     public static BigComplex Min(params BigComplex[] args)
     {
         if (args.Length == 0)
             return 0;
 
         var min = args[0];
+
+        if (min.IsInfinity && min.Real < 0)
+            return min;
+
         BigRational minLength = AbsSigned(min).Real;
 
         for (int i = 1; i < args.Length; i++)
         {
+            if (args[i].IsInfinity && args[i].Real < 0)
+                return args[i];
             var current = AbsSigned(args[i]).Real;
             if (current > minLength)
                 continue;
@@ -158,17 +174,24 @@ public static class Misc
         return min;
     }
 
-    [Function("Max")]
+    [Function("Max", HandlesInfinity = true)]
     public static BigComplex Max(params BigComplex[] args)
     {
         if (args.Length == 0)
             return 0;
 
         var max = args[0];
+
+        if (max.IsInfinity && max.Real > 0)
+            return max;
+
         BigRational maxLength = AbsSigned(max).Real;
 
         for (int i = 1; i < args.Length; i++)
         {
+            if (args[i].IsInfinity && args[i].Real > 0)
+                return args[i];
+
             var current = AbsSigned(args[i]).Real;
             if (current < maxLength)
                 continue;
@@ -179,7 +202,7 @@ public static class Misc
         return max;
     }
 
-    [Function("Mean")]
+    [Function("Mean", HandlesInfinity = true)]
     public static BigComplex Mean(params BigComplex[] args)
     {
         if (args.Length == 0)
@@ -188,7 +211,7 @@ public static class Misc
         return total / args.Length;
     }
 
-    [Function("Len")]
+    [Function("Len", HandlesInfinity = true)]
     public static BigComplex Len(params BigComplex[] args) => args.Length;
 
     [Function("Real")]
@@ -207,13 +230,18 @@ public static class Misc
         return new(0, args[0].Imaginary);
     }
 
-    [Function("Round", Args = "Round(number, nearest)")]
+    [Function("Round", Args = "Round(number, nearest)", HandlesInfinity = true)]
     public static BigComplex Round(params BigComplex[] args)
     {
         if (args.Length == 0)
             return 0;
         if (args.Length == 1)
             return Round(args[0], 1);
+
+        if (args[0].IsInfinity)
+            return args[0];
+        if (args[1].IsInfinity)
+            return 0;
 
         var real = BigRational.Round(args[0].Real / args[1].Real) * args[1].Real;
         var imag = BigRational.Round(args[0].Imaginary / args[1].Real) * args[1].Real;
@@ -226,7 +254,7 @@ public static class Misc
         return new BigComplex(real, imag);
     }
 
-    [Function("Floor", Args = "Floor(number, nearest)")]
+    [Function("Floor", Args = "Floor(number, nearest)", HandlesInfinity = true)]
     public static BigComplex Floor(params BigComplex[] args)
     {
         if (args.Length == 0)
@@ -234,18 +262,30 @@ public static class Misc
         if (args.Length == 1)
             return Floor(args[0], 1);
 
+        if (args[0].IsInfinity)
+            return args[0];
+
+        if (args[1].IsInfinity)
+            return args[0].Real < 0 ? new BigComplex(true, -1, 0) : 0;
+
         var real = BigRational.Floor(args[0].Real / args[1].Real) * args[1].Real;
         var imag = BigRational.Floor(args[0].Imaginary / args[1].Real) * args[1].Real;
         return new BigComplex(real, imag);
     }
 
-    [Function("Ceiling", Args = "Ceiling(number, nearest)")]
+    [Function("Ceiling", Args = "Ceiling(number, nearest)", HandlesInfinity = true)]
     public static BigComplex Ceiling(params BigComplex[] args)
     {
         if (args.Length == 0)
             return 0;
         if (args.Length == 1)
             return Ceiling(args[0], 1);
+
+        if (args[0].IsInfinity)
+            return args[0];
+
+        if (args[1].IsInfinity)
+            return args[0].Real > 0 ? new BigComplex(true, 1, 0) : 0;
 
         var real = BigRational.Ceiling(args[0].Real / args[1].Real) * args[1].Real;
         var imag = BigRational.Ceiling(args[0].Imaginary / args[1].Real) * args[1].Real;
@@ -282,7 +322,7 @@ public static class Misc
         return new BigComplex(middleReal, middleImag);
     }
 
-    [Function("Lerp", Args = "Lerp(a, b, t)")]
+    [Function("Lerp", Args = "Lerp(a, b, t)", HandlesInfinity = true)]
     public static BigComplex Lerp(params BigComplex[] args)
     {
         // (b - a) * t + a
@@ -301,7 +341,7 @@ public static class Misc
         return (b - a) * t + a;
     }
 
-    [Function("Convert", Args = "Convert(num, fromUnit, toUnit)")]
+    [Function("Convert", Args = "Convert(num, fromUnit, toUnit)", HandlesInfinity = true)]
     public static BigComplex Convert(params BigComplex[] args)
     {
         if (args.Length == 0)
@@ -314,7 +354,7 @@ public static class Misc
         return (args[0] * args[1]) / args[2];
     }
 
-    [Function("ConvertTemperature", Args = "ConvertTemperature(num, fromUnit, toUnit)")]
+    [Function("ConvertTemperature", Args = "ConvertTemperature(num, fromUnit, toUnit)", HandlesInfinity = true)]
     public static BigComplex ConvertTemperature(params BigComplex[] args)
     {
         if (args.Length == 0)
@@ -352,14 +392,14 @@ public static class Misc
         }
     }
 
-    [Function("ToDegrees", Args = "ToDegrees(radians)")]
+    [Function("ToDegrees", Args = "ToDegrees(radians)", HandlesInfinity = true)]
     public static BigComplex ToDegrees(params BigComplex[] args)
     {
         if (args.Length == 0) return 0;
         return args[0] * 180 / BigRational.Pi(Equation.DecimalPrecision);
     }
 
-    [Function("Time", Args = "Time(unit)")]
+    [Function("Time", Args = "Time(unit)", HandlesInfinity = true)]
     public static BigComplex Time(params BigComplex[] args)
     {
         if (args.Length == 0)
@@ -367,7 +407,7 @@ public static class Misc
         return new BigComplex(DateTime.Now.Ticks / TimeSpan.TicksPerSecond / args[0].Real, 0);
     }
 
-    [Function("TimeUTC", Args = "TimeUTC(unit)")]
+    [Function("TimeUTC", Args = "TimeUTC(unit)", HandlesInfinity = true)]
     public static BigComplex TimeUTC(params BigComplex[] args)
     {
         if (args.Length == 0)
@@ -389,5 +429,23 @@ public static class Misc
         if (args.Length == 0)
             return new BigComplex(0, 0);
         return new BigComplex(args[0].Real % 1, args[0].Imaginary % 1);
+    }
+
+    [Function("If", HandlesInfinity = true)]
+    public static BigComplex If(params BigComplex[] args)
+    {
+        if (args.Length == 0)
+            return 0;
+        if (args.Length == 1)
+            return args[0];
+
+        if (args.Length == 2)
+        {
+            if (args[0].BoolValue)
+                return args[1];
+            return args[0];
+        }
+
+        return args[0].BoolValue ? args[1] : args[2];
     }
 }

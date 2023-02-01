@@ -151,13 +151,24 @@ public partial class Misc : Form
 
         if (units is null)
         {
-            conversionFromUnit.DropDownStyle = ComboBoxStyle.Simple;
-            conversionToUnit.DropDownStyle = ComboBoxStyle.Simple;
+            conversionFromUnit.DropDownStyle = ComboBoxStyle.DropDown;
+            conversionToUnit.DropDownStyle = ComboBoxStyle.DropDown;
 
             if (conversionType.Text == "Number")
             {
                 conversionFromUnit.Text = "10";
                 conversionToUnit.Text = "2";
+
+                conversionFromUnit.Items.Clear();
+                conversionFromUnit.Items.Add("2");
+                conversionFromUnit.Items.Add("10");
+                conversionFromUnit.Items.Add("16");
+
+                conversionToUnit.Items.Clear();
+                conversionToUnit.Items.Add("2");
+                conversionToUnit.Items.Add("10");
+                conversionToUnit.Items.Add("16");
+
                 ReloadAnswer();
             }
 

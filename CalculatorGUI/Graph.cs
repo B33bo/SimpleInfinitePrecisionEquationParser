@@ -187,6 +187,12 @@ public partial class Graph : Form
         cancel = true;
     }
 
+    private void SwitchToFractal(object sender, EventArgs e)
+    {
+        Close();
+        new Fractal().Show();
+    }
+
     private void ChangeAxis(object sender, EventArgs e)
     {
         if (!BigComplex.TryParse(XOffset.Text, out BigComplex xoffset))

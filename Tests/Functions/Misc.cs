@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Numerics;
 
 namespace SIPEP.Tests.Functions;
 
@@ -13,23 +8,37 @@ public class Misc
     [TestMethod]
     public void Abs()
     {
-        Assert.AreEqual(1, new Equation(@"abs(-1)").Solve().Real);
-        Assert.AreEqual(1, new Equation(@"abs(1)").Solve().Real);
-        Assert.AreEqual(1, new Equation(@"abs(-1, 2)").Solve().Real);
-        Assert.AreEqual(1, new Equation(@"abs(i)").Solve().Real);
-        Assert.AreEqual(0, new Equation(@"abs()").Solve().Real);
+        Assert.AreEqual(1, new Equation("abs(-1)").Solve().Real);
+        Assert.AreEqual(1, new Equation("abs(1)").Solve().Real);
+        Assert.AreEqual(1, new Equation("abs(-1, 2)").Solve().Real);
+        Assert.AreEqual(1, new Equation("abs(i)").Solve().Real);
+        Assert.AreEqual(0, new Equation("abs()").Solve().Real);
+        Assert.AreEqual(BigComplex.Infinity, new Equation("abs(-inf)").Solve());
+        Assert.AreEqual(BigComplex.Infinity, new Equation("abs(inf)").Solve());
 
-        var abs1 = new Equation(@"abs(5i5)").Solve().Real;
+        var abs1 = new Equation("abs(5i5)").Solve().Real;
         Assert.IsTrue(abs1 > 7 && abs1 < 7.1);
     }
 
     [TestMethod]
     public void AbsSigned()
     {
-        Assert.AreEqual(-1, new Equation(@"abssigned(-1)").Solve().Real);
-        Assert.AreEqual(1, new Equation(@"abssigned(1)").Solve().Real);
-        Assert.AreEqual(1, new Equation(@"abssigned(i)").Solve().Real);
-        Assert.AreEqual(-1, new Equation(@"abssigned(-i)").Solve().Real);
+        Assert.AreEqual(-1, new Equation("abssigned(-1)").Solve().Real);
+        Assert.AreEqual(1, new Equation("abssigned(1)").Solve().Real);
+        Assert.AreEqual(1, new Equation("abssigned(i)").Solve().Real);
+        Assert.AreEqual(-1, new Equation("abssigned(-i)").Solve().Real);
+        Assert.AreEqual(BigComplex.Infinity, new Equation("abssigned(inf)").Solve());
+        Assert.AreEqual(-BigComplex.Infinity, new Equation("abssigned(-inf)").Solve());
+    }
+
+    [TestMethod]
+    public void Sign()
+    {
+        Assert.AreEqual(-1, new Equation("sign(-3)").Solve().Real);
+        Assert.AreEqual(1, new Equation("sign(1)").Solve().Real);
+        Assert.AreEqual(new BigComplex(0, -1), new Equation("sign(i)").Solve());
+        Assert.AreEqual(-1, new Equation("sign(-inf)").Solve());
+        Assert.AreEqual(1, new Equation("sign(inf)").Solve());
     }
 
     [TestMethod]
@@ -41,6 +50,7 @@ public class Misc
         var num4 = new Equation("log(3i5, 3)").Solve();
 
         Assert.AreEqual(new BigComplex(0, 0), new Equation("log()").Solve());
+        Assert.AreEqual(BigComplex.Infinity, new Equation("log(inf)").Solve());
 
         Assert.IsTrue(num1 > .6 && num1 < .7);
         Assert.IsTrue(num2 > .9 && num2 < 1.1);
@@ -60,6 +70,7 @@ public class Misc
         Assert.IsTrue(num2 > .9 && num2 < 1.1);
         Assert.IsTrue(num3 > 2.7 && num3 < 2.8);
         Assert.IsTrue(num4.Real > 5.6 && num4.Real < 5.8 && num4.Imaginary > -19.3 && num4.Imaginary < -19.2);
+        Assert.AreEqual(BigComplex.Infinity, new Equation("exp(inf)").Solve());
     }
 
     [TestMethod]
@@ -105,6 +116,8 @@ public class Misc
     public void Echo()
     {
         Assert.AreEqual(new BigComplex(12, 0), new Equation("Echo(12)").Solve());
+        Assert.AreEqual(new BigComplex(0, 0), new Equation("Echo()").Solve());
+        Assert.AreEqual(BigComplex.Infinity, new Equation("Echo(inf)").Solve());
     }
 
     [TestMethod]
@@ -113,6 +126,7 @@ public class Misc
         Assert.AreEqual(new BigComplex(2, 0), new Equation("Min(pi,12, 2, 14)").Solve());
         Assert.AreEqual(new BigComplex(2, 0), new Equation("Min(2)").Solve());
         Assert.AreEqual(new BigComplex(0, 0), new Equation("Min()").Solve());
+        Assert.AreEqual(-BigComplex.Infinity, new Equation("Min(3, -inf, 5)").Solve());
     }
 
     [TestMethod]
@@ -121,6 +135,7 @@ public class Misc
         Assert.AreEqual(new BigComplex(14, 0), new Equation("Max(pi,12, 2, 14)").Solve());
         Assert.AreEqual(new BigComplex(2, 0), new Equation("Max(2)").Solve());
         Assert.AreEqual(new BigComplex(0, 0), new Equation("Max()").Solve());
+        Assert.AreEqual(BigComplex.Infinity, new Equation("Max(3, inf, 5)").Solve());
     }
 
     [TestMethod]
@@ -130,6 +145,7 @@ public class Misc
         Assert.AreEqual(new BigComplex(BigRational.Parse("7.125"), 0), new Equation("Mean(.5,12, 2, 14)").Solve());
         Assert.AreEqual(new BigComplex(2, 0), new Equation("Mean(2)").Solve());
         Assert.AreEqual(new BigComplex(0, 0), new Equation("Mean()").Solve());
+        Assert.AreEqual(BigComplex.Infinity, new Equation("Mean(0, 2, inf)").Solve());
     }
 
     [TestMethod]
@@ -163,6 +179,8 @@ public class Misc
         Assert.AreEqual(new BigComplex(3, 3), new Equation("Round(3.1i2.5, 3)").Solve());
         Assert.AreEqual(new BigComplex(0, 0), new Equation("Round(.5, 2)").Solve());
         Assert.AreEqual(new BigComplex(0, 0), new Equation("Round()").Solve());
+        Assert.AreEqual(BigComplex.Infinity, new Equation("Round(inf)").Solve());
+        Assert.AreEqual(0, new Equation("Round(2, inf)").Solve());
     }
 
     [TestMethod]
@@ -174,6 +192,10 @@ public class Misc
         Assert.AreEqual(new BigComplex(3, 3), new Equation("Floor(4.5i4, 3)").Solve());
         Assert.AreEqual(new BigComplex(0, 0), new Equation("Floor(.5, 2)").Solve());
         Assert.AreEqual(new BigComplex(0, 0), new Equation("Floor()").Solve());
+
+        Assert.AreEqual(BigComplex.Infinity, new Equation("Floor(inf)").Solve());
+        Assert.AreEqual(0, new Equation("Floor(2, inf)").Solve());
+        Assert.AreEqual(-BigComplex.Infinity, new Equation("Floor(-1, inf)").Solve());
     }
 
     [TestMethod]
@@ -185,6 +207,10 @@ public class Misc
         Assert.AreEqual(new BigComplex(6, 6), new Equation("Ceiling(4.5i4, 3)").Solve());
         Assert.AreEqual(new BigComplex(2, 0), new Equation("Ceiling(.5, 2)").Solve());
         Assert.AreEqual(new BigComplex(0, 0), new Equation("Ceiling()").Solve());
+
+        Assert.AreEqual(BigComplex.Infinity, new Equation("Ceiling(inf)").Solve());
+        Assert.AreEqual(BigComplex.Infinity, new Equation("Ceiling(2, inf)").Solve());
+        Assert.AreEqual(0, new Equation("Ceiling(-1, inf)").Solve());
     }
 
     [TestMethod]
@@ -206,6 +232,8 @@ public class Misc
         Assert.AreEqual(new BigComplex(2, 0), new Equation("Lerp(2)").Solve());
         Assert.AreEqual(new BigComplex(5, 0), new Equation("Lerp(0, 10)").Solve());
         Assert.AreEqual(new BigComplex(0, BigRational.Parse(".2")), new Equation("Lerp(0, i, .2)").Solve());
+        Assert.AreEqual(BigComplex.Infinity, new Equation("Lerp(0, inf, .2)").Solve());
+        Assert.AreEqual(0, new Equation("Lerp(0, inf, 0)").Solve());
     }
 
     [TestMethod]
@@ -230,6 +258,7 @@ public class Misc
         Assert.IsTrue(ans3.Real > 278 && ans3.Real < 279);
         Assert.AreEqual(new BigComplex(5, 0), new Equation("ConvertTemperature(5)").Solve());
         Assert.AreEqual(new BigComplex(0, 0), new Equation("ConvertTemperature()").Solve());
+        Assert.AreEqual(BigComplex.Infinity, new Equation("ConvertTemperature(inf, fahrenheit, kelvin)").Solve());
     }
 
     [TestMethod]
@@ -239,7 +268,8 @@ public class Misc
         var ans2 = new Equation("ToDegrees(pi * i)").Solve().Imaginary;
         Assert.IsTrue(ans1 > 179 && ans1 < 181);
         Assert.IsTrue(ans2 > 179 && ans2 < 181);
-        Assert.AreEqual(BigComplex.Zero, new Equation("ToDegrees()").Solve().Imaginary);
+        Assert.AreEqual(BigComplex.Zero, new Equation("ToDegrees()").Solve());
+        Assert.AreEqual(BigComplex.Infinity, new Equation("ToDegrees(inf)").Solve());
     }
 
     [TestMethod]
@@ -247,6 +277,7 @@ public class Misc
     {
         Assert.AreEqual(1, new Equation("Remainder(10,3)").Solve());
         Assert.AreEqual(-1, new Equation("Remainder(-10,3)").Solve());
+        Assert.AreEqual(0, new Equation("Remainder(inf,3)").Solve());
     }
 
     [TestMethod]
@@ -266,5 +297,17 @@ public class Misc
         Assert.AreEqual(0, new Equation("Frac(2)").Solve());
         Assert.AreEqual(0, new Equation("Frac()").Solve());
         Assert.AreEqual(new BigComplex(0, BigRational.Parse("-.1")), new Equation("Frac(3i-3.1)").Solve());
+    }
+
+    [TestMethod]
+    public void If()
+    {
+        Assert.AreEqual(0, new Equation("If()").Solve());
+        Assert.AreEqual(true, new Equation("If(1=1)").Solve());
+        Assert.AreEqual(2, new Equation("If(1=1, 2, 3)").Solve());
+        Assert.AreEqual(3, new Equation("If(1=2, 2, 3)").Solve());
+        Assert.AreEqual(2, new Equation("If(1=1, 2)").Solve());
+        Assert.AreEqual(false, new Equation("If(1=2, 2)").Solve());
+        Assert.AreEqual(-BigComplex.Infinity, new Equation("If(false, 2, -inf)").Solve());
     }
 }

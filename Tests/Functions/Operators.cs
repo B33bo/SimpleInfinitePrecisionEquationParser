@@ -14,6 +14,11 @@ public class Operators
         Assert.AreEqual(new BigComplex(8, 1), new Equation("Add(3,0i1,5)").Solve());
         Assert.AreEqual(new BigComplex(3, 0), new Equation("Add(3)").Solve());
         Assert.AreEqual(new BigComplex(0, 0), new Equation("Add()").Solve());
+
+        Assert.AreEqual(-BigComplex.Infinity, new Equation("Add(3,-inf)").Solve());
+        Assert.AreEqual(BigComplex.Infinity, new Equation("Add(3,inf)").Solve());
+        Assert.AreEqual(BigComplex.Infinity, new Equation("Add(-inf,-inf)").Solve());
+        Assert.AreEqual(BigComplex.Infinity, new Equation("Add(inf,inf)").Solve());
     }
 
     [TestMethod]
@@ -25,6 +30,11 @@ public class Operators
         Assert.AreEqual(new BigComplex(0, 0), new Equation("Subtract(5,3,2)").Solve());
         Assert.AreEqual(new BigComplex(-3, 0), new Equation("Subtract(3)").Solve());
         Assert.AreEqual(new BigComplex(0, 0), new Equation("Subtract()").Solve());
+
+        Assert.AreEqual(BigComplex.Infinity, new Equation("Subtract(3,-inf)").Solve());
+        Assert.AreEqual(-BigComplex.Infinity, new Equation("Subtract(3,inf)").Solve());
+        Assert.AreEqual(-BigComplex.Infinity, new Equation("Subtract(-inf,-inf)").Solve());
+        Assert.AreEqual(-BigComplex.Infinity, new Equation("Subtract(inf,inf)").Solve());
     }
 
     [TestMethod]
@@ -36,6 +46,13 @@ public class Operators
         Assert.AreEqual(new BigComplex(24, 0), new Equation("Multiply(2,3,4)").Solve());
         Assert.AreEqual(new BigComplex(2, 0), new Equation("Multiply(2)").Solve());
         Assert.AreEqual(new BigComplex(1, 0), new Equation("Multiply()").Solve());
+
+        Assert.AreEqual(BigComplex.Infinity, new Equation("Multiply(2, inf)").Solve());
+        Assert.AreEqual(0, new Equation("Multiply(0, inf)").Solve());
+        Assert.AreEqual(-BigComplex.Infinity, new Equation("Multiply(2, -inf)").Solve());
+        Assert.AreEqual(BigComplex.Infinity, new Equation("Multiply(inf, inf)").Solve());
+        Assert.AreEqual(-BigComplex.Infinity, new Equation("Multiply(inf, -inf)").Solve());
+        Assert.AreEqual(BigComplex.Infinity, new Equation("Multiply(-inf, -inf)").Solve());
     }
 
     [TestMethod]
@@ -63,11 +80,15 @@ public class Operators
     [TestMethod]
     public void Divide()
     {
+        Assert.AreEqual(BigComplex.Infinity, new Equation("Divide(inf, 3)").Solve());
         Assert.AreEqual(new BigComplex(BigRational.Parse(".5"), 0), new Equation("1/2").Solve());
         Assert.AreEqual(new BigComplex(1, 0), new Equation("Divide(1,1)").Solve());
         Assert.AreEqual(new BigComplex(0, -5), new Equation("Divide(5,0i1)").Solve());
         Assert.AreEqual(new BigComplex(2, 0), new Equation("Divide(2)").Solve());
         Assert.AreEqual(new BigComplex(0, 0), new Equation("Divide()").Solve());
+        Assert.AreEqual(0, new Equation("Divide(5, inf)").Solve());
+        Assert.AreEqual(BigComplex.Infinity, new Equation("Divide(inf, inf)").Solve());
+        Assert.AreEqual(-BigComplex.Infinity, new Equation("Divide(-inf, 2)").Solve());
     }
 
     [TestMethod]
@@ -89,6 +110,10 @@ public class Operators
         Assert.IsTrue(pow6 > -.1 && pow6 < .1);
         Assert.IsTrue(pow7.Real > -16.1 && pow7.Real < -15.9 && pow7.Imaginary < 30.1 && pow7.Imaginary > -29.9);
         Assert.AreEqual(25, new Equation("5^2").Solve());
+        Assert.AreEqual(BigComplex.Infinity, new Equation("inf^2").Solve());
+        Assert.AreEqual(BigComplex.Infinity, new Equation("inf^2.1").Solve());
+        Assert.AreEqual(-BigComplex.Infinity, new Equation("-inf^2.1").Solve());
+        Assert.AreEqual(BigComplex.Infinity, new Equation("2^inf").Solve());
     }
 
     [TestMethod]
@@ -107,6 +132,9 @@ public class Operators
         Assert.IsTrue(root4 > 1.4 && root4 < 1.5);
         Assert.IsTrue(root5 > 1.4 && root5 < 1.5);
         Assert.IsTrue(root6 > -.1 && root6 < .1);
+
+        Assert.AreEqual(BigComplex.Infinity, new Equation("Root(inf)").Solve());
+        Assert.AreEqual(1, new Equation("Root(inf, 2)").Solve());
     }
 
     [TestMethod]
@@ -114,5 +142,24 @@ public class Operators
     {
         Assert.AreEqual((BigComplex)2, new Equation("11 % 3").Solve());
         Assert.AreEqual((BigComplex)2, new Equation("-10 % 3").Solve());
+        Assert.AreEqual(0, new Equation("inf % 3").Solve());
+        Assert.AreEqual(2, new Equation("2 % inf").Solve());
+    }
+
+    [TestMethod]
+    public void Factorial()
+    {
+        Assert.AreEqual(0, new Equation("Factorial()").Solve());
+        Assert.AreEqual(1, new Equation("0!").Solve());
+        Assert.AreEqual(120, new Equation("5!").Solve());
+        Assert.AreEqual(BigComplex.Infinity, new Equation("inf!").Solve());
+
+        var fact1 = new Equation("0.5!").Solve().Real;
+        var fact2 = new Equation("(-0.5)!").Solve().Real;
+        var fact3 = new Equation("i!").Solve();
+
+        Assert.IsTrue(fact1 > 0.8 && fact1 < 0.9);
+        Assert.IsTrue(fact2 > 1.7 && fact2 < 1.9);
+        Assert.IsTrue(fact3.Real > .4 && fact3.Real < .51 && fact3.Imaginary > -.2 && fact3.Imaginary < -.1);
     }
 }
