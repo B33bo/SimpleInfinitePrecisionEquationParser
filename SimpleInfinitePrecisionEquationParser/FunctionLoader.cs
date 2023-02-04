@@ -35,13 +35,24 @@ public static class FunctionLoader
         }
 
         var equations = SplitWithNonNestedEntries(args);
+        if (indexOfFunction >= 0)
+        {
+            if (loadedFunctions[indexOfFunction].Item1.StringArguments)
+            {
+                var stringFunctionAnswer = loadedFunctions[indexOfFunction].Item2.Invoke(null, new object[] { variables, equations });
+                if (stringFunctionAnswer is BigComplex stringFunctionAnswerBC)
+                    return stringFunctionAnswerBC;
+                throw new InvalidEquationException();
+            }
+        }
+
         BigComplex[] answers = new BigComplex[equations.Length];
 
         for (int i = 0; i < equations.Length; i++)
             answers[i] = new Equation(equations[i], variables).Solve();
 
         if (customFunctions.ContainsKey(functionName))
-            return SolveCustomFunction(customFunctions[functionName].varNameArgs, customFunctions[functionName].equation, answers, variables);//customFunctions[functionName](answers);
+            return SolveCustomFunction(customFunctions[functionName].varNameArgs, customFunctions[functionName].equation, answers, variables);
 
         if (indexOfFunction < 0)
             throw new InvalidEquationException();

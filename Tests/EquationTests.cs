@@ -58,4 +58,11 @@ public class EquationTests
         e.Variables["x"] = 3;
         Assert.AreEqual(new BigComplex(8, 0), e.Solve());
     }
+
+    [TestMethod]
+    public void StringCheck()
+    {
+        Equation e = new("stringlength(f(3,2), 3)");
+        Assert.AreEqual(6, e.Solve());
+    }
 }

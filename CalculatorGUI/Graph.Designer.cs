@@ -49,7 +49,12 @@
             this.label5 = new System.Windows.Forms.Label();
             this.resBox = new System.Windows.Forms.TextBox();
             this.button2 = new System.Windows.Forms.Button();
+            this.sweep = new System.Windows.Forms.CheckBox();
+            this.lineWidthText = new System.Windows.Forms.Label();
+            this.lineWidthSlider = new System.Windows.Forms.NumericUpDown();
+            this.pointerPos = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.graphImageBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.lineWidthSlider)).BeginInit();
             this.SuspendLayout();
             // 
             // graphImageBox
@@ -64,6 +69,7 @@
             this.graphImageBox.Size = new System.Drawing.Size(512, 512);
             this.graphImageBox.TabIndex = 0;
             this.graphImageBox.TabStop = false;
+            this.graphImageBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.ResetMPos);
             // 
             // equationBox
             // 
@@ -141,7 +147,7 @@
             this.widthText.Name = "widthText";
             this.widthText.Size = new System.Drawing.Size(200, 23);
             this.widthText.TabIndex = 2;
-            this.widthText.Text = "1";
+            this.widthText.Text = "2";
             this.widthText.TextChanged += new System.EventHandler(this.ChangeAxis);
             // 
             // heightText
@@ -151,7 +157,7 @@
             this.heightText.Name = "heightText";
             this.heightText.Size = new System.Drawing.Size(200, 23);
             this.heightText.TabIndex = 3;
-            this.heightText.Text = "1";
+            this.heightText.Text = "2";
             this.heightText.TextChanged += new System.EventHandler(this.ChangeAxis);
             // 
             // XOffset
@@ -178,9 +184,12 @@
             // 
             this.bottomLeft.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bottomLeft.AutoSize = true;
+            this.bottomLeft.BackColor = System.Drawing.Color.White;
+            this.bottomLeft.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.bottomLeft.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.bottomLeft.Location = new System.Drawing.Point(12, 509);
             this.bottomLeft.Name = "bottomLeft";
-            this.bottomLeft.Size = new System.Drawing.Size(30, 15);
+            this.bottomLeft.Size = new System.Drawing.Size(32, 15);
             this.bottomLeft.TabIndex = 6;
             this.bottomLeft.Text = "(0,0)";
             // 
@@ -188,9 +197,12 @@
             // 
             this.bottomRight.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.bottomRight.AutoSize = true;
-            this.bottomRight.Location = new System.Drawing.Point(494, 509);
+            this.bottomRight.BackColor = System.Drawing.Color.White;
+            this.bottomRight.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.bottomRight.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.bottomRight.Location = new System.Drawing.Point(418, 509);
             this.bottomRight.Name = "bottomRight";
-            this.bottomRight.Size = new System.Drawing.Size(30, 15);
+            this.bottomRight.Size = new System.Drawing.Size(32, 15);
             this.bottomRight.TabIndex = 6;
             this.bottomRight.Text = "(1,0)";
             // 
@@ -198,18 +210,25 @@
             // 
             this.topRight.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.topRight.AutoSize = true;
-            this.topRight.Location = new System.Drawing.Point(417, 12);
+            this.topRight.BackColor = System.Drawing.Color.White;
+            this.topRight.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.topRight.ForeColor = System.Drawing.Color.Black;
+            this.topRight.Location = new System.Drawing.Point(418, 12);
             this.topRight.Name = "topRight";
-            this.topRight.Size = new System.Drawing.Size(30, 15);
+            this.topRight.Size = new System.Drawing.Size(32, 15);
             this.topRight.TabIndex = 6;
             this.topRight.Text = "(1,1)";
+            this.topRight.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // topLeft
             // 
             this.topLeft.AutoSize = true;
+            this.topLeft.BackColor = System.Drawing.Color.White;
+            this.topLeft.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.topLeft.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.topLeft.Location = new System.Drawing.Point(12, 12);
             this.topLeft.Name = "topLeft";
-            this.topLeft.Size = new System.Drawing.Size(30, 15);
+            this.topLeft.Size = new System.Drawing.Size(32, 15);
             this.topLeft.TabIndex = 6;
             this.topLeft.Text = "(0,1)";
             // 
@@ -217,11 +236,14 @@
             // 
             this.middle.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.middle.AutoSize = true;
+            this.middle.BackColor = System.Drawing.Color.White;
+            this.middle.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.middle.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.middle.Location = new System.Drawing.Point(243, 259);
             this.middle.Name = "middle";
-            this.middle.Size = new System.Drawing.Size(30, 15);
+            this.middle.Size = new System.Drawing.Size(32, 15);
             this.middle.TabIndex = 6;
-            this.middle.Text = "(1,0)";
+            this.middle.Text = "(0,0)";
             // 
             // loadingBar
             // 
@@ -229,7 +251,7 @@
             this.loadingBar.Location = new System.Drawing.Point(530, 497);
             this.loadingBar.Name = "loadingBar";
             this.loadingBar.Size = new System.Drawing.Size(258, 23);
-            this.loadingBar.TabIndex = 7;
+            this.loadingBar.TabIndex = 10;
             // 
             // label5
             // 
@@ -265,12 +287,74 @@
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.SaveAsPNG);
             // 
+            // sweep
+            // 
+            this.sweep.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.sweep.AutoSize = true;
+            this.sweep.Checked = true;
+            this.sweep.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.sweep.Font = new System.Drawing.Font("Segoe UI", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.sweep.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.sweep.Location = new System.Drawing.Point(530, 243);
+            this.sweep.Name = "sweep";
+            this.sweep.Size = new System.Drawing.Size(88, 32);
+            this.sweep.TabIndex = 8;
+            this.sweep.Text = "Sweep";
+            this.sweep.UseVisualStyleBackColor = true;
+            this.sweep.CheckedChanged += new System.EventHandler(this.ToggleSweep);
+            // 
+            // lineWidthText
+            // 
+            this.lineWidthText.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.lineWidthText.AutoSize = true;
+            this.lineWidthText.CausesValidation = false;
+            this.lineWidthText.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.lineWidthText.ForeColor = System.Drawing.Color.White;
+            this.lineWidthText.Location = new System.Drawing.Point(530, 279);
+            this.lineWidthText.Name = "lineWidthText";
+            this.lineWidthText.Size = new System.Drawing.Size(85, 21);
+            this.lineWidthText.TabIndex = 4;
+            this.lineWidthText.Text = "Line Width";
+            // 
+            // lineWidthSlider
+            // 
+            this.lineWidthSlider.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.lineWidthSlider.Location = new System.Drawing.Point(620, 282);
+            this.lineWidthSlider.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.lineWidthSlider.Name = "lineWidthSlider";
+            this.lineWidthSlider.Size = new System.Drawing.Size(168, 23);
+            this.lineWidthSlider.TabIndex = 9;
+            this.lineWidthSlider.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // pointerPos
+            // 
+            this.pointerPos.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.pointerPos.AutoSize = true;
+            this.pointerPos.Font = new System.Drawing.Font("Segoe UI", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.pointerPos.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.pointerPos.Location = new System.Drawing.Point(530, 466);
+            this.pointerPos.Name = "pointerPos";
+            this.pointerPos.Size = new System.Drawing.Size(50, 28);
+            this.pointerPos.TabIndex = 11;
+            this.pointerPos.Text = "(0,0)";
+            // 
             // Graph
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.ClientSize = new System.Drawing.Size(800, 532);
+            this.Controls.Add(this.pointerPos);
+            this.Controls.Add(this.lineWidthSlider);
+            this.Controls.Add(this.sweep);
             this.Controls.Add(this.loadingBar);
             this.Controls.Add(this.topLeft);
             this.Controls.Add(this.topRight);
@@ -281,6 +365,7 @@
             this.Controls.Add(this.YOffset);
             this.Controls.Add(this.XOffset);
             this.Controls.Add(this.heightText);
+            this.Controls.Add(this.lineWidthText);
             this.Controls.Add(this.widthText);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
@@ -295,6 +380,7 @@
             this.ShowIcon = false;
             this.Text = "Graph";
             ((System.ComponentModel.ISupportInitialize)(this.graphImageBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.lineWidthSlider)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -322,5 +408,9 @@
         private Label label5;
         private TextBox resBox;
         private Button button2;
+        private CheckBox sweep;
+        private Label lineWidthText;
+        private NumericUpDown lineWidthSlider;
+        private Label pointerPos;
     }
 }

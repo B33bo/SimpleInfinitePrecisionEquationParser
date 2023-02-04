@@ -4,7 +4,8 @@ namespace SIPEP;
 
 public class Equation
 {
-    public const int Version = 6;
+    public static bool Radians = true;
+    public const int Version = 7;
     public static int DecimalPrecision { get => BigRational.MaxDigits; set => BigRational.MaxDigits = value; }
 
     public Dictionary<string, BigComplex> Variables = Constants.Vars;
@@ -191,6 +192,9 @@ public class Equation
             var finaltype = GetTypeOfPart(current, out object finaldat);
             _data.Add((finaltype, finaldat));
         }
+
+        if (indentLevel != 0)
+            throw new InvalidEquationException();
     }
 
     public BigComplex Solve()

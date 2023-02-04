@@ -1,19 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Numerics;
 
 namespace SIPEP.Functions;
 
 public static class Trig
 {
+    [Function("ToRadians")]
+    public static BigComplex ToRadians(params BigComplex[] args)
+    {
+        if (args.Length == 0)
+        {
+            Equation.Radians = true;
+            return 0;
+        }
+        return args[0] * Constants.Pi / 180;
+    }
+
+    [Function("ToDegrees")]
+    public static BigComplex ToDegrees(params BigComplex[] args)
+    {
+        if (args.Length == 0)
+        {
+            Equation.Radians = false;
+            return 0;
+        }
+        return args[0] * 180 / Constants.Pi;
+    }
+
     [Function("Sin")]
     public static BigComplex Sin(params BigComplex[] args)
     {
         if (args.Length == 0)
             return BigComplex.Zero;
+
+        if (!Equation.Radians)
+            args[0] = ToRadians(args[0]);
 
         if (args[0].Real < 0)
         {
@@ -53,7 +73,11 @@ public static class Trig
             return BigComplex.Zero;
         Complex normalPrecisionComplex = new((double)args[0].Real, (double)args[0].Imaginary);
         normalPrecisionComplex = Complex.Asin(normalPrecisionComplex);
-        return new BigComplex(normalPrecisionComplex.Real, normalPrecisionComplex.Imaginary);
+
+        var output = new BigComplex(normalPrecisionComplex.Real, normalPrecisionComplex.Imaginary);
+        if (Equation.Radians)
+            return output;
+        return ToDegrees(output);
     }
 
     [Function("Cos")]
@@ -61,6 +85,9 @@ public static class Trig
     {
         if (args.Length == 0)
             return BigComplex.Zero;
+
+        if (!Equation.Radians)
+            args[0] = ToRadians(args[0]);
 
         if (args[0].Real < 0)
         {
@@ -99,7 +126,11 @@ public static class Trig
             return BigComplex.Zero;
         Complex normalPrecisionComplex = new((double)args[0].Real, (double)args[0].Imaginary);
         normalPrecisionComplex = Complex.Acos(normalPrecisionComplex);
-        return new BigComplex(normalPrecisionComplex.Real, normalPrecisionComplex.Imaginary);
+        var output = new BigComplex(normalPrecisionComplex.Real, normalPrecisionComplex.Imaginary);
+
+        if (Equation.Radians)
+            return output;
+        return ToDegrees(output);
     }
 
     [Function("Tan")]
@@ -107,6 +138,10 @@ public static class Trig
     {
         if (args.Length == 0)
             return BigComplex.Zero;
+
+        if (!Equation.Radians)
+            args[0] = ToRadians(args[0]);
+
         BigRational x2 = 2.0 * args[0].Real;
         BigRational y2 = 2.0 * args[0].Imaginary;
         BigRational p = BigRational.Exp(y2, Equation.DecimalPrecision);
@@ -129,7 +164,12 @@ public static class Trig
     {
         if (args.Length == 0)
             return BigComplex.Zero;
+
+        var radians = Equation.Radians;
+        Equation.Radians = true;
         BigComplex tan = Tan(new BigComplex(-args[0].Imaginary, args[0].Real));
+        Equation.Radians = radians;
+
         return new BigComplex(tan.Imaginary, -tan.Real);
     }
 
@@ -140,6 +180,9 @@ public static class Trig
             return BigComplex.Zero;
         Complex asNormalComplex = new((double)args[0].Real, (double)args[0].Imaginary);
         asNormalComplex = Complex.Atan(asNormalComplex);
-        return new BigComplex(asNormalComplex.Real, asNormalComplex.Imaginary);
+        var output = new BigComplex(asNormalComplex.Real, asNormalComplex.Imaginary);
+        if (Equation.Radians)
+            return output;
+        return ToDegrees(output);
     }
 }

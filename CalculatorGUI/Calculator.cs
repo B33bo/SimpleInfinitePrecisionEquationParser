@@ -8,7 +8,7 @@ public partial class Calculator : Form
 #nullable disable //it was annoying me
     public static Calculator Instance { get; set; }
     public static Equation currentEquation;
-    public const int Version = 7;
+    public const int Version = 8;
     private static bool answerPreview = true;
     private bool debugMode;
     private int OutputDP;
@@ -21,6 +21,7 @@ public partial class Calculator : Form
         Instance = this;
         currentEquation.Variables.Add("calcversion", Version);
         OutputDP = (int)outputDPVar.Value;
+        degreesRadians.SelectedIndex = 0;
     }
 
     private void EquationChanged(object sender, EventArgs e)
@@ -100,6 +101,7 @@ public partial class Calculator : Form
     private void RefreshSettings(object sender, EventArgs e)
     {
         Equation.DecimalPrecision = (int)precision.Value;
+        Equation.Radians = degreesRadians.SelectedIndex == 0;
         TopMost = keepOnTopToggle.Checked;
         answerPreview = answerPrev.Checked;
         OutputDP = (int)outputDPVar.Value;

@@ -264,7 +264,7 @@ public struct BigComplex
         if (IsBoolean)
             return (Real > 0).ToString();
 
-        string precisionText = "#.";
+        string precisionText = "0.";
         for (int i = 0; i < precision; i++)
             precisionText += '#';
 

@@ -262,17 +262,6 @@ public class Misc
     }
 
     [TestMethod]
-    public static void ToDegrees()
-    {
-        var ans1 = new Equation("ToDegrees(pi)").Solve().Real;
-        var ans2 = new Equation("ToDegrees(pi * i)").Solve().Imaginary;
-        Assert.IsTrue(ans1 > 179 && ans1 < 181);
-        Assert.IsTrue(ans2 > 179 && ans2 < 181);
-        Assert.AreEqual(BigComplex.Zero, new Equation("ToDegrees()").Solve());
-        Assert.AreEqual(BigComplex.Infinity, new Equation("ToDegrees(inf)").Solve());
-    }
-
-    [TestMethod]
     public void Remainder()
     {
         Assert.AreEqual(1, new Equation("Remainder(10,3)").Solve());
@@ -309,5 +298,45 @@ public class Misc
         Assert.AreEqual(2, new Equation("If(1=1, 2)").Solve());
         Assert.AreEqual(false, new Equation("If(1=2, 2)").Solve());
         Assert.AreEqual(-BigComplex.Infinity, new Equation("If(false, 2, -inf)").Solve());
+    }
+
+    [TestMethod]
+    public void DataVal()
+    {
+        Assert.AreEqual(0, new Equation("DataVal()").Solve());
+        Assert.AreEqual(new BigComplex(0, 1), new Equation("DataVal(0,1)").Solve());
+        Assert.AreEqual(new BigComplex(0, 1), new Equation("DataVal(0,1, false)").Solve());
+        Assert.IsTrue(new Equation("DataVal(1,0,true,0)").SolveBoolean());
+        Assert.AreEqual(new BigComplex(0, 1), new Equation("DataVal(0,1, false, false)").Solve());
+        Assert.AreEqual(BigComplex.Infinity, new Equation("DataVal(1,0, false, true)").Solve());
+    }
+
+    [TestMethod]
+    public void StringLength()
+    {
+        Assert.AreEqual(-1, new Equation("StringLength()").Solve());
+        Assert.AreEqual(3, new Equation("StringLength(abc)").Solve());
+        Assert.AreEqual(47, new Equation("StringLength(this was totally not a function to test strings)").Solve());
+        Assert.AreEqual(3, new Equation("StringLength(a b)").Solve());
+        Assert.AreEqual(0, new Equation("StringLength(,)").Solve());
+    }
+
+    [TestMethod]
+    public void Sum()
+    {
+        Assert.AreEqual(15, new Equation("Sum(i = 0, 5, i)").Solve());
+        Assert.AreEqual(6, new Equation("Sum(i = 0, 5, 1)").Solve());
+        Assert.AreEqual(55, new Equation("Sum(i = 0, 5, i^2)").Solve());
+        Assert.AreEqual(14, new Equation("Sum(i = e, 5, i)").Solve());
+        Assert.AreEqual(5, new Equation("Sum(i = 5, 5, i)").Solve());
+    }
+
+    [TestMethod]
+    public void Product()
+    {
+        Assert.AreEqual(0, new Equation("Product(i = 0, 5, i)").Solve());
+        Assert.AreEqual(120, new Equation("Product(i = 1, 5, i)").Solve());
+        Assert.AreEqual(64, new Equation("Product(i = 0, 5, 2)").Solve());
+        Assert.AreEqual(14400, new Equation("Product(i = 1, 5, i^2)").Solve());
     }
 }

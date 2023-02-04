@@ -121,9 +121,9 @@ public class Boolean
     [TestMethod]
     public void Approx()
     {
-        Assert.IsTrue(new Equation("4 ≈ 8 / 2").SolveBoolean());
-        Assert.IsFalse(new Equation("1 + 1 ≈ 3").SolveBoolean());
-        Assert.IsFalse(new Equation("1 + 1 ≈ 3").SolveBoolean());
+        Assert.IsTrue(new Equation("4 ~ 8 / 2").SolveBoolean());
+        Assert.IsFalse(new Equation("1 + 1 ~ 3").SolveBoolean());
+        Assert.IsFalse(new Equation("1 + 1 ~ 3").SolveBoolean());
 
         Assert.IsFalse(new Equation("Approx(1,2)").SolveBoolean());
         Assert.IsTrue(new Equation("Approx(0.1, 0.12)").SolveBoolean());
@@ -131,9 +131,9 @@ public class Boolean
         Assert.IsTrue(new Equation("Approx(1)").SolveBoolean());
         Assert.IsTrue(new Equation("Approx()").SolveBoolean());
 
-        Assert.IsTrue(new Equation("inf≈inf").SolveBoolean());
-        Assert.IsFalse(new Equation("inf≈1").SolveBoolean());
-        Assert.IsFalse(new Equation("inf≈-inf").SolveBoolean());
-        Assert.IsFalse(new Equation("inf≈1").SolveBoolean());
+        Assert.IsTrue(new Equation("inf~inf").SolveBoolean());
+        Assert.IsFalse(new Equation("inf~1").SolveBoolean());
+        Assert.IsFalse(new Equation("inf~-inf").SolveBoolean());
+        Assert.IsFalse(new Equation("inf~1").SolveBoolean());
     }
 }

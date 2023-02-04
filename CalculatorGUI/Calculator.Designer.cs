@@ -47,6 +47,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.outputDPVar = new System.Windows.Forms.NumericUpDown();
             this.debugModeText = new System.Windows.Forms.Label();
+            this.degreesRadians = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.precision)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.secretBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.outputDPVar)).BeginInit();
@@ -118,9 +119,9 @@
             // 
             this.funcsBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.funcsBtn.Font = new System.Drawing.Font("Segoe UI", 35F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.funcsBtn.Location = new System.Drawing.Point(12, 270);
+            this.funcsBtn.Location = new System.Drawing.Point(12, 291);
             this.funcsBtn.Name = "funcsBtn";
-            this.funcsBtn.Size = new System.Drawing.Size(115, 108);
+            this.funcsBtn.Size = new System.Drawing.Size(115, 114);
             this.funcsBtn.TabIndex = 5;
             this.funcsBtn.Text = "F(x)";
             this.funcsBtn.UseVisualStyleBackColor = true;
@@ -130,9 +131,9 @@
             // 
             this.varBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.varBtn.Font = new System.Drawing.Font("Segoe UI", 50F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.varBtn.Location = new System.Drawing.Point(133, 270);
+            this.varBtn.Location = new System.Drawing.Point(133, 291);
             this.varBtn.Name = "varBtn";
-            this.varBtn.Size = new System.Drawing.Size(115, 108);
+            this.varBtn.Size = new System.Drawing.Size(115, 114);
             this.varBtn.TabIndex = 6;
             this.varBtn.Text = "n";
             this.varBtn.UseVisualStyleBackColor = true;
@@ -141,10 +142,10 @@
             // precision
             // 
             this.precision.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.precision.Location = new System.Drawing.Point(367, 326);
+            this.precision.Location = new System.Drawing.Point(367, 353);
             this.precision.Name = "precision";
             this.precision.Size = new System.Drawing.Size(53, 23);
-            this.precision.TabIndex = 10;
+            this.precision.TabIndex = 11;
             this.precision.Value = new decimal(new int[] {
             30,
             0,
@@ -158,7 +159,7 @@
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.label1.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.label1.Location = new System.Drawing.Point(426, 328);
+            this.label1.Location = new System.Drawing.Point(426, 355);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(73, 21);
             this.label1.TabIndex = 11;
@@ -194,10 +195,10 @@
             this.answerPrev.CheckState = System.Windows.Forms.CheckState.Checked;
             this.answerPrev.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.answerPrev.ForeColor = System.Drawing.Color.White;
-            this.answerPrev.Location = new System.Drawing.Point(367, 264);
+            this.answerPrev.Location = new System.Drawing.Point(367, 291);
             this.answerPrev.Name = "answerPrev";
             this.answerPrev.Size = new System.Drawing.Size(140, 25);
-            this.answerPrev.TabIndex = 8;
+            this.answerPrev.TabIndex = 9;
             this.answerPrev.Text = "Answer Preview";
             this.answerPrev.UseVisualStyleBackColor = true;
             this.answerPrev.CheckedChanged += new System.EventHandler(this.RefreshSettings);
@@ -208,10 +209,10 @@
             this.keepOnTopToggle.AutoSize = true;
             this.keepOnTopToggle.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.keepOnTopToggle.ForeColor = System.Drawing.Color.White;
-            this.keepOnTopToggle.Location = new System.Drawing.Point(367, 295);
+            this.keepOnTopToggle.Location = new System.Drawing.Point(367, 322);
             this.keepOnTopToggle.Name = "keepOnTopToggle";
             this.keepOnTopToggle.Size = new System.Drawing.Size(116, 25);
-            this.keepOnTopToggle.TabIndex = 9;
+            this.keepOnTopToggle.TabIndex = 10;
             this.keepOnTopToggle.Text = "Keep On Top";
             this.keepOnTopToggle.UseVisualStyleBackColor = true;
             this.keepOnTopToggle.CheckedChanged += new System.EventHandler(this.RefreshSettings);
@@ -221,9 +222,9 @@
             this.moreBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.moreBtn.AutoSize = true;
             this.moreBtn.Font = new System.Drawing.Font("Segoe UI", 50F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.moreBtn.Location = new System.Drawing.Point(254, 270);
+            this.moreBtn.Location = new System.Drawing.Point(254, 291);
             this.moreBtn.Name = "moreBtn";
-            this.moreBtn.Size = new System.Drawing.Size(107, 108);
+            this.moreBtn.Size = new System.Drawing.Size(107, 114);
             this.moreBtn.TabIndex = 7;
             this.moreBtn.Text = "...";
             this.moreBtn.UseVisualStyleBackColor = true;
@@ -245,7 +246,7 @@
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.label2.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.label2.Location = new System.Drawing.Point(426, 357);
+            this.label2.Location = new System.Drawing.Point(426, 384);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(83, 21);
             this.label2.TabIndex = 12;
@@ -254,10 +255,10 @@
             // outputDPVar
             // 
             this.outputDPVar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.outputDPVar.Location = new System.Drawing.Point(367, 355);
+            this.outputDPVar.Location = new System.Drawing.Point(367, 382);
             this.outputDPVar.Name = "outputDPVar";
             this.outputDPVar.Size = new System.Drawing.Size(53, 23);
-            this.outputDPVar.TabIndex = 11;
+            this.outputDPVar.TabIndex = 12;
             this.outputDPVar.Value = new decimal(new int[] {
             5,
             0,
@@ -277,12 +278,28 @@
             this.debugModeText.Text = "DEBUG MODE";
             this.debugModeText.Visible = false;
             // 
+            // degreesRadians
+            // 
+            this.degreesRadians.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.degreesRadians.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.degreesRadians.FormattingEnabled = true;
+            this.degreesRadians.Items.AddRange(new object[] {
+            "Radians",
+            "Degrees"});
+            this.degreesRadians.Location = new System.Drawing.Point(367, 262);
+            this.degreesRadians.MaxDropDownItems = 2;
+            this.degreesRadians.Name = "degreesRadians";
+            this.degreesRadians.Size = new System.Drawing.Size(187, 23);
+            this.degreesRadians.TabIndex = 8;
+            this.degreesRadians.SelectedIndexChanged += new System.EventHandler(this.RefreshSettings);
+            // 
             // Calculator
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.ClientSize = new System.Drawing.Size(575, 390);
+            this.ClientSize = new System.Drawing.Size(575, 417);
+            this.Controls.Add(this.degreesRadians);
             this.Controls.Add(this.debugModeText);
             this.Controls.Add(this.secretBox);
             this.Controls.Add(this.keepOnTopToggle);
@@ -334,5 +351,6 @@
         private Label label2;
         private NumericUpDown outputDPVar;
         private Label debugModeText;
+        private ComboBox degreesRadians;
     }
 }

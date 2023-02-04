@@ -392,13 +392,6 @@ public static class Misc
         }
     }
 
-    [Function("ToDegrees", Args = "ToDegrees(radians)", HandlesInfinity = true)]
-    public static BigComplex ToDegrees(params BigComplex[] args)
-    {
-        if (args.Length == 0) return 0;
-        return args[0] * 180 / BigRational.Pi(Equation.DecimalPrecision);
-    }
-
     [Function("Time", Args = "Time(unit)", HandlesInfinity = true)]
     public static BigComplex Time(params BigComplex[] args)
     {
@@ -447,5 +440,102 @@ public static class Misc
         }
 
         return args[0].BoolValue ? args[1] : args[2];
+    }
+
+    [Function("DataVal", Args = "DataVal(Real, Imaginary, Is Boolean, Is Infinity)", HandlesInfinity = true)]
+    public static BigComplex DataVal(params BigComplex[] args)
+    {
+        BigComplex data = new BigComplex();
+
+        switch (args.Length)
+        {
+            default:
+                if (args.Length < 4)
+                    break;
+                goto case 4;
+            case 4:
+                data.IsInfinity = args[3].BoolValue;
+                goto case 3;
+            case 3:
+                data.IsBoolean = args[2].BoolValue;
+                goto case 2;
+            case 2:
+                data.Imaginary = args[1].Real;
+                goto case 1;
+            case 1:
+                data.Real = args[0].Real;
+                break;
+        }
+
+        return data;
+    }
+
+    [Function("StringLength", StringArguments = true)]
+    public static BigComplex StringLength(Dictionary<string, BigComplex> vars, params string[] args)
+    {
+        if (args.Length == 0)
+            return -1;
+        return args[0].Length;
+    }
+
+    [Function("Sum", Args = "Sum(i = start, end, equation)", StringArguments = true)]
+    public static BigComplex Sum(Dictionary<string, BigComplex> vars, params string[] args)
+    {
+        if (args.Length != 3)
+            return Constants.Vars["NaN"];
+        //sum (i = start, end, equation)
+        string[] startText = args[0].Replace(" ", "").Split('=');
+
+        if (startText.Length != 2)
+            return Constants.Vars["NaN"];
+
+        string varName = startText[0];
+        BigInteger start = (BigInteger)new Equation(startText[1], vars).Solve().Real;
+        BigInteger end = (BigInteger)new Equation(args[1], vars).Solve().Real;
+
+        Equation eq = new(args[2], vars);
+
+        if (!eq.Variables.ContainsKey(varName))
+            eq.Variables.Add(varName, 0);
+
+        BigComplex value = 0;
+
+        for (BigInteger i = start; i <= end; i++)
+        {
+            eq.Variables[varName] = (BigRational)i;
+            value += eq.Solve();
+        }
+        return value;
+    }
+
+    [Function("Product", Args = "Product(i = start, end, equation)", StringArguments = true)]
+    public static BigComplex Product(Dictionary<string, BigComplex> vars, params string[] args)
+    {
+        if (args.Length != 3)
+            return Constants.Vars["NaN"];
+        //product (i = start, end, equation)
+        string[] startText = args[0].Replace(" ", "").Split('=');
+
+        if (startText.Length != 2)
+            return Constants.Vars["NaN"];
+
+        string varName = startText[0];
+        BigInteger start = (BigInteger)new Equation(startText[1], vars).Solve().Real;
+        BigInteger end = (BigInteger)new Equation(args[1], vars).Solve().Real;
+
+        Equation eq = new(args[2], vars);
+
+        if (!eq.Variables.ContainsKey(varName))
+            eq.Variables.Add(varName, 0);
+
+        BigComplex value = 1;
+
+        for (BigInteger i = start; i <= end; i++)
+        {
+            eq.Variables[varName] = (BigRational)i;
+            value *= eq.Solve();
+        }
+
+        return value;
     }
 }

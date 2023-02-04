@@ -104,7 +104,7 @@ public static class Boolean
         return BigComplex.True;
     }
 
-    [Function("Approx", Operator = '≈', Priority = 5)]
+    [Function("Approx", Operator = '~', Priority = 5)]
     public static BigComplex Approx(params BigComplex[] args)
     {
         if (args.Length == 1 || args.Length == 0)
