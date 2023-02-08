@@ -331,7 +331,7 @@
             0,
             0,
             0});
-            this.lineWidthSlider.ValueChanged += new System.EventHandler(this.UpdatePlotInformation);
+            this.lineWidthSlider.ValueChanged += new System.EventHandler(this.ChangeLineWidth);
             // 
             // pointerPos
             // 
@@ -382,7 +382,7 @@
             this.equationBox.Size = new System.Drawing.Size(258, 23);
             this.equationBox.TabIndex = 13;
             this.equationBox.SelectedIndexChanged += new System.EventHandler(this.ChangeEquationNumber);
-            this.equationBox.TextChanged += new System.EventHandler(this.UpdatePlotInformation);
+            this.equationBox.TextChanged += new System.EventHandler(this.EquationTextChanged);
             // 
             // label7
             // 
@@ -414,7 +414,6 @@
             0,
             0,
             0});
-            this.threadsPerPlot.ValueChanged += new System.EventHandler(this.UpdatePlotInformation);
             // 
             // Graph
             // 

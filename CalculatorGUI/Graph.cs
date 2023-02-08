@@ -1,4 +1,5 @@
 ﻿using SIPEP;
+using System.Diagnostics;
 using System.Numerics;
 
 namespace CalculatorGUI;
@@ -25,12 +26,13 @@ public partial class Graph : Form
 
     private Bitmap? Render()
     {
+        loadingBar.Show();
         loadingBar.Value = 0;
         graph = new byte[truewidth, trueheight];
 
         // midPointX = (width / 2 - xoffset) / (width / truewidth) therefore:
         int midPointX = (int)((truewidth * (width / 2 - xoffset)) / width);
-        int midPointY = (int)((truewidth * (width / 2 - xoffset)) / height);
+        int midPointY = (int)((trueheight * (height / 2 - yoffset)) / height);
 
         var image = GetBase(midPointX, midPointY);
 
@@ -82,17 +84,16 @@ public partial class Graph : Form
             }
         }
 
+        loadingBar.Hide();
+
         return image;
     }
 
     private void Draw(object sender, EventArgs e)
     {
-        loadingBar.Show();
         graph = new byte[truewidth, trueheight];
 
         var img = Render();
-
-        loadingBar.Hide();
 
         if (img is null)
             return;
@@ -113,6 +114,10 @@ public partial class Graph : Form
         var down = yoffset - (height / 2);
 
         int threads = (int)threadsPerPlot.Value;
+
+        if (threads > truewidth)
+            threads = truewidth;
+
         int widthForThread = truewidth / threads;
 
         int threadsWaiting = threads;
@@ -260,7 +265,7 @@ public partial class Graph : Form
     {
         var dialog = new SaveFileDialog()
         {
-            Filter = "JPG|*.jpg|PNG|*.png|BITMAP|*.bmp",
+            Filter = "PNG|*.png|JPG|*.jpg|BITMAP|*.bmp",
             Title = "Save graph",
         };
         
@@ -293,28 +298,28 @@ public partial class Graph : Form
             return;
 
         colorBox.BackColor = colorDialog.Color;
-        UpdatePlotInformation(sender, e);
+        plots[currentPlot].LineColor = colorDialog.Color;
     }
 
     private void ToggleSweep(object sender, EventArgs e)
     {
         lineWidthSlider.Visible = sweep.Checked;
         lineWidthText.Visible = sweep.Checked;
-        UpdatePlotInformation(sender, e);
+        plots[currentPlot].Sweep = sweep.Checked;
     }
 
-    private void UpdatePlotInformation(object sender, EventArgs e)
-    {
-        if (equationBox.SelectedIndex >= 0)
-            return;
-        equationBox.Items[currentPlot] = equationBox.Text;
-        plots[currentPlot] = new Plot(equationBox.Text, sweep.Checked, (int)lineWidthSlider.Value, colorBox.BackColor);
-    }
+    private int oldIndex = -1;
 
     private void ChangeEquationNumber(object sender, EventArgs e)
     {
-        currentPlot = equationBox.SelectedIndex;
+        //I don't know what I did, but I fixed the weird combobox issue
+        //fuck comboboxes
+        oldIndex = equationBox.SelectedIndex;
 
+        if (equationBox.SelectedIndex < 0)
+            return;
+
+        currentPlot = equationBox.SelectedIndex;
         if (currentPlot >= plots.Count)
         {
             plots.Add(new Plot("", true, 1, Color.Red));
@@ -325,6 +330,23 @@ public partial class Graph : Form
         sweep.Checked = plots[currentPlot].Sweep;
         lineWidthSlider.Value = plots[currentPlot].LineWidth;
         colorBox.BackColor = plots[currentPlot].LineColor;
+    }
+
+    private void EquationTextChanged(object sender, EventArgs e)
+    {
+        if (oldIndex != equationBox.SelectedIndex)
+        {
+            oldIndex = equationBox.SelectedIndex;
+            return;
+        }
+
+        equationBox.Items[currentPlot] = equationBox.Text;
+        plots[currentPlot] = new Plot(equationBox.Text, plots[currentPlot].Sweep, plots[currentPlot].LineWidth, plots[currentPlot].LineColor);
+    }
+
+    private void ChangeLineWidth(object sender, EventArgs e)
+    {
+        plots[currentPlot].LineWidth = (int)lineWidthSlider.Value;
     }
 
     private void ResetMPos(object sender, MouseEventArgs e)
@@ -370,7 +392,7 @@ public partial class Graph : Form
         middle.Text = $"({xoffset.Real}, {yoffset.Real})";
     }
 
-    private struct Plot
+    private class Plot
     {
         public string Equation { get; set; }
         public bool Sweep { get; set; }
