@@ -1,5 +1,4 @@
 ﻿using SIPEP;
-using System.Media;
 using System.Numerics;
 
 namespace CalculatorGUI;
@@ -10,37 +9,88 @@ public partial class Graph : Form
     private BigRational xoffset = 0, yoffset = 0;
     private BigRational width = 2, height = 2;
 
-    private enum Mode
-    {
-        Coordinate,
-        Imaginary,
-    }
+    private readonly List<Plot> plots;
+    private int currentPlot;
+    private static byte[,]? graph;
 
-    private Mode mode = Mode.Coordinate;
-    private bool cancel = false;
-    private int lineWidth;
+    private static int pendingPlots;
+    private static int progress;
 
     public Graph()
     {
         InitializeComponent();
+        plots = new List<Plot>() { new Plot("", true, 1, Color.Red) };
+        graphImageBox.BackgroundImage = GetBase(truewidth / 2, trueheight / 2);
+    }
+
+    private Bitmap? Render()
+    {
+        loadingBar.Value = 0;
+        graph = new byte[truewidth, trueheight];
+
+        // midPointX = (width / 2 - xoffset) / (width / truewidth) therefore:
+        int midPointX = (int)((truewidth * (width / 2 - xoffset)) / width);
+        int midPointY = (int)((truewidth * (width / 2 - xoffset)) / height);
+
+        var image = GetBase(midPointX, midPointY);
+
+        int area = truewidth * trueheight;
+        for (int i = 0; i < plots.Count; i++)
+            loadingBar.Maximum += plots[i].Sweep ? truewidth : area;
+
+        if (image is null)
+            return null;
+        progress = 0;
+
+        for (int i = 0; i < plots.Count; i++)
+        {
+            pendingPlots++;
+            Plot plot = plots[i];
+            byte index = (byte)(i + 1);
+
+            if (plots[i].Sweep)
+            {
+                new Thread(() =>
+                {
+                    Sweep(plot.Equation, index, plot.LineWidth);
+                    pendingPlots--;
+                }).Start();
+            }
+            else
+            {
+                new Thread(() =>
+                {
+                    BooleanDraw(plot.Equation, index);
+                    pendingPlots--;
+                }).Start();
+            }
+        }
+
+        while (pendingPlots > 0)
+        {
+            loadingBar.Value = progress;
+        }
+
+        for (int x = 0; x < graph.GetLength(0); x++)
+        {
+            for (int y = 0; y < graph.GetLength(1); y++)
+            {
+                var index = graph[x, y] - 1;
+                if (index < 0)
+                    continue;
+                image.SetPixel(x, y, plots[index].LineColor);
+            }
+        }
+
+        return image;
     }
 
     private void Draw(object sender, EventArgs e)
     {
         loadingBar.Show();
+        graph = new byte[truewidth, trueheight];
 
-        try
-        {
-            Calculator.currentEquation.LoadString(equationBox.Text);
-        }
-        catch (Exception)
-        {
-            SystemSounds.Beep.Play();
-        }
-
-        lineWidth = (int)lineWidthSlider.Value;
-
-        var img = sweep.Checked ? Sweep() : Draw();
+        var img = Render();
 
         loadingBar.Hide();
 
@@ -51,89 +101,134 @@ public partial class Graph : Form
         graphImageBox.BackgroundImage = img;
     }
 
-    private Bitmap? Draw()
+    private void BooleanDraw(string equation, byte index)
     {
-        loadingBar.Maximum = truewidth * trueheight;
-        cancel = false;
-        loadingBar.Value = 0;
-        if (!BigComplex.TryParse(XOffset.Text, out BigComplex xoffset))
-            return null;
-        if (!BigComplex.TryParse(YOffset.Text, out BigComplex yoffset))
-            return null;
+        if (graph is null)
+            return;
 
-        if (!BigComplex.TryParse(widthText.Text, out BigComplex width))
-            return null;
-        if (!BigComplex.TryParse(heightText.Text, out BigComplex height))
-            return null;
+        BigRational trueWidthToUnit = (width / truewidth);
+        BigRational trueHeightToUnit = (height / truewidth);
 
-        BigRational trueWidthToUnit = (width / truewidth).Real;
-        BigRational trueHeightToUnit = (height / truewidth).Real;
+        var left = xoffset - (width / 2);
+        var down = yoffset - (height / 2);
 
-        var midPointXunit = (-xoffset + width / 2) / width * truewidth;
-        var midPointYunit = (-yoffset + height / 2) / height * trueheight;
+        int threads = (int)threadsPerPlot.Value;
+        int widthForThread = truewidth / threads;
 
-        var baseMap = GetBase((int)midPointXunit.Real, (int)midPointYunit.Real);
-        if (baseMap is null)
-            return null;
-        Bitmap bitmap = baseMap;
+        int threadsWaiting = threads;
 
-        if (!Calculator.currentEquation.Variables.ContainsKey("x"))
-            Calculator.currentEquation.Variables.Add("x", 0);
-
-        if (!Calculator.currentEquation.Variables.ContainsKey("y"))
-            Calculator.currentEquation.Variables.Add("y", 0);
-
-        if (!Calculator.currentEquation.Variables.ContainsKey("pos"))
-            Calculator.currentEquation.Variables.Add("pos", 0);
-
-        var left = (xoffset - (width / 2)).Real;
-        var down = (yoffset - (height / 2)).Real;
-
-        for (int trueX = 0; trueX < truewidth; trueX++)
+        for (int i = 0; i < threads; i++)
         {
+            int startX = i * widthForThread, endX = widthForThread * (i + 1);
+            if (i == threads - 1)
+                endX = truewidth; // so the slice at the end doesn't get shaved off
+
+            new Thread(() =>
+            {
+                Equation eq = new(equation, Calculator.currentEquation.Variables);
+                eq.SetVariable("x", 0);
+                eq.SetVariable("y", 0);
+                eq.SetVariable("pos", 0);
+
+                for (int trueX = startX; trueX < endX; trueX++)
+                {
+                    RenderYCoordinate(trueX, eq);
+                }
+                threadsWaiting--;
+            }).Start();
+        }
+
+        while (threadsWaiting > 0) { }
+
+        void RenderYCoordinate(int trueX, Equation eq)
+        {
+            if (graph is null)
+                return;
             for (int trueY = 0; trueY < trueheight; trueY++)
             {
-                if (cancel)
-                    return null;
-
-                loadingBar.Value++;
+                progress++;
 
                 BigRational x = left + trueX * trueWidthToUnit;
                 BigRational y = down + (trueheight - trueY - 1) * trueHeightToUnit;
 
-                Calculator.currentEquation.Variables["x"] = x;
-                Calculator.currentEquation.Variables["y"] = y;
-                Calculator.currentEquation.Variables["pos"] = new BigComplex(x, y);
+                eq.Variables["x"] = x;
+                eq.Variables["y"] = y;
+                eq.Variables["pos"] = new BigComplex(x, y);
 
                 try
                 {
-                    if (mode == Mode.Coordinate)
-                    {
-                        if (Calculator.currentEquation.SolveBoolean())
-                            bitmap.SetPixel(trueX, trueY, Color.Red);
-                    }
-                    else
-                    {
-                        var pos = Calculator.currentEquation.Solve();
-                        int xPos = (int)((pos.Real - left) / width.Real * truewidth);
-                        int yPos = (int)((pos.Imaginary - down) / height.Real * truewidth);
-
-                        if (xPos < 0 || xPos >= truewidth || yPos < 0 || yPos > trueheight)
-                            continue;
-                        bitmap.SetPixel(xPos, trueY - yPos - 1, Color.Red);
-                    }
+                    if (!eq.SolveBoolean())
+                        continue;
+                    if (graph[trueX, trueY] > index)
+                        continue;
+                    graph[trueX, trueY] = index;
                 }
                 catch (Exception)
                 {
-                    return null;
+                    continue;
                 }
             }
         }
-        return bitmap;
+    }
+
+    private void Sweep(string equation, byte index, int lineHeight)
+    {
+        if (graph is null)
+            return;
+        BigRational trueWidthToUnit = (width / truewidth);
+        BigRational trueHeightToUnit = (height / truewidth);
+
+        Equation eq = new(equation, Calculator.currentEquation.Variables);
+
+        eq.SetVariable("x", 0);
+        eq.SetVariable("y", 0);
+        eq.SetVariable("pos", 0);
+
+        var left = xoffset - (width / 2);
+        var down = yoffset - (height / 2);
+
+        for (int trueX = 0; trueX < truewidth; trueX++)
+        {
+            progress++;
+
+            BigRational x = left + trueX * trueWidthToUnit;
+            eq.Variables["x"] = x;
+            eq.Variables["pos"] = new BigComplex(x, 0);
+            BigRational output = eq.Solve().Real;
+
+            if (output > int.MaxValue || output < int.MinValue)
+                continue;
+
+            // output = down + trueY * trueHeightToUnit
+            // output - down / trueHeightToUnit = trueY
+            int trueY = (int)((output - down) / trueHeightToUnit);
+            trueY = trueheight - trueY - 1;
+
+            DrawAtPoint(trueX, trueY, lineHeight, index);
+        }
+
+        static void DrawAtPoint(int x, int y, int height, byte index)
+        {
+            if (graph is null)
+                return;
+            int startY = y - height / 2;
+            for (int i = 0; i < height; i++)
+            {
+                int trueY = i + startY;
+
+                if (trueY < 0 || trueY >= graph.GetLength(1))
+                    continue;
+
+                if (graph[x, trueY] > index)
+                    continue;
+                graph[x, trueY] = index;
+            }
+        }
     }
 
     private Bitmap? GetBase(int midX, int midY)
     {
+        midY = trueheight - midY - 1;
         Bitmap bmp = new(truewidth, trueheight);
 
         for (int i = 0; i < truewidth; i++)
@@ -147,89 +242,6 @@ public partial class Graph : Form
             }
         }
         return bmp;
-    }
-
-    private Bitmap? Sweep()
-    {
-        loadingBar.Value = 0;
-        loadingBar.Maximum = truewidth;
-
-        cancel = false;
-        loadingBar.Value = 0;
-        if (!BigComplex.TryParse(XOffset.Text, out BigComplex xoffset))
-            return null;
-        if (!BigComplex.TryParse(YOffset.Text, out BigComplex yoffset))
-            return null;
-
-        if (!BigComplex.TryParse(widthText.Text, out BigComplex width))
-            return null;
-        if (!BigComplex.TryParse(heightText.Text, out BigComplex height))
-            return null;
-
-        BigRational trueWidthToUnit = (width / truewidth).Real;
-        BigRational trueHeightToUnit = (height / truewidth).Real;
-
-        var midPointXunit = (-xoffset + width / 2) / width * truewidth;
-        var midPointYunit = (-yoffset + height / 2) / height * trueheight;
-        var baseImage = GetBase((int)midPointXunit.Real, (int)midPointYunit.Real);
-        if (baseImage is null)
-            return null;
-        Bitmap bitmap = baseImage;
-
-        if (!Calculator.currentEquation.Variables.ContainsKey("x"))
-            Calculator.currentEquation.Variables.Add("x", 0);
-
-        if (!Calculator.currentEquation.Variables.ContainsKey("y"))
-            Calculator.currentEquation.Variables.Add("y", 0);
-
-        if (!Calculator.currentEquation.Variables.ContainsKey("pos"))
-            Calculator.currentEquation.Variables.Add("pos", 0);
-
-        var left = (xoffset - (width / 2)).Real;
-        var down = (yoffset - (height / 2)).Real;
-
-        for (int trueX = 0; trueX < truewidth; trueX++)
-        {
-            loadingBar.Value++;
-            if (cancel)
-                return null;
-
-            BigRational x = left + trueX * trueWidthToUnit;
-            Calculator.currentEquation.Variables["x"] = x;
-            Calculator.currentEquation.Variables["pos"] = new BigComplex(x, 0);
-            BigRational output = Calculator.currentEquation.Solve().Real;
-
-            if (output > int.MaxValue || output < int.MinValue)
-                continue;
-
-            // output = down + trueY * trueHeightToUnit
-            // output - down / trueHeightToUnit = trueY
-            int trueY = (int)((output - down) / trueHeightToUnit);
-
-            DrawAtPoint(trueX, trueheight - trueY - 1);
-        }
-        return bitmap;
-
-        void DrawAtPoint(int x, int y)
-        {
-            int top = y - lineWidth / 2;
-            int bottom = y + lineWidth / 2;
-
-            for (int i = top; i <= bottom; i++)
-            {
-                if (i < 0 || i >= bitmap.Height)
-                    continue;
-                bitmap.SetPixel(x, i, Color.Red);
-            }
-        }
-    }
-
-    private void CycleMode(object sender, EventArgs e)
-    {
-        if (mode == Mode.Imaginary)
-            mode = Mode.Coordinate;
-        else
-            mode = Mode.Imaginary;
     }
 
     private void ChangeRes(object sender, EventArgs e)
@@ -251,14 +263,14 @@ public partial class Graph : Form
             Filter = "JPG|*.jpg|PNG|*.png|BITMAP|*.bmp",
             Title = "Save graph",
         };
-
+        
         if (dialog.ShowDialog() != DialogResult.OK)
             return;
 
         if (dialog.FileName == "")
             return;
 
-        var drawing = sweep.Checked ? Sweep() : Draw();
+        var drawing = Render();
         switch (dialog.FilterIndex)
         {
             case 1:
@@ -274,16 +286,45 @@ public partial class Graph : Form
         drawing?.Dispose();
     }
 
-    private void SwitchToFractal(object sender, EventArgs e)
+    private void ChangeColor(object sender, EventArgs e)
     {
-        Close();
-        new Fractal().Show();
+        var colorDialog = new ColorDialog();
+        if (colorDialog.ShowDialog() != DialogResult.OK)
+            return;
+
+        colorBox.BackColor = colorDialog.Color;
+        UpdatePlotInformation(sender, e);
     }
 
     private void ToggleSweep(object sender, EventArgs e)
     {
         lineWidthSlider.Visible = sweep.Checked;
         lineWidthText.Visible = sweep.Checked;
+        UpdatePlotInformation(sender, e);
+    }
+
+    private void UpdatePlotInformation(object sender, EventArgs e)
+    {
+        if (equationBox.SelectedIndex >= 0)
+            return;
+        equationBox.Items[currentPlot] = equationBox.Text;
+        plots[currentPlot] = new Plot(equationBox.Text, sweep.Checked, (int)lineWidthSlider.Value, colorBox.BackColor);
+    }
+
+    private void ChangeEquationNumber(object sender, EventArgs e)
+    {
+        currentPlot = equationBox.SelectedIndex;
+
+        if (currentPlot >= plots.Count)
+        {
+            plots.Add(new Plot("", true, 1, Color.Red));
+            equationBox.Items.Insert(plots.Count - 1, "");
+            equationBox.Text = "";
+        }
+
+        sweep.Checked = plots[currentPlot].Sweep;
+        lineWidthSlider.Value = plots[currentPlot].LineWidth;
+        colorBox.BackColor = plots[currentPlot].LineColor;
     }
 
     private void ResetMPos(object sender, MouseEventArgs e)
@@ -291,7 +332,7 @@ public partial class Graph : Form
         (double x, double y) mousePosPercent = ((double)e.Location.X / graphImageBox.Size.Width, (double)e.Location.Y / graphImageBox.Size.Height);
         mousePosPercent.y = 1 - mousePosPercent.y;
 
-        BigComplex position = new BigComplex(mousePosPercent.x * width, mousePosPercent.y * height);
+        BigComplex position = new(mousePosPercent.x * width, mousePosPercent.y * height);
         position -= new BigComplex(width / 2, height / 2);
         position += new BigComplex(xoffset, yoffset);
 
@@ -327,5 +368,21 @@ public partial class Graph : Form
         topRight.Text = $"({right.Real}, {up.Real})";
         bottomRight.Text = $"({right.Real}, {down.Real})";
         middle.Text = $"({xoffset.Real}, {yoffset.Real})";
+    }
+
+    private struct Plot
+    {
+        public string Equation { get; set; }
+        public bool Sweep { get; set; }
+        public int LineWidth { get; set; }
+        public Color LineColor { get; set; }
+
+        public Plot(string equation, bool sweep, int lineWidth, Color color)
+        {
+            Equation = equation;
+            Sweep = sweep;
+            LineWidth = lineWidth;
+            LineColor = color;
+        }
     }
 }

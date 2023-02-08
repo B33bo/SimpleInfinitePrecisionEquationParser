@@ -637,4 +637,25 @@ public static class Misc
 
         return current;
     }
+
+    [Function("Repeat", Args = "Repeat(equation, iterations, varname, initial value)", StringArguments = true)]
+    public static BigComplex Repeat(Dictionary<string, BigComplex> vars, params string[] args)
+    {
+        if (args.Length < 4)
+            return Constants.Vars["NaN"];
+        Equation eq = new Equation(args[0], vars);
+
+        var initialVal = new Equation(args[3], vars).Solve();
+        args[2] = args[2].Replace(" ", "");
+        eq.SetVariable(args[2], initialVal);
+
+        BigInteger iterations = (BigInteger)new Equation(args[1], vars).Solve().Real;
+
+        for (BigInteger i = 0; i < iterations - 1; i++)
+        {
+            eq.SetVariable(args[2], eq.Solve());
+        }
+
+        return eq.Solve();
+    }
 }

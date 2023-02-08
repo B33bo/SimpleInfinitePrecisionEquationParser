@@ -30,7 +30,6 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Graph));
             this.graphImageBox = new System.Windows.Forms.PictureBox();
-            this.equationBox = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -53,8 +52,15 @@
             this.lineWidthText = new System.Windows.Forms.Label();
             this.lineWidthSlider = new System.Windows.Forms.NumericUpDown();
             this.pointerPos = new System.Windows.Forms.Label();
+            this.colorBox = new System.Windows.Forms.PictureBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.equationBox = new System.Windows.Forms.ComboBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.threadsPerPlot = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.graphImageBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.lineWidthSlider)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.colorBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.threadsPerPlot)).BeginInit();
             this.SuspendLayout();
             // 
             // graphImageBox
@@ -70,14 +76,6 @@
             this.graphImageBox.TabIndex = 0;
             this.graphImageBox.TabStop = false;
             this.graphImageBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.ResetMPos);
-            // 
-            // equationBox
-            // 
-            this.equationBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.equationBox.Location = new System.Drawing.Point(530, 12);
-            this.equationBox.Name = "equationBox";
-            this.equationBox.Size = new System.Drawing.Size(258, 23);
-            this.equationBox.TabIndex = 0;
             // 
             // button1
             // 
@@ -248,7 +246,7 @@
             // loadingBar
             // 
             this.loadingBar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.loadingBar.Location = new System.Drawing.Point(530, 497);
+            this.loadingBar.Location = new System.Drawing.Point(530, 468);
             this.loadingBar.Name = "loadingBar";
             this.loadingBar.Size = new System.Drawing.Size(258, 23);
             this.loadingBar.TabIndex = 10;
@@ -278,8 +276,8 @@
             // 
             // button2
             // 
-            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button2.Location = new System.Drawing.Point(530, 214);
+            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button2.Location = new System.Drawing.Point(530, 497);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(258, 23);
             this.button2.TabIndex = 7;
@@ -295,7 +293,7 @@
             this.sweep.CheckState = System.Windows.Forms.CheckState.Checked;
             this.sweep.Font = new System.Drawing.Font("Segoe UI", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.sweep.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.sweep.Location = new System.Drawing.Point(530, 243);
+            this.sweep.Location = new System.Drawing.Point(530, 247);
             this.sweep.Name = "sweep";
             this.sweep.Size = new System.Drawing.Size(88, 32);
             this.sweep.TabIndex = 8;
@@ -310,7 +308,7 @@
             this.lineWidthText.CausesValidation = false;
             this.lineWidthText.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.lineWidthText.ForeColor = System.Drawing.Color.White;
-            this.lineWidthText.Location = new System.Drawing.Point(530, 279);
+            this.lineWidthText.Location = new System.Drawing.Point(530, 283);
             this.lineWidthText.Name = "lineWidthText";
             this.lineWidthText.Size = new System.Drawing.Size(85, 21);
             this.lineWidthText.TabIndex = 4;
@@ -319,7 +317,7 @@
             // lineWidthSlider
             // 
             this.lineWidthSlider.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.lineWidthSlider.Location = new System.Drawing.Point(620, 282);
+            this.lineWidthSlider.Location = new System.Drawing.Point(620, 286);
             this.lineWidthSlider.Minimum = new decimal(new int[] {
             1,
             0,
@@ -333,6 +331,7 @@
             0,
             0,
             0});
+            this.lineWidthSlider.ValueChanged += new System.EventHandler(this.UpdatePlotInformation);
             // 
             // pointerPos
             // 
@@ -340,11 +339,82 @@
             this.pointerPos.AutoSize = true;
             this.pointerPos.Font = new System.Drawing.Font("Segoe UI", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.pointerPos.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.pointerPos.Location = new System.Drawing.Point(530, 466);
+            this.pointerPos.Location = new System.Drawing.Point(530, 402);
             this.pointerPos.Name = "pointerPos";
             this.pointerPos.Size = new System.Drawing.Size(50, 28);
             this.pointerPos.TabIndex = 11;
             this.pointerPos.Text = "(0,0)";
+            // 
+            // colorBox
+            // 
+            this.colorBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.colorBox.BackColor = System.Drawing.Color.Red;
+            this.colorBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.colorBox.Location = new System.Drawing.Point(584, 214);
+            this.colorBox.Name = "colorBox";
+            this.colorBox.Size = new System.Drawing.Size(204, 23);
+            this.colorBox.TabIndex = 12;
+            this.colorBox.TabStop = false;
+            this.colorBox.Click += new System.EventHandler(this.ChangeColor);
+            // 
+            // label6
+            // 
+            this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label6.AutoSize = true;
+            this.label6.CausesValidation = false;
+            this.label6.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.label6.ForeColor = System.Drawing.Color.White;
+            this.label6.Location = new System.Drawing.Point(530, 216);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(48, 21);
+            this.label6.TabIndex = 4;
+            this.label6.Text = "Color";
+            // 
+            // equationBox
+            // 
+            this.equationBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.equationBox.FormattingEnabled = true;
+            this.equationBox.Items.AddRange(new object[] {
+            "",
+            "New Equation"});
+            this.equationBox.Location = new System.Drawing.Point(530, 12);
+            this.equationBox.Name = "equationBox";
+            this.equationBox.Size = new System.Drawing.Size(258, 23);
+            this.equationBox.TabIndex = 13;
+            this.equationBox.SelectedIndexChanged += new System.EventHandler(this.ChangeEquationNumber);
+            this.equationBox.TextChanged += new System.EventHandler(this.UpdatePlotInformation);
+            // 
+            // label7
+            // 
+            this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.label7.AutoSize = true;
+            this.label7.CausesValidation = false;
+            this.label7.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.label7.ForeColor = System.Drawing.Color.White;
+            this.label7.Location = new System.Drawing.Point(530, 439);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(122, 21);
+            this.label7.TabIndex = 4;
+            this.label7.Text = "Threads Per Plot";
+            // 
+            // threadsPerPlot
+            // 
+            this.threadsPerPlot.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.threadsPerPlot.Location = new System.Drawing.Point(658, 439);
+            this.threadsPerPlot.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.threadsPerPlot.Name = "threadsPerPlot";
+            this.threadsPerPlot.Size = new System.Drawing.Size(130, 23);
+            this.threadsPerPlot.TabIndex = 9;
+            this.threadsPerPlot.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.threadsPerPlot.ValueChanged += new System.EventHandler(this.UpdatePlotInformation);
             // 
             // Graph
             // 
@@ -352,7 +422,10 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.ClientSize = new System.Drawing.Size(800, 532);
+            this.Controls.Add(this.equationBox);
+            this.Controls.Add(this.colorBox);
             this.Controls.Add(this.pointerPos);
+            this.Controls.Add(this.threadsPerPlot);
             this.Controls.Add(this.lineWidthSlider);
             this.Controls.Add(this.sweep);
             this.Controls.Add(this.loadingBar);
@@ -364,9 +437,11 @@
             this.Controls.Add(this.resBox);
             this.Controls.Add(this.YOffset);
             this.Controls.Add(this.XOffset);
+            this.Controls.Add(this.label7);
             this.Controls.Add(this.heightText);
             this.Controls.Add(this.lineWidthText);
             this.Controls.Add(this.widthText);
+            this.Controls.Add(this.label6);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
@@ -374,13 +449,14 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
-            this.Controls.Add(this.equationBox);
             this.Controls.Add(this.graphImageBox);
             this.Name = "Graph";
             this.ShowIcon = false;
             this.Text = "Graph";
             ((System.ComponentModel.ISupportInitialize)(this.graphImageBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.lineWidthSlider)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.colorBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.threadsPerPlot)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -389,7 +465,6 @@
         #endregion
 
         private PictureBox graphImageBox;
-        private TextBox equationBox;
         private Button button1;
         private Label label1;
         private Label label2;
@@ -412,5 +487,10 @@
         private Label lineWidthText;
         private NumericUpDown lineWidthSlider;
         private Label pointerPos;
+        private PictureBox colorBox;
+        private Label label6;
+        private ComboBox equationBox;
+        private Label label7;
+        private NumericUpDown threadsPerPlot;
     }
 }

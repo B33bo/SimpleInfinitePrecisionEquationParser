@@ -5,7 +5,7 @@ namespace SIPEP;
 public class Equation
 {
     public static bool Radians = true;
-    public const int Version = 8;
+    public const int Version = 9;
     public static int DecimalPrecision { get => BigRational.MaxDigits; set => BigRational.MaxDigits = value; }
 
     public Dictionary<string, BigComplex> Variables = Constants.Vars;
@@ -47,6 +47,14 @@ public class Equation
         }
 
         LoadString(equationStr);
+    }
+
+    public void SetVariable(string name, BigComplex data)
+    {
+        if (Variables.ContainsKey(name))
+            Variables[name] = data;
+        else
+            Variables.Add(name, data);
     }
 
     private void Instructional(string str, ref List<(SectionType, object)> data)
