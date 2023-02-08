@@ -5,7 +5,7 @@ namespace SIPEP;
 public class Equation
 {
     public static bool Radians = true;
-    public const int Version = 7;
+    public const int Version = 8;
     public static int DecimalPrecision { get => BigRational.MaxDigits; set => BigRational.MaxDigits = value; }
 
     public Dictionary<string, BigComplex> Variables = Constants.Vars;
@@ -51,7 +51,7 @@ public class Equation
 
     private void Instructional(string str, ref List<(SectionType, object)> data)
     {
-        str = str[3..].Replace(" ", ""); //removes the "let"
+        str = str[4..]; //removes the "let"
 
         int indexOfEquals = -1;
         for (int i = 0; i < str.Length; i++)
@@ -65,7 +65,7 @@ public class Equation
         if (indexOfEquals < 0)
             throw new InvalidEquationException();
 
-        string varName = str[..(indexOfEquals)];
+        string varName = str[..(indexOfEquals)].Replace(" ", "");
         string equation = str[(indexOfEquals + 1)..];
 
         if (varName.EndsWith(")"))
@@ -73,6 +73,7 @@ public class Equation
             // it's a function
             var functionName = varName.Split('(')[0];
             var args = varName.Split('(')[1][..^1];
+            args = args.Trim();
 
             data = new List<(SectionType, object)>()
             {

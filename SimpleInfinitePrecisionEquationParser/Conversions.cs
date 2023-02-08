@@ -27,8 +27,6 @@ public static class Conversions
                     all.Add(unit.Key, unit.Value);
                 foreach (var unit in Time)
                     all.Add(unit.Key, unit.Value);
-                foreach (var unit in Temperature)
-                    all.Add(unit.Key, unit.Value);
             }
             
             return all;
@@ -147,15 +145,4 @@ public static class Conversions
         { "november", 86400 * 30 },
         { "december", 86400 * 31 },
     };
-
-    public static Dictionary<string, BigComplex> Temperature = new()
-    {
-        { "celsius", Celsius },
-        { "centigrade", Celsius },
-        { "kelvin", Kelvin },
-        { "fahrenheit", Fahrenheit },
-        { "rankine", Rankine },
-    };
-
-    public const int Celsius = 0, Kelvin = 1, Fahrenheit = 2, Rankine = 3;
 }

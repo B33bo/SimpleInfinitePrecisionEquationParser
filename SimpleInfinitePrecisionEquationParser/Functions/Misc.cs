@@ -354,40 +354,44 @@ public static class Misc
         return (args[0] * args[1]) / args[2];
     }
 
-    [Function("ConvertTemperature", Args = "ConvertTemperature(num, fromUnit, toUnit)", HandlesInfinity = true)]
-    public static BigComplex ConvertTemperature(params BigComplex[] args)
+    [Function("ConvertTemperature", Args = "ConvertTemperature(num, fromUnit, toUnit)", StringArguments = true)]
+    public static BigComplex ConvertTemperature(Dictionary<string, BigComplex> vars, params string[] args)
     {
         if (args.Length == 0)
             return 0;
-        if (args.Length == 1)
-            return args[0];
-        if (args.Length == 2)
-            return CelsiusTo(args[0], args[1]);
 
-        var celsius = ToCelsius(args[0], args[1]);
+        var number = new Equation(args[0]).Solve();
+        if (args.Length == 1)
+            return number;
+        if (args.Length == 2)
+            return CelsiusTo(number, args[1]);
+
+        var celsius = ToCelsius(number, args[1]);
         return CelsiusTo(celsius, args[2]);
 
-        static BigComplex ToCelsius(BigComplex val, BigComplex unit)
+        static BigComplex ToCelsius(BigComplex val, string unit)
         {
-            return (int)unit.Real switch
+            return unit.ToLower().Trim(' ') switch
             {
-                Conversions.Celsius => val,
-                Conversions.Fahrenheit => (val - 32) * 5 / 9,
-                Conversions.Kelvin => val - BigRational.Parse("273.15"),
-                Conversions.Rankine => (val - BigRational.Parse("491.67")) * 5 / 9,
-                _ => val,
+                "celsius" => val,
+                "centigrade" => val,
+                "fahrenheit" => (val - 32) * 5 / 9,
+                "kelvin" => val - BigRational.Parse("273.15"),
+                "rankine" => (val - BigRational.Parse("491.67")) * 5 / 9,
+                _ => Constants.Vars["NaN"],
             };
         }
 
-        static BigComplex CelsiusTo(BigComplex val, BigComplex unit)
+        static BigComplex CelsiusTo(BigComplex val, string unit)
         {
-            return (int)unit.Real switch
+            return unit.ToLower().Trim(' ') switch
             {
-                Conversions.Celsius => val,
-                Conversions.Fahrenheit => (val * 9 / 5) + 32,
-                Conversions.Kelvin => val + BigRational.Parse("273.15"),
-                Conversions.Rankine => (val * 9 / 5) + BigRational.Parse("491.67"),
-                _ => val,
+                "celsius" => val,
+                "centigrade" => val,
+                "fahrenheit" => (val * 9 / 5) + 32,
+                "kelvin" => val + BigRational.Parse("273.15"),
+                "rankine" => (val * 9 / 5) + BigRational.Parse("491.67"),
+                _ => Constants.Vars["NaN"],
             };
         }
     }
@@ -424,22 +428,24 @@ public static class Misc
         return new BigComplex(args[0].Real % 1, args[0].Imaginary % 1);
     }
 
-    [Function("If", HandlesInfinity = true)]
-    public static BigComplex If(params BigComplex[] args)
+    [Function("If", HandlesInfinity = true, StringArguments = true)]
+    public static BigComplex If(Dictionary<string, BigComplex> vars, params string[] args)
     {
         if (args.Length == 0)
             return 0;
+
+        bool istrue = new Equation(args[0], vars).SolveBoolean();
         if (args.Length == 1)
-            return args[0];
+            return istrue;
 
         if (args.Length == 2)
         {
-            if (args[0].BoolValue)
-                return args[1];
-            return args[0];
+            if (istrue)
+                return new Equation(args[1]).Solve();
+            return istrue;
         }
 
-        return args[0].BoolValue ? args[1] : args[2];
+        return istrue ? new Equation(args[1]).Solve() : new Equation(args[2]).Solve();
     }
 
     [Function("DataVal", Args = "DataVal(Real, Imaginary, Is Boolean, Is Infinity)", HandlesInfinity = true)]
@@ -537,5 +543,98 @@ public static class Misc
         }
 
         return value;
+    }
+
+    [Function("Integral", Args = "Integral(start, end, intervals, equation, varname?)", StringArguments = true)]
+    public static BigComplex Integral(Dictionary<string, BigComplex> vars, params string[] args)
+    {
+        if (args.Length < 4)
+            return Constants.Vars["NaN"];
+
+        string variableName = args.Length > 4 ? args[4].Trim(' ') : "x";
+
+        BigComplex start = new Equation(args[0], vars).Solve();
+        BigComplex end = new Equation(args[1], vars).Solve();
+        BigInteger intervals = (BigInteger)new Equation(args[2], vars).Solve().Real;
+        Equation equation = new Equation(args[3], vars);
+
+        BigComplex sum = 0;
+        BigComplex dx = (end - start) / new BigComplex(intervals, 0);
+
+        var half = BigComplex.One / 2;
+
+        if (!equation.Variables.ContainsKey(variableName))
+            equation.Variables.Add(variableName, 0);
+
+        for (BigInteger i = 0; i < intervals; i++)
+        {
+            var t = start + (half + new BigComplex(i, 0)) * dx;
+
+            equation.Variables[variableName] = t;
+            sum += equation.Solve();
+        }
+
+        return sum * dx;
+    }
+
+    [Function("Derivative", Args = "Derivative(equation, epsilon, initial Variable, varname?)", StringArguments = true)]
+    public static BigComplex Derivative(Dictionary<string, BigComplex> vars, params string[] args)
+    {
+        if (args.Length < 3)
+            return Constants.Vars["NaN"];
+
+        string varname = "x";
+
+        if (args.Length > 3)
+            varname = args[3].Trim(' ');
+
+        BigComplex initial = new Equation(args[2], vars).Solve();
+
+        if (vars.ContainsKey(varname))
+            vars[varname] = initial;
+        else
+            vars.Add(varname, initial);
+
+        Equation eq = new Equation(args[0], vars);
+        BigComplex epsilon = new Equation(args[1], vars).Solve();
+
+        var first = eq.Solve();
+        eq.Variables[varname] += epsilon;
+        var second = eq.Solve();
+
+        return (second - first) / epsilon;
+    }
+
+    [Function("For", Args = "For(start, keep running, after iteration, equation, varname?, initial value?)", StringArguments = true)]
+    public static BigComplex For(Dictionary<string, BigComplex> vars, params string[] args)
+    {
+        string varname = args.Length > 4 ? args[4].Trim(' ') : "current";
+
+        string keepRunning = args[1];
+        string afterIteration = args[2];
+        string equation = args[3];
+
+        BigComplex current = args.Length > 5 ? new Equation(args[5], vars).Solve() : 0;
+        if (vars.ContainsKey(varname))
+            vars[varname] = current;
+        else
+            vars.Add(varname, current);
+
+        Equation eq = new Equation(args[0], vars); //let i = 0
+        eq.Solve();
+        eq.LoadString(keepRunning);
+
+        while (eq.SolveBoolean())
+        {
+            eq.LoadString(equation);
+            current = eq.Solve();
+            eq.Variables[varname] = current;
+
+            eq.LoadString(afterIteration);
+            eq.Solve();
+            eq.LoadString(keepRunning);
+        }
+
+        return current;
     }
 }

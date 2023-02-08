@@ -339,4 +339,22 @@ public class Misc
         Assert.AreEqual(64, new Equation("Product(i = 0, 5, 2)").Solve());
         Assert.AreEqual(14400, new Equation("Product(i = 1, 5, i^2)").Solve());
     }
+
+    [TestMethod]
+    public void Integral()
+    {
+        Assert.AreEqual(31, new Equation("Integral(0, 5, 1, x^2, x)-.25").Solve());
+    }
+
+    [TestMethod]
+    public void Derivative()
+    {
+        Assert.AreEqual(2, new Equation("Derivative(x^2,0.01,1,x)-.01").Solve());
+    }
+
+    [TestMethod]
+    public void For()
+    {
+        Assert.AreEqual(11, new Equation("For(let x = 0,x < 5,let x = x + 1,current+x,current,1)").Solve());
+    }
 }
