@@ -71,7 +71,7 @@ public static class Misc
         if (args[0].IsInfinity)
             return args[0];
         if (args[1].IsInfinity)
-            return Constants.Vars["NaN"];
+            return BigComplex.NaN;
 
         return logQuick(args[0]) / logQuick(args[1]);
 
@@ -378,7 +378,7 @@ public static class Misc
                 "fahrenheit" => (val - 32) * 5 / 9,
                 "kelvin" => val - BigRational.Parse("273.15"),
                 "rankine" => (val - BigRational.Parse("491.67")) * 5 / 9,
-                _ => Constants.Vars["NaN"],
+                _ => BigComplex.NaN,
             };
         }
 
@@ -391,7 +391,7 @@ public static class Misc
                 "fahrenheit" => (val * 9 / 5) + 32,
                 "kelvin" => val + BigRational.Parse("273.15"),
                 "rankine" => (val * 9 / 5) + BigRational.Parse("491.67"),
-                _ => Constants.Vars["NaN"],
+                _ => BigComplex.NaN,
             };
         }
     }
@@ -488,12 +488,12 @@ public static class Misc
     public static BigComplex Sum(Dictionary<string, BigComplex> vars, params string[] args)
     {
         if (args.Length != 3)
-            return Constants.Vars["NaN"];
+            return BigComplex.NaN;
         //sum (i = start, end, equation)
         string[] startText = args[0].Replace(" ", "").Split('=');
 
         if (startText.Length != 2)
-            return Constants.Vars["NaN"];
+            return BigComplex.NaN;
 
         string varName = startText[0];
         BigInteger start = (BigInteger)new Equation(startText[1], vars).Solve().Real;
@@ -518,12 +518,12 @@ public static class Misc
     public static BigComplex Product(Dictionary<string, BigComplex> vars, params string[] args)
     {
         if (args.Length != 3)
-            return Constants.Vars["NaN"];
+            return BigComplex.NaN;
         //product (i = start, end, equation)
         string[] startText = args[0].Replace(" ", "").Split('=');
 
         if (startText.Length != 2)
-            return Constants.Vars["NaN"];
+            return BigComplex.NaN;
 
         string varName = startText[0];
         BigInteger start = (BigInteger)new Equation(startText[1], vars).Solve().Real;
@@ -549,7 +549,7 @@ public static class Misc
     public static BigComplex Integral(Dictionary<string, BigComplex> vars, params string[] args)
     {
         if (args.Length < 4)
-            return Constants.Vars["NaN"];
+            return BigComplex.NaN;
 
         string variableName = args.Length > 4 ? args[4].Trim(' ') : "x";
 
@@ -581,7 +581,7 @@ public static class Misc
     public static BigComplex Derivative(Dictionary<string, BigComplex> vars, params string[] args)
     {
         if (args.Length < 3)
-            return Constants.Vars["NaN"];
+            return BigComplex.NaN;
 
         string varname = "x";
 
@@ -642,8 +642,8 @@ public static class Misc
     public static BigComplex Repeat(Dictionary<string, BigComplex> vars, params string[] args)
     {
         if (args.Length < 4)
-            return Constants.Vars["NaN"];
-        Equation eq = new Equation(args[0], vars);
+            return BigComplex.NaN;
+        Equation eq = new(args[0], vars);
 
         var initialVal = new Equation(args[3], vars).Solve();
         args[2] = args[2].Replace(" ", "");

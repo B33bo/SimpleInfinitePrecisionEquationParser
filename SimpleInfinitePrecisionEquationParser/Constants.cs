@@ -16,7 +16,7 @@ internal static class Constants
         { "i", new(0, 1) },
         { "one", 1 },
         { "zero", 0 },
-        { "NaN", (BigRational)0 / (BigRational)0 },
+        { "NaN", BigComplex.NaN },
         { "true", BigComplex.True },
         { "false", BigComplex.False },
         { "version", Equation.Version },

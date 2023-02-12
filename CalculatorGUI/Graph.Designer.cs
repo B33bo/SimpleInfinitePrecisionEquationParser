@@ -46,7 +46,6 @@
             this.middle = new System.Windows.Forms.Label();
             this.loadingBar = new System.Windows.Forms.ProgressBar();
             this.label5 = new System.Windows.Forms.Label();
-            this.resBox = new System.Windows.Forms.TextBox();
             this.button2 = new System.Windows.Forms.Button();
             this.sweep = new System.Windows.Forms.CheckBox();
             this.lineWidthText = new System.Windows.Forms.Label();
@@ -57,10 +56,13 @@
             this.equationBox = new System.Windows.Forms.ComboBox();
             this.label7 = new System.Windows.Forms.Label();
             this.threadsPerPlot = new System.Windows.Forms.NumericUpDown();
+            this.renderAxis = new System.Windows.Forms.CheckBox();
+            this.resBox = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.graphImageBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.lineWidthSlider)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.colorBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.threadsPerPlot)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.resBox)).BeginInit();
             this.SuspendLayout();
             // 
             // graphImageBox
@@ -246,7 +248,7 @@
             // loadingBar
             // 
             this.loadingBar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.loadingBar.Location = new System.Drawing.Point(530, 468);
+            this.loadingBar.Location = new System.Drawing.Point(528, 303);
             this.loadingBar.Name = "loadingBar";
             this.loadingBar.Size = new System.Drawing.Size(258, 23);
             this.loadingBar.TabIndex = 10;
@@ -263,16 +265,6 @@
             this.label5.Size = new System.Drawing.Size(84, 21);
             this.label5.TabIndex = 4;
             this.label5.Text = "Resolution";
-            // 
-            // resBox
-            // 
-            this.resBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.resBox.Location = new System.Drawing.Point(620, 185);
-            this.resBox.Name = "resBox";
-            this.resBox.Size = new System.Drawing.Size(168, 23);
-            this.resBox.TabIndex = 6;
-            this.resBox.Text = "128";
-            this.resBox.TextChanged += new System.EventHandler(this.ChangeRes);
             // 
             // button2
             // 
@@ -291,11 +283,11 @@
             this.sweep.AutoSize = true;
             this.sweep.Checked = true;
             this.sweep.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.sweep.Font = new System.Drawing.Font("Segoe UI", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.sweep.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.sweep.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.sweep.Location = new System.Drawing.Point(530, 247);
+            this.sweep.Location = new System.Drawing.Point(533, 243);
             this.sweep.Name = "sweep";
-            this.sweep.Size = new System.Drawing.Size(88, 32);
+            this.sweep.Size = new System.Drawing.Size(75, 25);
             this.sweep.TabIndex = 8;
             this.sweep.Text = "Sweep";
             this.sweep.UseVisualStyleBackColor = true;
@@ -308,7 +300,7 @@
             this.lineWidthText.CausesValidation = false;
             this.lineWidthText.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.lineWidthText.ForeColor = System.Drawing.Color.White;
-            this.lineWidthText.Location = new System.Drawing.Point(530, 283);
+            this.lineWidthText.Location = new System.Drawing.Point(528, 271);
             this.lineWidthText.Name = "lineWidthText";
             this.lineWidthText.Size = new System.Drawing.Size(85, 21);
             this.lineWidthText.TabIndex = 4;
@@ -317,7 +309,7 @@
             // lineWidthSlider
             // 
             this.lineWidthSlider.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.lineWidthSlider.Location = new System.Drawing.Point(620, 286);
+            this.lineWidthSlider.Location = new System.Drawing.Point(618, 274);
             this.lineWidthSlider.Minimum = new decimal(new int[] {
             1,
             0,
@@ -331,7 +323,7 @@
             0,
             0,
             0});
-            this.lineWidthSlider.ValueChanged += new System.EventHandler(this.ChangeLineWidth);
+            this.lineWidthSlider.ValueChanged += new System.EventHandler(this.ChangeRes);
             // 
             // pointerPos
             // 
@@ -339,7 +331,7 @@
             this.pointerPos.AutoSize = true;
             this.pointerPos.Font = new System.Drawing.Font("Segoe UI", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.pointerPos.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.pointerPos.Location = new System.Drawing.Point(530, 402);
+            this.pointerPos.Location = new System.Drawing.Point(528, 409);
             this.pointerPos.Name = "pointerPos";
             this.pointerPos.Size = new System.Drawing.Size(50, 28);
             this.pointerPos.TabIndex = 11;
@@ -391,7 +383,7 @@
             this.label7.CausesValidation = false;
             this.label7.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.label7.ForeColor = System.Drawing.Color.White;
-            this.label7.Location = new System.Drawing.Point(530, 439);
+            this.label7.Location = new System.Drawing.Point(528, 468);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(122, 21);
             this.label7.TabIndex = 4;
@@ -400,7 +392,7 @@
             // threadsPerPlot
             // 
             this.threadsPerPlot.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.threadsPerPlot.Location = new System.Drawing.Point(658, 439);
+            this.threadsPerPlot.Location = new System.Drawing.Point(656, 468);
             this.threadsPerPlot.Minimum = new decimal(new int[] {
             1,
             0,
@@ -415,12 +407,46 @@
             0,
             0});
             // 
+            // renderAxis
+            // 
+            this.renderAxis.AutoSize = true;
+            this.renderAxis.Checked = true;
+            this.renderAxis.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.renderAxis.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.renderAxis.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.renderAxis.Location = new System.Drawing.Point(533, 440);
+            this.renderAxis.Name = "renderAxis";
+            this.renderAxis.Size = new System.Drawing.Size(111, 25);
+            this.renderAxis.TabIndex = 14;
+            this.renderAxis.Text = "Render Axis";
+            this.renderAxis.UseVisualStyleBackColor = true;
+            // 
+            // resBox
+            // 
+            this.resBox.Location = new System.Drawing.Point(618, 187);
+            this.resBox.Maximum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            0});
+            this.resBox.Name = "resBox";
+            this.resBox.Size = new System.Drawing.Size(168, 23);
+            this.resBox.TabIndex = 15;
+            this.resBox.Value = new decimal(new int[] {
+            512,
+            0,
+            0,
+            0});
+            this.resBox.ValueChanged += new System.EventHandler(this.ChangeRes);
+            // 
             // Graph
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.ClientSize = new System.Drawing.Size(800, 532);
+            this.Controls.Add(this.resBox);
+            this.Controls.Add(this.renderAxis);
             this.Controls.Add(this.equationBox);
             this.Controls.Add(this.colorBox);
             this.Controls.Add(this.pointerPos);
@@ -433,7 +459,6 @@
             this.Controls.Add(this.middle);
             this.Controls.Add(this.bottomRight);
             this.Controls.Add(this.bottomLeft);
-            this.Controls.Add(this.resBox);
             this.Controls.Add(this.YOffset);
             this.Controls.Add(this.XOffset);
             this.Controls.Add(this.label7);
@@ -456,6 +481,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.lineWidthSlider)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.colorBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.threadsPerPlot)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.resBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -480,7 +506,6 @@
         private Label middle;
         private ProgressBar loadingBar;
         private Label label5;
-        private TextBox resBox;
         private Button button2;
         private CheckBox sweep;
         private Label lineWidthText;
@@ -491,5 +516,7 @@
         private ComboBox equationBox;
         private Label label7;
         private NumericUpDown threadsPerPlot;
+        private CheckBox renderAxis;
+        private NumericUpDown resBox;
     }
 }

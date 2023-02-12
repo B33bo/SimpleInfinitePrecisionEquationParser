@@ -6,7 +6,7 @@ namespace CalculatorGUI;
 
 public partial class Graph : Form
 {
-    private int truewidth = 128, trueheight = 128;
+    private int truewidth = 512, trueheight = 512;
     private BigRational xoffset = 0, yoffset = 0;
     private BigRational width = 2, height = 2;
 
@@ -130,7 +130,16 @@ public partial class Graph : Form
 
             new Thread(() =>
             {
-                Equation eq = new(equation, Calculator.currentEquation.Variables);
+                Equation eq;
+                try
+                {
+                    eq = new(equation, Calculator.currentEquation.Variables);
+                }
+                catch (Exception)
+                {
+                    threadsWaiting--;
+                    return;
+                }
                 eq.SetVariable("x", 0);
                 eq.SetVariable("y", 0);
                 eq.SetVariable("pos", 0);
@@ -183,7 +192,15 @@ public partial class Graph : Form
         BigRational trueWidthToUnit = (width / truewidth);
         BigRational trueHeightToUnit = (height / truewidth);
 
-        Equation eq = new(equation, Calculator.currentEquation.Variables);
+        Equation eq;
+        try
+        {
+            eq = new(equation, Calculator.currentEquation.Variables);
+        }
+        catch (Exception)
+        {
+            return;
+        }
 
         eq.SetVariable("x", 0);
         eq.SetVariable("y", 0);
@@ -199,7 +216,16 @@ public partial class Graph : Form
             BigRational x = left + trueX * trueWidthToUnit;
             eq.Variables["x"] = x;
             eq.Variables["pos"] = new BigComplex(x, 0);
-            BigRational output = eq.Solve().Real;
+
+            BigRational output;
+            try
+            {
+                output = eq.Solve().Real;
+            }
+            catch (Exception)
+            {
+                return;
+            }
 
             if (output > int.MaxValue || output < int.MinValue)
                 continue;
@@ -233,6 +259,7 @@ public partial class Graph : Form
 
     private Bitmap? GetBase(int midX, int midY)
     {
+        bool renderAxis = this.renderAxis.Checked;
         midY = trueheight - midY - 1;
         Bitmap bmp = new(truewidth, trueheight);
 
@@ -240,7 +267,7 @@ public partial class Graph : Form
         {
             for (int j = 0; j < trueheight; j++)
             {
-                if (i == midX || j == midY)
+                if ((i == midX || j == midY) && renderAxis)
                     bmp.SetPixel(i, j, Color.Gray);
                 else
                     bmp.SetPixel(i, j, Color.White);
@@ -251,14 +278,9 @@ public partial class Graph : Form
 
     private void ChangeRes(object sender, EventArgs e)
     {
-        if (!int.TryParse(resBox.Text, out int newRes))
-            return;
-        if (newRes <= 0)
-            return;
-
-        truewidth = newRes;
-        trueheight = newRes;
-        lineWidthSlider.Maximum = newRes;
+        truewidth = (int)resBox.Value;
+        trueheight = (int)resBox.Value;
+        lineWidthSlider.Maximum = (int)resBox.Value;
     }
 
     private void SaveAsPNG(object sender, EventArgs e)
@@ -365,31 +387,38 @@ public partial class Graph : Form
 
     private void ChangeAxis(object sender, EventArgs e)
     {
-        if (!BigComplex.TryParse(XOffset.Text, out BigComplex xoffset))
-            return;
-        if (!BigComplex.TryParse(YOffset.Text, out BigComplex yoffset))
-            return;
+        try
+        {
+            Calculator.currentEquation.LoadString(XOffset.Text);
+            xoffset = Calculator.currentEquation.Solve().Real;
 
-        if (!BigComplex.TryParse(widthText.Text, out BigComplex width))
-            return;
-        if (!BigComplex.TryParse(heightText.Text, out BigComplex height))
-            return;
+            Calculator.currentEquation.LoadString(YOffset.Text);
+            yoffset = Calculator.currentEquation.Solve().Real;
 
-        this.width = width.Real;
-        this.height = height.Real;
-        this.xoffset = xoffset.Real;
-        this.yoffset = yoffset.Real;
+            Calculator.currentEquation.LoadString(widthText.Text);
+            width = Calculator.currentEquation.Solve().Real;
+
+            Calculator.currentEquation.LoadString(heightText.Text);
+            height = Calculator.currentEquation.Solve().Real;
+        }
+        catch (Exception)
+        {
+            xoffset = BigComplex.NaN.Real;
+            yoffset = BigComplex.NaN.Real;
+            width = BigComplex.NaN.Real;
+            height = BigComplex.NaN.Real;
+        }
 
         var left = xoffset - (width / 2);
         var right = xoffset + (width / 2);
         var up = yoffset + (height / 2);
         var down = yoffset - (height / 2);
 
-        topLeft.Text = $"({left.Real}, {up.Real})";
-        bottomLeft.Text = $"({left.Real}, {down.Real})";
-        topRight.Text = $"({right.Real}, {up.Real})";
-        bottomRight.Text = $"({right.Real}, {down.Real})";
-        middle.Text = $"({xoffset.Real}, {yoffset.Real})";
+        topLeft.Text = $"({left}, {up})";
+        bottomLeft.Text = $"({left}, {down})";
+        topRight.Text = $"({right}, {up})";
+        bottomRight.Text = $"({right}, {down})";
+        middle.Text = $"({xoffset}, {yoffset})";
     }
 
     private class Plot

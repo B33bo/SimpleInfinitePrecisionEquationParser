@@ -12,6 +12,7 @@ public struct BigComplex
     public static readonly BigComplex True = new(true);
     public static readonly BigComplex False = new(false);
     public static readonly BigComplex Infinity = new(true, 1, 0);
+    public static readonly BigComplex NaN = new((BigRational)0 / 0, 0);
 
     public BigRational Real { get; set; }
     public BigRational Imaginary { get; set; }
@@ -258,7 +259,8 @@ public struct BigComplex
 
     public string ToString(int precision)
     {
-        if (Real == Constants.Vars["NaN"].Real || Imaginary == Constants.Vars["NaN"].Real)
+        if (Real == NaN.Real || Imaginary == NaN.Real)
+            // BigRational.IsNan doesn't work
             return "NaN";
 
         if (IsBoolean)

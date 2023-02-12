@@ -62,7 +62,7 @@ public static class FunctionLoader
             for (int i = 0; i < answers.Length; i++)
             {
                 if (answers[i].IsInfinity)
-                    return Constants.Vars["NaN"];
+                    return BigComplex.NaN;
             }
         }
 
