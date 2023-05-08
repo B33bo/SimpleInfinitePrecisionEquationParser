@@ -76,7 +76,11 @@ public static class FunctionLoader
     public static BigComplex SolveCustomFunction(string variableNameArgs, string equation, BigComplex[] args, Dictionary<string, BigComplex> variables)
     {
         Equation realEquation = new("", variables);
-        var varNameArgs = variableNameArgs.Split(',');
+        string[] varNameArgs;
+        if (string.IsNullOrEmpty(variableNameArgs))
+            varNameArgs = Array.Empty<string>();
+        else
+            varNameArgs = variableNameArgs.Split(',');
 
         for (int i = 0; i < varNameArgs.Length; i++)
         {

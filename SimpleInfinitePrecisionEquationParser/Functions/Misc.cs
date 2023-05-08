@@ -658,4 +658,37 @@ public static class Misc
 
         return eq.Solve();
     }
+
+    [Function("lcm", Args = "LCM(numbers)")]
+    public static BigComplex LCM(params BigComplex[] args)
+    {
+        if (args.Length == 1)
+            return args[0];
+        if (args.Length == 0)
+            return 1;
+        return Operators.Multiply(args) / GCD(args);
+    }
+
+    [Function("gcd", Args = "GCD(numbers)")]
+    public static BigComplex GCD(params BigComplex[] args)
+    {
+        if (args.Length == 1)
+            return args[0];
+        if (args.Length == 0)
+            return 1;
+
+        var gcd = CalculateGCD(args[0], args[1]);
+
+        for (int i = 2; i < args.Length; i++)
+            gcd = CalculateGCD(gcd, args[i]);
+
+        return gcd;
+
+        static BigComplex CalculateGCD(BigComplex num1, BigComplex num2)
+        {
+            if (num2 == 0)
+                return num1;
+            return CalculateGCD(num2, num1 % num2);
+        }
+    }
 }

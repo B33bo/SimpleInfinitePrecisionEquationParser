@@ -357,4 +357,24 @@ public class Misc
     {
         Assert.AreEqual(11, new Equation("For(let x = 0,x < 5,let x = x + 1,current+x,current,1)").Solve());
     }
+
+    [TestMethod]
+    public void LCM()
+    {
+        Assert.AreEqual(18, new Equation("lcm(9,6)").Solve());
+        Assert.AreEqual(6, new Equation("lcm(2,3)").Solve());
+        Assert.AreEqual(2, new Equation("lcm(2)").Solve());
+        Assert.AreEqual(1, new Equation("lcm()").Solve());
+        Assert.AreEqual(18, new Equation("lcm(9,6,3)").Solve());
+    }
+
+    [TestMethod]
+    public void GCD()
+    {
+        Assert.AreEqual(3, new Equation("gcd(9,6)").Solve());
+        Assert.AreEqual(1, new Equation("gcd(2,3)").Solve());
+        Assert.AreEqual(2, new Equation("gcd(2)").Solve());
+        Assert.AreEqual(1, new Equation("gcd()").Solve());
+        Assert.AreEqual(3, new Equation("gcd(9,6,12)").Solve());
+    }
 }
