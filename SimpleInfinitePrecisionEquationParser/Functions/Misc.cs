@@ -451,7 +451,7 @@ public static class Misc
     [Function("DataVal", Args = "DataVal(Real, Imaginary, Is Boolean, Is Infinity)", HandlesInfinity = true)]
     public static BigComplex DataVal(params BigComplex[] args)
     {
-        BigComplex data = new BigComplex();
+        BigComplex data = new();
 
         switch (args.Length)
         {
@@ -556,7 +556,7 @@ public static class Misc
         BigComplex start = new Equation(args[0], vars).Solve();
         BigComplex end = new Equation(args[1], vars).Solve();
         BigInteger intervals = (BigInteger)new Equation(args[2], vars).Solve().Real;
-        Equation equation = new Equation(args[3], vars);
+        Equation equation = new(args[3], vars);
 
         BigComplex sum = 0;
         BigComplex dx = (end - start) / new BigComplex(intervals, 0);
@@ -595,7 +595,7 @@ public static class Misc
         else
             vars.Add(varname, initial);
 
-        Equation eq = new Equation(args[0], vars);
+        Equation eq = new(args[0], vars);
         BigComplex epsilon = new Equation(args[1], vars).Solve();
 
         var first = eq.Solve();
@@ -620,7 +620,7 @@ public static class Misc
         else
             vars.Add(varname, current);
 
-        Equation eq = new Equation(args[0], vars); //let i = 0
+        Equation eq = new(args[0], vars); //let i = 0
         eq.Solve();
         eq.LoadString(keepRunning);
 
