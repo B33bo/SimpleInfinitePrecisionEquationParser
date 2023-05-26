@@ -7,14 +7,16 @@ public static class FunctionLoader
     public static string Operators = "";
     public static int HighestOperatorOrder = 0;
 
-    public static List<(FunctionAttribute, MethodInfo)>? loadedFunctions = null;
-    //public static Dictionary<string, Func<BigComplex[], BigComplex>> customFunctions = new();
-    public static Dictionary<string, (string equation, string varNameArgs)> customFunctions = new();
+    public static List<(FunctionAttribute, MethodInfo)> loadedFunctions = null;
+    public static Dictionary<string, (string equation, string varNameArgs)> customFunctions = new()
+    {
+        {"quadraticpos", (@"(-b+\(b^2-4*a*c))/(2*a)", "a,b,c") },
+        {"quadraticneg", (@"(-b-\(b^2-4*a*c))/(2*a)", "a,b,c") },
+    };
     private static Dictionary<char, int> getOperator = new();
 
     public static void AddFunction(string name, string variableNameArgs, string equation)
     {
-        //customFunctions.Add(name, args => SolveCustomFunction(variableNameArgs, equation, args));
         if (customFunctions.ContainsKey(name))
             customFunctions[name] = (equation, variableNameArgs);
         else
@@ -69,8 +71,7 @@ public static class FunctionLoader
         if (loadedFunctions[indexOfFunction].Item2.Invoke(null, new object[] { answers }) is BigComplex answer)
             return answer;
 
-        //TODO: Invalid Equation Exception
-        return BigComplex.Zero;
+        throw new InvalidEquationException();
     }
 
     public static BigComplex SolveCustomFunction(string variableNameArgs, string equation, BigComplex[] args, Dictionary<string, BigComplex> variables)
@@ -94,7 +95,7 @@ public static class FunctionLoader
         return realEquation.Solve();
     }
 
-    public static (FunctionAttribute oper, MethodInfo method) GetOperator(char op)
+    public static (FunctionAttribute info, MethodInfo method) GetOperator(char op)
     {
         loadedFunctions ??= LoadFunctions();
         return loadedFunctions[getOperator[op]];

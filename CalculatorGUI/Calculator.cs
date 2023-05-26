@@ -1,5 +1,7 @@
 using SIPEP;
 using SIPEP.Functions;
+using System.Numerics;
+using System.Text;
 
 namespace CalculatorGUI;
 
@@ -46,34 +48,75 @@ public partial class Calculator : Form
     {
         BigComplex answer;
 
-        if (debugMode)
+        try
         {
-            currentEquation.LoadString(equationTextBox.Text);
-            answer = currentEquation.Solve();
-        }
-        else
-        {
-            try
+            AnswerLabel.ForeColor = Color.White;
+
+            if (equationTextBox.Text.StartsWith(@"solve,"))
+                AnswerLabel.Text = GetSolutionString(equationTextBox.Text, out answer);
+            else
             {
-                currentEquation.LoadString(equationTextBox.Text);
-                answer = currentEquation.Solve();
-            }
-            catch (Exception)
-            {
-                AnswerLabel.Text = "Error";
-                AnswerLabel.ForeColor = Color.Red;
-                return;
+                answer = GetAnswer(equationTextBox.Text);
+                AnswerLabel.Text = answer.ToString(OutputDP);
             }
         }
+        catch (Exception)
+        {
+            AnswerLabel.Text = "Error";
+            AnswerLabel.ForeColor = Color.Red;
 
-        if (currentEquation.Variables.ContainsKey("ans"))
-            currentEquation.Variables["ans"] = answer;
-        else
-            currentEquation.Variables.Add("ans", answer);
+            if (debugMode)
+                throw;
 
-        AnswerLabel.Text = answer.ToString(OutputDP);
-        AnswerLabel.ForeColor = Color.White;
+            return;
+        }
+
+        currentEquation.SetVariable("ans", answer);
+
         precision.Value = Equation.DecimalPrecision;
+    }
+
+    private string GetSolutionString(string s, out BigComplex FirstResult)
+    {
+        // format: solve,varName,max,depth:
+        var argsString = s.Split(':')[0];
+        var args = argsString.Split(',');
+
+        currentEquation.LoadString(s.Substring(argsString.Length + 1));
+
+        double max = 100;
+        int depth = 20;
+        BigRational cutoff = BigRational.Parse("0.1");
+        bool realOnly = false;
+
+        if (args.Length >= 3)
+            max = double.Parse(args[2]);
+        if (args.Length >= 4)
+            depth = int.Parse(args[3]);
+        if (args.Length >= 5)
+            cutoff = BigRational.Parse(args[4]);
+        if (args.Length >= 6)
+            realOnly = bool.Parse(args[5]);
+
+        var solutions = currentEquation.FindSolutions(args[1], max, depth, cutoff, realOnly);
+
+        FirstResult = BigComplex.NaN;
+
+        if (solutions.Length == 0)
+            return "No Solutions";
+
+        FirstResult = solutions[0];
+
+        StringBuilder finalStr = new();
+        for (int i = 0; i < solutions.Length; i++)
+            finalStr.Append(solutions[i].ToString(OutputDP) + ", ");
+        return finalStr.Remove(finalStr.Length - 2, 2).ToString();
+    }
+
+    private static BigComplex GetAnswer(string s)
+    {
+        currentEquation.LoadString(s);
+        return currentEquation.Solve();
     }
 
     private void CopyToClipboard(object sender, EventArgs e)

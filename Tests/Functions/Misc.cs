@@ -275,7 +275,7 @@ public class Misc
         Assert.AreEqual(10, new Equation("Int(10.3)").Solve());
         Assert.AreEqual(10, new Equation("Int(10)").Solve());
         Assert.AreEqual(0, new Equation("Int(0)").Solve());
-        Assert.AreEqual(new BigComplex(0, -4), new Equation("Int(0.1i-4.2)").Solve());
+        Assert.AreEqual(new BigComplex(0, -4), new Equation("Int(0.1 + i * (-4.2))").Solve());
         Assert.AreEqual(0, new Equation("Int()").Solve());
     }
 
@@ -285,7 +285,7 @@ public class Misc
         Assert.AreEqual(BigRational.Parse(".2"), new Equation("Frac(2.2)").Solve());
         Assert.AreEqual(0, new Equation("Frac(2)").Solve());
         Assert.AreEqual(0, new Equation("Frac()").Solve());
-        Assert.AreEqual(new BigComplex(0, BigRational.Parse("-.1")), new Equation("Frac(3i-3.1)").Solve());
+        Assert.AreEqual(new BigComplex(0, BigRational.Parse("-.1")), new Equation("Frac(-3.1 * i + 2)").Solve());
     }
 
     [TestMethod]
@@ -361,11 +361,11 @@ public class Misc
     [TestMethod]
     public void LCM()
     {
-        Assert.AreEqual(18, new Equation("lcm(9,6)").Solve());
+        Assert.AreEqual(18, new Equation("lcm(9,6,3)").Solve());
         Assert.AreEqual(6, new Equation("lcm(2,3)").Solve());
+        Assert.AreEqual(18, new Equation("lcm(9,6)").Solve());
         Assert.AreEqual(2, new Equation("lcm(2)").Solve());
         Assert.AreEqual(1, new Equation("lcm()").Solve());
-        Assert.AreEqual(18, new Equation("lcm(9,6,3)").Solve());
     }
 
     [TestMethod]

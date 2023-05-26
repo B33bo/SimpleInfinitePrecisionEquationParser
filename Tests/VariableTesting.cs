@@ -8,7 +8,7 @@ public class VariableTesting
     [TestMethod]
     public void Vars()
     {
-        Equation e = new Equation("let x = 1");
+        Equation e = new("let x = 1");
         Assert.AreEqual(new BigComplex(1, 0), e.Solve());
         e.LoadString("x + 1");
         Assert.AreEqual(new BigComplex(2, 0), e.Solve());

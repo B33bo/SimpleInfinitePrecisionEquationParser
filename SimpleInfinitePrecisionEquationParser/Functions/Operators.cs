@@ -189,9 +189,11 @@ public static class Operators
         // use function N^x * Prod(N, k=1, k / (x + k))
         // where N = precision
 
-        BigInteger N = Equation.DecimalPrecision * 20;
+        BigInteger N;
         if (args.Length == 2)
             N = (BigInteger)args[1].Real;
+        else
+            N = Equation.DecimalPrecision * 20;
 
         var Nx = Pow(new BigComplex(N, 0), args[0]);
 

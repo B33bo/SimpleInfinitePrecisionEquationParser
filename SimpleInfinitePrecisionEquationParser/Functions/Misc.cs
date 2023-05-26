@@ -666,7 +666,17 @@ public static class Misc
             return args[0];
         if (args.Length == 0)
             return 1;
-        return Operators.Multiply(args) / GCD(args);
+
+        var lcm = CalculateLCM(args[0], args[1]);
+        for (int i = 2; i < args.Length; i++)
+            lcm = CalculateLCM(lcm, args[i]);
+
+        return lcm;
+
+        static BigComplex CalculateLCM(BigComplex num1, BigComplex num2)
+        {
+            return (num1 * num2) / GCD(num1, num2);
+        }
     }
 
     [Function("gcd", Args = "GCD(numbers)")]

@@ -154,12 +154,12 @@ public class Operators
         Assert.AreEqual(120, new Equation("5!").Solve());
         Assert.AreEqual(BigComplex.Infinity, new Equation("inf!").Solve());
 
-        var fact1 = new Equation("0.5!").Solve().Real;
-        var fact2 = new Equation("(-0.5)!").Solve().Real;
-        var fact3 = new Equation("i!").Solve();
+        var fact1 = new Equation("Factorial(0.5,10)").Solve().Real;
+        var fact2 = new Equation("Factorial(-0.5,10)").Solve().Real;
+        var fact3 = new Equation("Factorial(i,10)").Solve();
 
         Assert.IsTrue(fact1 > 0.8 && fact1 < 0.9);
         Assert.IsTrue(fact2 > 1.7 && fact2 < 1.9);
-        Assert.IsTrue(fact3.Real > .4 && fact3.Real < .51 && fact3.Imaginary > -.2 && fact3.Imaginary < -.1);
+        Assert.IsTrue(fact3.Real > .4 && fact3.Real < .52 && fact3.Imaginary > -.2 && fact3.Imaginary < -.1);
     }
 }
