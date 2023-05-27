@@ -323,7 +323,7 @@
             0,
             0,
             0});
-            this.lineWidthSlider.ValueChanged += new System.EventHandler(this.ChangeRes);
+            this.lineWidthSlider.ValueChanged += new System.EventHandler(this.ChangeLineWidth);
             // 
             // pointerPos
             // 
