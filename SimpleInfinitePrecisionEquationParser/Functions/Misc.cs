@@ -214,7 +214,7 @@ public static class Misc
     [Function("Len", HandlesInfinity = true)]
     public static BigComplex Len(params BigComplex[] args) => args.Length;
 
-    [Function("Real")]
+    [Function("Re")]
     public static BigComplex Real(params BigComplex[] args)
     {
         if (args.Length == 0)
@@ -222,12 +222,12 @@ public static class Misc
         return args[0].Real;
     }
 
-    [Function("Imaginary")]
+    [Function("Im")]
     public static BigComplex Imaginary(params BigComplex[] args)
     {
         if (args.Length == 0)
             return 0;
-        return new(0, args[0].Imaginary);
+        return args[0].Imaginary;
     }
 
     [Function("Round", Args = "Round(number, nearest)", HandlesInfinity = true)]

@@ -159,17 +159,17 @@ public class Misc
     [TestMethod]
     public void Real()
     {
-        Assert.AreEqual(new BigComplex(BigRational.Parse(".5"), 0), new Equation("Real(.5)").Solve());
-        Assert.AreEqual(new BigComplex(3, 0), new Equation("Real(3i2)").Solve());
-        Assert.AreEqual(new BigComplex(0, 0), new Equation("Real()").Solve());
+        Assert.AreEqual(new BigComplex(BigRational.Parse(".5"), 0), new Equation("Re(.5)").Solve());
+        Assert.AreEqual(3, new Equation("Re(3i2)").Solve());
+        Assert.AreEqual(0, new Equation("Re()").Solve());
     }
 
     [TestMethod]
     public void Imaginary()
     {
-        Assert.AreEqual(new BigComplex(0, 0), new Equation("Imaginary(.5)").Solve());
-        Assert.AreEqual(new BigComplex(0, 2), new Equation("Imaginary(3i2)").Solve());
-        Assert.AreEqual(new BigComplex(0, 0), new Equation("Imaginary()").Solve());
+        Assert.AreEqual(0, new Equation("Im(.5)").Solve());
+        Assert.AreEqual(2, new Equation("Im(3i2)").Solve());
+        Assert.AreEqual(0, new Equation("Im()").Solve());
     }
 
     [TestMethod]
