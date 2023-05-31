@@ -58,6 +58,7 @@
             this.threadsPerPlot = new System.Windows.Forms.NumericUpDown();
             this.renderAxis = new System.Windows.Forms.CheckBox();
             this.resBox = new System.Windows.Forms.NumericUpDown();
+            this.button3 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.graphImageBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.lineWidthSlider)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.colorBox)).BeginInit();
@@ -269,7 +270,7 @@
             // button2
             // 
             this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button2.Location = new System.Drawing.Point(530, 497);
+            this.button2.Location = new System.Drawing.Point(530, 471);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(258, 23);
             this.button2.TabIndex = 7;
@@ -331,7 +332,7 @@
             this.pointerPos.AutoSize = true;
             this.pointerPos.Font = new System.Drawing.Font("Segoe UI", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.pointerPos.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.pointerPos.Location = new System.Drawing.Point(528, 409);
+            this.pointerPos.Location = new System.Drawing.Point(528, 383);
             this.pointerPos.Name = "pointerPos";
             this.pointerPos.Size = new System.Drawing.Size(50, 28);
             this.pointerPos.TabIndex = 11;
@@ -383,7 +384,7 @@
             this.label7.CausesValidation = false;
             this.label7.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.label7.ForeColor = System.Drawing.Color.White;
-            this.label7.Location = new System.Drawing.Point(528, 468);
+            this.label7.Location = new System.Drawing.Point(528, 442);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(122, 21);
             this.label7.TabIndex = 4;
@@ -392,7 +393,7 @@
             // threadsPerPlot
             // 
             this.threadsPerPlot.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.threadsPerPlot.Location = new System.Drawing.Point(656, 468);
+            this.threadsPerPlot.Location = new System.Drawing.Point(656, 442);
             this.threadsPerPlot.Minimum = new decimal(new int[] {
             1,
             0,
@@ -414,7 +415,7 @@
             this.renderAxis.CheckState = System.Windows.Forms.CheckState.Checked;
             this.renderAxis.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.renderAxis.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.renderAxis.Location = new System.Drawing.Point(533, 440);
+            this.renderAxis.Location = new System.Drawing.Point(533, 414);
             this.renderAxis.Name = "renderAxis";
             this.renderAxis.Size = new System.Drawing.Size(111, 25);
             this.renderAxis.TabIndex = 14;
@@ -438,6 +439,17 @@
             0,
             0});
             this.resBox.ValueChanged += new System.EventHandler(this.ChangeRes);
+            // 
+            // button3
+            // 
+            this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button3.Location = new System.Drawing.Point(530, 501);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(258, 23);
+            this.button3.TabIndex = 7;
+            this.button3.Text = "Switch to fractal";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.SwitchToFractal);
             // 
             // Graph
             // 
@@ -471,6 +483,7 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
+            this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.graphImageBox);
@@ -518,5 +531,6 @@
         private NumericUpDown threadsPerPlot;
         private CheckBox renderAxis;
         private NumericUpDown resBox;
+        private Button button3;
     }
 }

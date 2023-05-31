@@ -371,6 +371,12 @@ public partial class Graph : Form
         plots[currentPlot].LineWidth = (int)lineWidthSlider.Value;
     }
 
+    private void SwitchToFractal(object sender, EventArgs e)
+    {
+        new Fractal().Show();
+        Close();
+    }
+
     private void ResetMPos(object sender, MouseEventArgs e)
     {
         (double x, double y) mousePosPercent = ((double)e.Location.X / graphImageBox.Size.Width, (double)e.Location.Y / graphImageBox.Size.Height);

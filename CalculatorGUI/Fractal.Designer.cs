@@ -37,7 +37,6 @@
             this.bottomLeft = new System.Windows.Forms.Label();
             this.resBox = new System.Windows.Forms.TextBox();
             this.YOffset = new System.Windows.Forms.TextBox();
-            this.XOffset = new System.Windows.Forms.TextBox();
             this.scaleText = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
@@ -47,13 +46,16 @@
             this.button1 = new System.Windows.Forms.Button();
             this.equationBox = new System.Windows.Forms.TextBox();
             this.graphImageBox = new System.Windows.Forms.PictureBox();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.cutoffText = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.iterationsText = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.epsilonText = new System.Windows.Forms.TextBox();
+            this.XOffset = new System.Windows.Forms.TextBox();
+            this.renderTime = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.threadBox = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.graphImageBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -68,6 +70,7 @@
             // topLeft
             // 
             this.topLeft.AutoSize = true;
+            this.topLeft.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.topLeft.Location = new System.Drawing.Point(12, 10);
             this.topLeft.Name = "topLeft";
             this.topLeft.Size = new System.Drawing.Size(30, 15);
@@ -78,6 +81,7 @@
             // 
             this.topRight.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.topRight.AutoSize = true;
+            this.topRight.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.topRight.Location = new System.Drawing.Point(417, 10);
             this.topRight.Name = "topRight";
             this.topRight.Size = new System.Drawing.Size(30, 15);
@@ -88,6 +92,7 @@
             // 
             this.middle.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.middle.AutoSize = true;
+            this.middle.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.middle.Location = new System.Drawing.Point(243, 257);
             this.middle.Name = "middle";
             this.middle.Size = new System.Drawing.Size(30, 15);
@@ -98,6 +103,7 @@
             // 
             this.bottomRight.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.bottomRight.AutoSize = true;
+            this.bottomRight.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.bottomRight.Location = new System.Drawing.Point(494, 507);
             this.bottomRight.Name = "bottomRight";
             this.bottomRight.Size = new System.Drawing.Size(30, 15);
@@ -108,6 +114,7 @@
             // 
             this.bottomLeft.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bottomLeft.AutoSize = true;
+            this.bottomLeft.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.bottomLeft.Location = new System.Drawing.Point(12, 507);
             this.bottomLeft.Name = "bottomLeft";
             this.bottomLeft.Size = new System.Drawing.Size(30, 15);
@@ -131,15 +138,7 @@
             this.YOffset.Size = new System.Drawing.Size(187, 23);
             this.YOffset.TabIndex = 19;
             this.YOffset.Text = "0";
-            // 
-            // XOffset
-            // 
-            this.XOffset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.XOffset.Location = new System.Drawing.Point(601, 97);
-            this.XOffset.Name = "XOffset";
-            this.XOffset.Size = new System.Drawing.Size(187, 23);
-            this.XOffset.TabIndex = 13;
-            this.XOffset.Text = "0";
+            this.YOffset.TextChanged += new System.EventHandler(this.RecalcNums);
             // 
             // scaleText
             // 
@@ -148,7 +147,8 @@
             this.scaleText.Name = "scaleText";
             this.scaleText.Size = new System.Drawing.Size(200, 23);
             this.scaleText.TabIndex = 11;
-            this.scaleText.Text = "1";
+            this.scaleText.Text = "3";
+            this.scaleText.TextChanged += new System.EventHandler(this.RecalcNums);
             // 
             // label5
             // 
@@ -210,6 +210,7 @@
             this.button2.TabIndex = 26;
             this.button2.Text = "Save as Image";
             this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.SaveAsImage);
             // 
             // button1
             // 
@@ -229,7 +230,7 @@
             this.equationBox.Name = "equationBox";
             this.equationBox.Size = new System.Drawing.Size(258, 23);
             this.equationBox.TabIndex = 9;
-            this.equationBox.Text = "z^2";
+            this.equationBox.Text = "z^2+c";
             // 
             // graphImageBox
             // 
@@ -243,18 +244,6 @@
             this.graphImageBox.Size = new System.Drawing.Size(512, 512);
             this.graphImageBox.TabIndex = 8;
             this.graphImageBox.TabStop = false;
-            // 
-            // comboBox1
-            // 
-            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Items.AddRange(new object[] {
-            "Julia",
-            "Mandelbrot"});
-            this.comboBox1.Location = new System.Drawing.Point(530, 301);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(258, 23);
-            this.comboBox1.TabIndex = 28;
             // 
             // label2
             // 
@@ -322,27 +311,70 @@
             this.epsilonText.TabIndex = 21;
             this.epsilonText.Text = "0.0001";
             // 
+            // XOffset
+            // 
+            this.XOffset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.XOffset.Location = new System.Drawing.Point(601, 97);
+            this.XOffset.Name = "XOffset";
+            this.XOffset.Size = new System.Drawing.Size(187, 23);
+            this.XOffset.TabIndex = 19;
+            this.XOffset.Text = "0";
+            this.XOffset.TextChanged += new System.EventHandler(this.RecalcNums);
+            // 
+            // renderTime
+            // 
+            this.renderTime.AutoSize = true;
+            this.renderTime.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.renderTime.Location = new System.Drawing.Point(530, 477);
+            this.renderTime.Name = "renderTime";
+            this.renderTime.Size = new System.Drawing.Size(0, 15);
+            this.renderTime.TabIndex = 28;
+            // 
+            // label8
+            // 
+            this.label8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label8.AutoSize = true;
+            this.label8.CausesValidation = false;
+            this.label8.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.label8.ForeColor = System.Drawing.Color.White;
+            this.label8.Location = new System.Drawing.Point(535, 303);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(65, 21);
+            this.label8.TabIndex = 14;
+            this.label8.Text = "Threads";
+            // 
+            // threadBox
+            // 
+            this.threadBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.threadBox.Location = new System.Drawing.Point(611, 301);
+            this.threadBox.Name = "threadBox";
+            this.threadBox.Size = new System.Drawing.Size(177, 23);
+            this.threadBox.TabIndex = 21;
+            this.threadBox.Text = "5";
+            // 
             // Fractal
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.ClientSize = new System.Drawing.Size(800, 532);
-            this.Controls.Add(this.comboBox1);
+            this.Controls.Add(this.renderTime);
             this.Controls.Add(this.loadingBar);
             this.Controls.Add(this.topLeft);
             this.Controls.Add(this.topRight);
             this.Controls.Add(this.middle);
             this.Controls.Add(this.bottomRight);
             this.Controls.Add(this.bottomLeft);
+            this.Controls.Add(this.threadBox);
             this.Controls.Add(this.epsilonText);
             this.Controls.Add(this.iterationsText);
             this.Controls.Add(this.cutoffText);
+            this.Controls.Add(this.label8);
             this.Controls.Add(this.resBox);
             this.Controls.Add(this.label7);
+            this.Controls.Add(this.XOffset);
             this.Controls.Add(this.YOffset);
             this.Controls.Add(this.label6);
-            this.Controls.Add(this.XOffset);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.scaleText);
             this.Controls.Add(this.label5);
@@ -355,6 +387,7 @@
             this.Controls.Add(this.graphImageBox);
             this.Name = "Fractal";
             this.Text = "Fractal";
+            this.Load += new System.EventHandler(this.Fractal_Load);
             ((System.ComponentModel.ISupportInitialize)(this.graphImageBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -371,7 +404,6 @@
         private Label bottomLeft;
         private TextBox resBox;
         private TextBox YOffset;
-        private TextBox XOffset;
         private TextBox scaleText;
         private Label label5;
         private Label label4;
@@ -381,12 +413,15 @@
         private Button button1;
         private TextBox equationBox;
         private PictureBox graphImageBox;
-        private ComboBox comboBox1;
         private Label label2;
         private TextBox cutoffText;
         private Label label6;
         private TextBox iterationsText;
         private Label label7;
         private TextBox epsilonText;
+        private TextBox XOffset;
+        private Label renderTime;
+        private Label label8;
+        private TextBox threadBox;
     }
 }

@@ -1,20 +1,20 @@
 ﻿using SIPEP;
-using SIPEP.Functions;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
+using System.Diagnostics;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace CalculatorGUI;
 
 public partial class Fractal : Form
 {
+    private static Color[,] currentBMP;
+    private static int threadsRunning;
+    private static int sectionsDone;
+
+    private int pixelScale, iterations, threads, rowsDone;
+    private BigComplex cutoff, scale, startPoint, epsilon, offset;
+
+    private BigRational UnitsPerPixel;
+
     public Fractal()
     {
         InitializeComponent();
@@ -22,11 +22,14 @@ public partial class Fractal : Form
 
     private void DrawFractal(object sender, EventArgs e)
     {
-        TryDrawFractal();
+        TryDrawFractal(out Bitmap? drawing);
+        graphImageBox.BackgroundImage?.Dispose();
+        graphImageBox.BackgroundImage = drawing;
     }
 
-    private bool TryDrawFractal()
+    private bool TryDrawFractal(out Bitmap? drawing)
     {
+        drawing = null;
         if (!BigComplex.TryParse(scaleText.Text, out scale))
             return false;
         if (!BigComplex.TryParse(XOffset.Text, out BigComplex xOffset))
@@ -39,103 +42,175 @@ public partial class Fractal : Form
             return false;
         if (!int.TryParse(iterationsText.Text, out iterations))
             return false;
+        if (!int.TryParse(threadBox.Text, out threads))
+            return false;
         if (!BigComplex.TryParse(epsilonText.Text, out epsilon))
             return false;
 
-        graphImageBox.BackgroundImage?.Dispose();
-        graphImageBox.BackgroundImage = GetJulia();
+        offset = new BigComplex(xOffset.Real, yOffset.Real);
+        drawing = GetJulia();
         return true;
     }
 
-    private static Color[,] currentBMP;
-    private static int threadsRunning;
+    private void SaveAsImage(object sender, EventArgs e)
+    {
+        var dialog = new SaveFileDialog()
+        {
+            Filter = "PNG|*.png|JPG|*.jpg|BITMAP|*.bmp",
+            Title = "Save graph",
+        };
 
-    private int pixelScale, iterations;
-    private BigComplex cutoff, scale, startPoint, epsilon;
-    private BigRational UnitsPerPixel;
+        if (dialog.ShowDialog() != DialogResult.OK)
+            return;
+
+        if (dialog.FileName == "")
+            return;
+
+        if (!TryDrawFractal(out Bitmap? drawing))
+            return;
+        switch (dialog.FilterIndex)
+        {
+            case 1:
+                drawing?.Save(dialog.FileName, System.Drawing.Imaging.ImageFormat.Jpeg);
+                break;
+            case 2:
+                drawing?.Save(dialog.FileName, System.Drawing.Imaging.ImageFormat.Png);
+                break;
+            case 3:
+                drawing?.Save(dialog.FileName, System.Drawing.Imaging.ImageFormat.Bmp);
+                break;
+        }
+        drawing?.Dispose();
+    }
+
+    private void Fractal_Load(object sender, EventArgs e)
+    {
+        TryDrawFractal(out Bitmap? drawing);
+        graphImageBox.BackgroundImage = drawing;
+    }
+
+    private void RecalcNums(object sender, EventArgs e)
+    {
+        if (!BigComplex.TryParse(scaleText.Text, out scale))
+            return;
+        if (!BigComplex.TryParse(XOffset.Text, out BigComplex xOffset))
+            return;
+        if (!BigComplex.TryParse(YOffset.Text, out BigComplex yOffset))
+            return;
+
+        BigRational left = -scale.Real / 2 + xOffset.Real;
+        BigRational right = scale.Real / 2 + xOffset.Real;
+        BigRational up = scale.Real / 2 + yOffset.Real;
+        BigRational down = -scale.Real / 2 + yOffset.Real;
+
+        topLeft.Text = $"({left},{up})";
+        bottomLeft.Text = $"({left},{down})";
+        topRight.Text = $"({right},{up})";
+        bottomRight.Text = $"({right},{down})";
+        middle.Text = $"({xOffset},{yOffset})";
+    }
+
     private Bitmap GetJulia()
     {
+        rowsDone = 0;
         loadingBar.Value = 0;
         loadingBar.Maximum = pixelScale;
-        startPoint -= scale / 2;
+
+        startPoint = -scale / 2;
+        startPoint.Imaginary -= scale.Real / 2; // why
+        startPoint += offset;
+
         BigComplex position = startPoint;
         UnitsPerPixel = scale.Real / pixelScale;
         currentBMP = new Color[pixelScale, pixelScale];
 
-        /*
-        for (int x = 0; x < pixelScale; x++)
-        {
-            position.Real = x * unitsPerPixel + startPoint.Real;
-            for (int y = 0; y < pixelScale; y++)
-            {
-                position.Imaginary = y * unitsPerPixel + startPoint.Imaginary;
-                bmp.SetPixel(x, pixelScale - y - 1, GetColor(position, iterations, cutoff, epsilon));
-                loadingBar.Value++;
-            }
-        }*/
+        Thread[] loadedThreads = new Thread[threads];
 
-        Thread[] threads = new Thread[pixelScale];
-        for (int i = 0; i < pixelScale; i++)
+        Stopwatch stopwatch = new();
+        stopwatch.Start();
+
+        threadsRunning = 1;
+        sectionsDone = 0;
+
+        Equation eq = new Equation(equationBox.Text);
+        eq.SetVariable("z", 0);
+
+        int lengthOfThread = pixelScale / threads;
+
+        for (int i = 0; i < threads; i++)
         {
-#nullable disable
-            ParameterizedThreadStart start = new(GetStrip);
-#nullable enable
-            threads[i] = new Thread(start);
+            ParameterizedThreadStart start = new(DoThread);
+            loadedThreads[i] = new Thread(start);
             threadsRunning++;
+
+            if (i == threads - 1)
+            {
+                //int remainingLength = pixelScale - );
+                loadedThreads[i].Start((i * lengthOfThread, new Equation(eq), lengthOfThread));
+            }
+            else
+                loadedThreads[i].Start((i * lengthOfThread, new Equation(eq), lengthOfThread));
         }
 
-        for (int i = 0; i < threads.Length; i++)
+        threadsRunning--;
+
+        while (threadsRunning > 0)
         {
-            Equation eq = new Equation(equationBox.Text);
-            eq.Variables.Add("z", 0);
-            threads[i].Start((i, eq));
+            renderTime.Text = stopwatch.Elapsed.ToString();
+            loadingBar.Value = rowsDone;
+            Update();
         }
 
-        while (threadsRunning != 0) {
-            loadingBar.Value = threads.Length - threadsRunning - 1;
-        }
+        stopwatch.Stop();
+        loadingBar.Value = loadingBar.Maximum;
+
         Bitmap bmp = new Bitmap(pixelScale, pixelScale);
 
         for (int x = 0; x < currentBMP.GetLength(0); x++)
         {
             for (int y = 0; y < currentBMP.GetLength(1); y++)
-            {
                 bmp.SetPixel(x, y, currentBMP[x, y]);
-            }
         }
+
         return bmp;
     }
 
-    private void GetStrip(object index)
+    private void DoThread(object? input) // has to be an object because it's threaded
     {
-        if (index is not ValueTuple<int, Equation> data)
-        {
-            threadsRunning--;
+        if (input is not ValueTuple<int, Equation, int> tuple)
             return;
-        }
 
-        int xIndex = data.Item1;
-        Equation eq = data.Item2;
+        int xIndex = tuple.Item1;
+        Equation eq = tuple.Item2;
+        int length = tuple.Item3;
 
-        BigComplex position = new(xIndex * UnitsPerPixel + startPoint.Real, 0);
-        //eq.Variables = Calculator.currentEquation.Variables;
-
-        for (int i = 0; i < pixelScale; i++)
+        for (int i = 0; i < length; i++)
         {
-            position.Imaginary = i * UnitsPerPixel + startPoint.Imaginary;
-            Color c = GetColor(position, iterations, cutoff.Real, epsilon.Real, eq);
-            lock (currentBMP)
-            {
-                currentBMP[xIndex, pixelScale - i - 1] = c;
-            }
+            GetStrip(xIndex + i, eq);
         }
 
         threadsRunning--;
     }
 
+    private void GetStrip(int xIndex, Equation eq)
+    {
+        BigComplex position = new(xIndex * UnitsPerPixel + startPoint.Real, 0);
+
+        for (int i = 0; i < pixelScale; i++)
+        {
+            position.Imaginary = i * UnitsPerPixel + startPoint.Imaginary;
+            Color c = GetColor(position, iterations, cutoff.Real, epsilon.Real, eq);
+            currentBMP[xIndex, pixelScale - i - 1] = c;
+        }
+
+        rowsDone++;
+    }
+
     private static Color GetColor(BigComplex position, int iterations, BigRational cutoff, BigRational epsilon, Equation eq)
     {
         BigComplex z = position;
+        eq.SetVariable("c", position);
+
         for (int i = 0; i < iterations; i++)
         {
             eq.Variables["z"] = z;
@@ -145,11 +220,16 @@ public partial class Fractal : Form
             z.Imaginary -= z.Imaginary % epsilon;
 
             if (z == 0)
-                return Color.Red;
+                return Color.Black;
+
+            if (BigRational.Abs(z.Real) + BigRational.Abs(z.Imaginary) > cutoff)
+            {
+                int darkness = (int)(i / (float)iterations * 255);
+                darkness = 255 - darkness;
+                return Color.FromArgb(darkness, darkness, darkness);
+            }
         }
 
-        bool realInRange = z.Real < cutoff && z.Real > -cutoff;
-        bool imaginaryInRange = z.Imaginary < cutoff && z.Imaginary > -cutoff;
-        return realInRange && imaginaryInRange ? Color.Red : Color.Blue;
+        return Color.Black;
     }
 }
