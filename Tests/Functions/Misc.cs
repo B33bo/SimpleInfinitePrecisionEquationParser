@@ -49,7 +49,7 @@ public class Misc
         var num3 = new Equation("log(8, 2)").Solve().Real;
         var num4 = new Equation("log(3i5, 3)").Solve();
 
-        Assert.AreEqual(new BigComplex(0, 0), new Equation("log()").Solve());
+        Assert.AreEqual(0, new Equation("log()").Solve());
         Assert.AreEqual(BigComplex.Infinity, new Equation("log(inf)").Solve());
 
         Assert.IsTrue(num1 > .6 && num1 < .7);
@@ -116,7 +116,7 @@ public class Misc
     public void Echo()
     {
         Assert.AreEqual(new BigComplex(12, 0), new Equation("Echo(12)").Solve());
-        Assert.AreEqual(new BigComplex(0, 0), new Equation("Echo()").Solve());
+        Assert.AreEqual(0, new Equation("Echo()").Solve());
         Assert.AreEqual(BigComplex.Infinity, new Equation("Echo(inf)").Solve());
     }
 
@@ -125,7 +125,7 @@ public class Misc
     {
         Assert.AreEqual(new BigComplex(2, 0), new Equation("Min(pi,12, 2, 14)").Solve());
         Assert.AreEqual(new BigComplex(2, 0), new Equation("Min(2)").Solve());
-        Assert.AreEqual(new BigComplex(0, 0), new Equation("Min()").Solve());
+        Assert.AreEqual(0, new Equation("Min()").Solve());
         Assert.AreEqual(-BigComplex.Infinity, new Equation("Min(3, -inf, 5)").Solve());
     }
 
@@ -134,7 +134,7 @@ public class Misc
     {
         Assert.AreEqual(new BigComplex(14, 0), new Equation("Max(pi,12, 2, 14)").Solve());
         Assert.AreEqual(new BigComplex(2, 0), new Equation("Max(2)").Solve());
-        Assert.AreEqual(new BigComplex(0, 0), new Equation("Max()").Solve());
+        Assert.AreEqual(0, new Equation("Max()").Solve());
         Assert.AreEqual(BigComplex.Infinity, new Equation("Max(3, inf, 5)").Solve());
     }
 
@@ -144,7 +144,7 @@ public class Misc
         Assert.AreEqual(new BigComplex(BigRational.Parse("5"), 0), new Equation("Mean(2,5, 8)").Solve());
         Assert.AreEqual(new BigComplex(BigRational.Parse("7.125"), 0), new Equation("Mean(.5,12, 2, 14)").Solve());
         Assert.AreEqual(new BigComplex(2, 0), new Equation("Mean(2)").Solve());
-        Assert.AreEqual(new BigComplex(0, 0), new Equation("Mean()").Solve());
+        Assert.AreEqual(0, new Equation("Mean()").Solve());
         Assert.AreEqual(BigComplex.Infinity, new Equation("Mean(0, 2, inf)").Solve());
     }
 
@@ -153,7 +153,7 @@ public class Misc
     {
         Assert.AreEqual(new BigComplex(5, 0), new Equation("Len(.5, 12, 2, 14, pi)").Solve());
         Assert.AreEqual(new BigComplex(1, 0), new Equation("Len(2)").Solve());
-        Assert.AreEqual(new BigComplex(0, 0), new Equation("Len()").Solve());
+        Assert.AreEqual(0, new Equation("Len()").Solve());
     }
 
     [TestMethod]
@@ -177,8 +177,8 @@ public class Misc
     {
         Assert.AreEqual(new BigComplex(1, 0), new Equation("Round(.5)").Solve());
         Assert.AreEqual(new BigComplex(3, 3), new Equation("Round(3.1i2.5, 3)").Solve());
-        Assert.AreEqual(new BigComplex(0, 0), new Equation("Round(.5, 2)").Solve());
-        Assert.AreEqual(new BigComplex(0, 0), new Equation("Round()").Solve());
+        Assert.AreEqual(0, new Equation("Round(.5, 2)").Solve());
+        Assert.AreEqual(0, new Equation("Round()").Solve());
         Assert.AreEqual(BigComplex.Infinity, new Equation("Round(inf)").Solve());
         Assert.AreEqual(0, new Equation("Round(2, inf)").Solve());
     }
@@ -186,12 +186,12 @@ public class Misc
     [TestMethod]
     public void Floor()
     {
-        Assert.AreEqual(new BigComplex(0, 0), new Equation("Floor(.9)").Solve());
-        Assert.AreEqual(new BigComplex(0, 0), new Equation("Floor(.2)").Solve());
-        Assert.AreEqual(new BigComplex(3, 0), new Equation("Floor(5, 3)").Solve());
+        Assert.AreEqual(0, new Equation("Floor(.9)").Solve());
+        Assert.AreEqual(0, new Equation("Floor(.2)").Solve());
+        Assert.AreEqual(3, new Equation("Floor(5, 3)").Solve());
         Assert.AreEqual(new BigComplex(3, 3), new Equation("Floor(4.5i4, 3)").Solve());
-        Assert.AreEqual(new BigComplex(0, 0), new Equation("Floor(.5, 2)").Solve());
-        Assert.AreEqual(new BigComplex(0, 0), new Equation("Floor()").Solve());
+        Assert.AreEqual(0, new Equation("Floor(.5, 2)").Solve());
+        Assert.AreEqual(0, new Equation("Floor()").Solve());
 
         Assert.AreEqual(BigComplex.Infinity, new Equation("Floor(inf)").Solve());
         Assert.AreEqual(0, new Equation("Floor(2, inf)").Solve());
@@ -206,7 +206,7 @@ public class Misc
         Assert.AreEqual(new BigComplex(6, 0), new Equation("Ceiling(4.5, 3)").Solve());
         Assert.AreEqual(new BigComplex(6, 6), new Equation("Ceiling(4.5i4, 3)").Solve());
         Assert.AreEqual(new BigComplex(2, 0), new Equation("Ceiling(.5, 2)").Solve());
-        Assert.AreEqual(new BigComplex(0, 0), new Equation("Ceiling()").Solve());
+        Assert.AreEqual(0, new Equation("Ceiling()").Solve());
 
         Assert.AreEqual(BigComplex.Infinity, new Equation("Ceiling(inf)").Solve());
         Assert.AreEqual(BigComplex.Infinity, new Equation("Ceiling(2, inf)").Solve());
@@ -218,7 +218,7 @@ public class Misc
     {
         Assert.AreEqual(new BigComplex(3, 0), new Equation("Halfway(1, 5)").Solve());
         Assert.AreEqual(new BigComplex(3, 0), new Equation("Halfway(0, 6)").Solve());
-        Assert.AreEqual(new BigComplex(0, 0), new Equation("Halfway()").Solve());
+        Assert.AreEqual(0, new Equation("Halfway()").Solve());
         Assert.AreEqual(new BigComplex(1, 0), new Equation("Halfway(2)").Solve());
         Assert.AreEqual(new BigComplex(1, 1), new Equation("Halfway(2, 0i2)").Solve());
     }
@@ -228,7 +228,7 @@ public class Misc
     {
         Assert.AreEqual(new BigComplex(BigRational.Parse("1.8"), 0), new Equation("Lerp(1, 5, .2)").Solve());
         Assert.AreEqual(new BigComplex(3, 0), new Equation("Lerp(0, 6, .5)").Solve());
-        Assert.AreEqual(new BigComplex(0, 0), new Equation("Lerp()").Solve());
+        Assert.AreEqual(0, new Equation("Lerp()").Solve());
         Assert.AreEqual(new BigComplex(2, 0), new Equation("Lerp(2)").Solve());
         Assert.AreEqual(new BigComplex(5, 0), new Equation("Lerp(0, 10)").Solve());
         Assert.AreEqual(new BigComplex(0, BigRational.Parse(".2")), new Equation("Lerp(0, i, .2)").Solve());
@@ -240,10 +240,10 @@ public class Misc
     public void Convert()
     {
         Assert.AreEqual(new BigComplex(10, 0), new Equation("Convert(1, centimeter, millimeter)").Solve());
-        Assert.AreEqual(new BigComplex(0, 10), new Equation("Convert(i, centimeter, millimeter)").Solve());
+        Assert.AreEqual(BigComplex.ImaginaryOne * 10, new Equation("Convert(i, centimeter, millimeter)").Solve());
         Assert.AreEqual(new BigComplex(500, 0), new Equation("Convert(5, centimeter)").Solve());
         Assert.AreEqual(new BigComplex(5, 0), new Equation("Convert(5)").Solve());
-        Assert.AreEqual(new BigComplex(0, 0), new Equation("Convert()").Solve());
+        Assert.AreEqual(0, new Equation("Convert()").Solve());
     }
 
     [TestMethod]
@@ -257,7 +257,7 @@ public class Misc
         Assert.IsTrue(ans2.Real > 274 && ans2.Real < 275);
         Assert.IsTrue(ans3.Real > 278 && ans3.Real < 279);
         Assert.AreEqual(new BigComplex(5, 0), new Equation("ConvertTemperature(5)").Solve());
-        Assert.AreEqual(new BigComplex(0, 0), new Equation("ConvertTemperature()").Solve());
+        Assert.AreEqual(0, new Equation("ConvertTemperature()").Solve());
         Assert.AreEqual(BigComplex.Infinity, new Equation("ConvertTemperature(inf, fahrenheit, kelvin)").Solve());
     }
 
@@ -304,10 +304,10 @@ public class Misc
     public void DataVal()
     {
         Assert.AreEqual(0, new Equation("DataVal()").Solve());
-        Assert.AreEqual(new BigComplex(0, 1), new Equation("DataVal(0,1)").Solve());
-        Assert.AreEqual(new BigComplex(0, 1), new Equation("DataVal(0,1, false)").Solve());
+        Assert.AreEqual(BigComplex.ImaginaryOne, new Equation("DataVal(0,1)").Solve());
+        Assert.AreEqual(BigComplex.ImaginaryOne, new Equation("DataVal(0,1, false)").Solve());
         Assert.IsTrue(new Equation("DataVal(1,0,true,0)").SolveBoolean());
-        Assert.AreEqual(new BigComplex(0, 1), new Equation("DataVal(0,1, false, false)").Solve());
+        Assert.AreEqual(BigComplex.ImaginaryOne, new Equation("DataVal(0,1, false, false)").Solve());
         Assert.AreEqual(BigComplex.Infinity, new Equation("DataVal(1,0, false, true)").Solve());
     }
 
