@@ -23,7 +23,7 @@ public static class FunctionLoader
             customFunctions.Add(name, (equation, variableNameArgs));
     }
 
-    public static BigComplex DoFunction(string functionName, string args, Dictionary<string, BigComplex> variables)
+    public static BigComplex DoFunction(string functionName, string args, Dictionary<string, Variable> variables)
     {
         loadedFunctions ??= LoadFunctions();
         int indexOfFunction = -1;
@@ -74,7 +74,7 @@ public static class FunctionLoader
         throw new InvalidEquationException();
     }
 
-    public static BigComplex SolveCustomFunction(string variableNameArgs, string equation, BigComplex[] args, Dictionary<string, BigComplex> variables)
+    public static BigComplex SolveCustomFunction(string variableNameArgs, string equation, BigComplex[] args, Dictionary<string, Variable> variables)
     {
         Equation realEquation = new("", variables);
         string[] varNameArgs;

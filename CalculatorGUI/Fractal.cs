@@ -12,12 +12,15 @@ public partial class Fractal : Form
 
     private int pixelScale, iterations, threads, rowsDone;
     private BigComplex cutoff, scale, startPoint, epsilon, offset;
+    private bool juliaMode;
 
     private BigRational UnitsPerPixel;
+    private BigComplex lastMousePos;
 
     public Fractal()
     {
         InitializeComponent();
+        juliaOrMandelbrot.SelectedIndex = 0;
     }
 
     private void DrawFractal(object sender, EventArgs e)
@@ -29,6 +32,7 @@ public partial class Fractal : Form
 
     private bool TryDrawFractal(out Bitmap? drawing)
     {
+        juliaMode = juliaOrMandelbrot.SelectedIndex == 1;
         drawing = null;
         if (!BigComplex.TryParse(scaleText.Text, out scale))
             return false;
@@ -50,6 +54,26 @@ public partial class Fractal : Form
         offset = new BigComplex(xOffset.Real, yOffset.Real);
         drawing = GetJulia();
         return true;
+    }
+
+    private void ResetMPos(object sender, MouseEventArgs e)
+    {
+        (double x, double y) mousePosPercent = ((double)e.Location.X / graphImageBox.Size.Width, (double)e.Location.Y / graphImageBox.Size.Height);
+        mousePosPercent.y = 1 - mousePosPercent.y;
+
+        BigComplex position = new(mousePosPercent.x * scale.Real, mousePosPercent.y * scale.Real);
+        lastMousePos = position;
+        position -= new BigComplex(scale.Real / 2, scale.Real / 2);
+        position += new BigComplex(offset.Real, offset.Imaginary);
+
+        string xAxis = position.Real.ToString("0.00");
+        string yAxis = position.Imaginary.ToString("0.00");
+        posText.Text = $"({xAxis},{yAxis})";
+    }
+
+    private void CopyMpos(object sender, EventArgs e)
+    {
+        Clipboard.SetText($"{lastMousePos.Real} + i*{lastMousePos.Imaginary}");
     }
 
     private void SaveAsImage(object sender, EventArgs e)
@@ -169,7 +193,7 @@ public partial class Fractal : Form
         for (int x = 0; x < currentBMP.GetLength(0); x++)
         {
             for (int y = 0; y < currentBMP.GetLength(1); y++)
-                bmp.SetPixel(x, y, currentBMP[x, y]);
+                bmp.SetPixel(x, pixelScale - y - 1, currentBMP[x, y]);
         }
 
         return bmp;
@@ -199,17 +223,18 @@ public partial class Fractal : Form
         for (int i = 0; i < pixelScale; i++)
         {
             position.Imaginary = i * UnitsPerPixel + startPoint.Imaginary;
-            Color c = GetColor(position, iterations, cutoff.Real, epsilon.Real, eq);
+            Color c = GetColor(position, iterations, cutoff.Real, epsilon.Real, juliaMode, eq);
             currentBMP[xIndex, pixelScale - i - 1] = c;
         }
 
         rowsDone++;
     }
 
-    private static Color GetColor(BigComplex position, int iterations, BigRational cutoff, BigRational epsilon, Equation eq)
+    private static Color GetColor(BigComplex position, int iterations, BigRational cutoff, BigRational epsilon, bool julia, Equation eq)
     {
-        BigComplex z = position;
+        BigComplex z = julia ? position : 0;
         eq.SetVariable("c", position);
+        eq.SetVariable("z", z);
 
         for (int i = 0; i < iterations; i++)
         {
@@ -225,8 +250,7 @@ public partial class Fractal : Form
             if (BigRational.Abs(z.Real) + BigRational.Abs(z.Imaginary) > cutoff)
             {
                 int darkness = (int)(i / (float)iterations * 255);
-                darkness = 255 - darkness;
-                return Color.FromArgb(darkness, darkness, darkness);
+                return Color.FromArgb(0, darkness, 255 - darkness);
             }
         }
 

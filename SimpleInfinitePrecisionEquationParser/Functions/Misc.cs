@@ -89,7 +89,7 @@ public static class Misc
         return Operators.Pow(Constants.E, args[0]);
     }
 
-    [Function("Rand", Args = "Rand(min, max, ?Seed)")]
+    [Function("Rand", Args = "Rand(min, max, ?Seed)", StaticFunction = false)]
     public static BigComplex Rand(params BigComplex[] args)
     {
         if (args.Length == 0)
@@ -133,10 +133,10 @@ public static class Misc
         return new BigComplex(realDiff, imagDiff);
     }
 
-    [Function("Crash")]
+    [Function("Crash", StaticFunction = false)]
     public static void Crash() { } // no arguments so it crashes
 
-    [Function("MaxDigits")]
+    [Function("MaxDigits", StaticFunction = false)]
     public static BigComplex MaxDigits(params BigComplex[] args)
     {
         if (args.Length == 1)
@@ -355,7 +355,7 @@ public static class Misc
     }
 
     [Function("ConvertTemperature", Args = "ConvertTemperature(num, fromUnit, toUnit)", StringArguments = true)]
-    public static BigComplex ConvertTemperature(Dictionary<string, BigComplex> vars, params string[] args)
+    public static BigComplex ConvertTemperature(Dictionary<string, Variable> vars, params string[] args)
     {
         if (args.Length == 0)
             return 0;
@@ -396,7 +396,7 @@ public static class Misc
         }
     }
 
-    [Function("Time", Args = "Time(unit)", HandlesInfinity = true)]
+    [Function("Time", Args = "Time(unit)", HandlesInfinity = true, StaticFunction = false)]
     public static BigComplex Time(params BigComplex[] args)
     {
         if (args.Length == 0)
@@ -429,7 +429,7 @@ public static class Misc
     }
 
     [Function("If", HandlesInfinity = true, StringArguments = true)]
-    public static BigComplex If(Dictionary<string, BigComplex> vars, params string[] args)
+    public static BigComplex If(Dictionary<string, Variable> vars, params string[] args)
     {
         if (args.Length == 0)
             return 0;
@@ -477,7 +477,7 @@ public static class Misc
     }
 
     [Function("StringLength", StringArguments = true)]
-    public static BigComplex StringLength(Dictionary<string, BigComplex> vars, params string[] args)
+    public static BigComplex StringLength(Dictionary<string, Variable> vars, params string[] args)
     {
         if (args.Length == 0)
             return -1;
@@ -485,7 +485,7 @@ public static class Misc
     }
 
     [Function("Sum", Args = "Sum(i = start, end, equation)", StringArguments = true)]
-    public static BigComplex Sum(Dictionary<string, BigComplex> vars, params string[] args)
+    public static BigComplex Sum(Dictionary<string, Variable> vars, params string[] args)
     {
         if (args.Length != 3)
             return BigComplex.NaN;
@@ -502,20 +502,20 @@ public static class Misc
         Equation eq = new(args[2], vars);
 
         if (!eq.Variables.ContainsKey(varName))
-            eq.Variables.Add(varName, 0);
+            eq.Variables.Add(varName, (BigComplex)0);
 
         BigComplex value = 0;
 
         for (BigInteger i = start; i <= end; i++)
         {
-            eq.Variables[varName] = (BigRational)i;
+            eq.Variables[varName] = (BigComplex)i;
             value += eq.Solve();
         }
         return value;
     }
 
     [Function("Product", Args = "Product(i = start, end, equation)", StringArguments = true)]
-    public static BigComplex Product(Dictionary<string, BigComplex> vars, params string[] args)
+    public static BigComplex Product(Dictionary<string, Variable> vars, params string[] args)
     {
         if (args.Length != 3)
             return BigComplex.NaN;
@@ -532,13 +532,13 @@ public static class Misc
         Equation eq = new(args[2], vars);
 
         if (!eq.Variables.ContainsKey(varName))
-            eq.Variables.Add(varName, 0);
+            eq.Variables.Add(varName, (BigComplex)0);
 
         BigComplex value = 1;
 
         for (BigInteger i = start; i <= end; i++)
         {
-            eq.Variables[varName] = (BigRational)i;
+            eq.Variables[varName] = (BigComplex)i;
             value *= eq.Solve();
         }
 
@@ -546,7 +546,7 @@ public static class Misc
     }
 
     [Function("Integral", Args = "Integral(start, end, intervals, equation, varname?)", StringArguments = true)]
-    public static BigComplex Integral(Dictionary<string, BigComplex> vars, params string[] args)
+    public static BigComplex Integral(Dictionary<string, Variable> vars, params string[] args)
     {
         if (args.Length < 4)
             return BigComplex.NaN;
@@ -564,7 +564,7 @@ public static class Misc
         var half = BigComplex.One / 2;
 
         if (!equation.Variables.ContainsKey(variableName))
-            equation.Variables.Add(variableName, 0);
+            equation.Variables.Add(variableName, (BigComplex)0);
 
         for (BigInteger i = 0; i < intervals; i++)
         {
@@ -578,7 +578,7 @@ public static class Misc
     }
 
     [Function("Derivative", Args = "Derivative(equation, epsilon, initial Variable, varname?)", StringArguments = true)]
-    public static BigComplex Derivative(Dictionary<string, BigComplex> vars, params string[] args)
+    public static BigComplex Derivative(Dictionary<string, Variable> vars, params string[] args)
     {
         if (args.Length < 3)
             return BigComplex.NaN;
@@ -606,7 +606,7 @@ public static class Misc
     }
 
     [Function("For", Args = "For(start, keep running, after iteration, equation, varname?, initial value?)", StringArguments = true)]
-    public static BigComplex For(Dictionary<string, BigComplex> vars, params string[] args)
+    public static BigComplex For(Dictionary<string, Variable> vars, params string[] args)
     {
         string varname = args.Length > 4 ? args[4].Trim(' ') : "current";
 
@@ -639,7 +639,7 @@ public static class Misc
     }
 
     [Function("Repeat", Args = "Repeat(equation, iterations, varname, initial value)", StringArguments = true)]
-    public static BigComplex Repeat(Dictionary<string, BigComplex> vars, params string[] args)
+    public static BigComplex Repeat(Dictionary<string, Variable> vars, params string[] args)
     {
         if (args.Length < 4)
             return BigComplex.NaN;

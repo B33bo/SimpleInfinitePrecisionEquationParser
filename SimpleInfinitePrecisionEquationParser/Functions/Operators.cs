@@ -105,7 +105,7 @@ public static class Operators
             BigRational theta = BigRational.Atan2(valueImaginary, valueReal, Equation.DecimalPrecision);
             BigRational newRho = exponentReal * theta + exponentImaginary * BigRational.Log(rho, precistion);
 
-            BigRational t = BigRational.Pow(rho, exponentReal, precistion) * BigRational.Pow(Constants.E, -exponentImaginary * theta, Equation.DecimalPrecision);
+            BigRational t = BigRational.Pow(rho, exponentReal, precistion) * BigRational.Pow(Constants.E.Real, -exponentImaginary * theta, Equation.DecimalPrecision);
 
             return new BigComplex(t * BigRational.Cos(newRho, Equation.DecimalPrecision), t * BigRational.Sin(newRho, Equation.DecimalPrecision));
         }

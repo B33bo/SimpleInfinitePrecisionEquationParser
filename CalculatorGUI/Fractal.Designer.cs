@@ -56,6 +56,8 @@
             this.renderTime = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.threadBox = new System.Windows.Forms.TextBox();
+            this.juliaOrMandelbrot = new System.Windows.Forms.ComboBox();
+            this.posText = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.graphImageBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -204,7 +206,7 @@
             // button2
             // 
             this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button2.Location = new System.Drawing.Point(530, 272);
+            this.button2.Location = new System.Drawing.Point(530, 301);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(258, 23);
             this.button2.TabIndex = 26;
@@ -244,6 +246,8 @@
             this.graphImageBox.Size = new System.Drawing.Size(512, 512);
             this.graphImageBox.TabIndex = 8;
             this.graphImageBox.TabStop = false;
+            this.graphImageBox.Click += new System.EventHandler(this.CopyMpos);
+            this.graphImageBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.ResetMPos);
             // 
             // label2
             // 
@@ -323,12 +327,14 @@
             // 
             // renderTime
             // 
+            this.renderTime.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.renderTime.AutoSize = true;
             this.renderTime.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.renderTime.Location = new System.Drawing.Point(530, 477);
             this.renderTime.Name = "renderTime";
-            this.renderTime.Size = new System.Drawing.Size(0, 15);
+            this.renderTime.Size = new System.Drawing.Size(31, 15);
             this.renderTime.TabIndex = 28;
+            this.renderTime.Text = "time";
             // 
             // label8
             // 
@@ -337,7 +343,7 @@
             this.label8.CausesValidation = false;
             this.label8.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.label8.ForeColor = System.Drawing.Color.White;
-            this.label8.Location = new System.Drawing.Point(535, 303);
+            this.label8.Location = new System.Drawing.Point(535, 332);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(65, 21);
             this.label8.TabIndex = 14;
@@ -346,11 +352,36 @@
             // threadBox
             // 
             this.threadBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.threadBox.Location = new System.Drawing.Point(611, 301);
+            this.threadBox.Location = new System.Drawing.Point(611, 330);
             this.threadBox.Name = "threadBox";
             this.threadBox.Size = new System.Drawing.Size(177, 23);
             this.threadBox.TabIndex = 21;
             this.threadBox.Text = "5";
+            // 
+            // juliaOrMandelbrot
+            // 
+            this.juliaOrMandelbrot.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.juliaOrMandelbrot.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.juliaOrMandelbrot.FormattingEnabled = true;
+            this.juliaOrMandelbrot.Items.AddRange(new object[] {
+            "Mandelbrot",
+            "Julia"});
+            this.juliaOrMandelbrot.Location = new System.Drawing.Point(530, 272);
+            this.juliaOrMandelbrot.Name = "juliaOrMandelbrot";
+            this.juliaOrMandelbrot.Size = new System.Drawing.Size(258, 23);
+            this.juliaOrMandelbrot.TabIndex = 29;
+            // 
+            // posText
+            // 
+            this.posText.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.posText.AutoSize = true;
+            this.posText.Font = new System.Drawing.Font("Segoe UI", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.posText.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.posText.Location = new System.Drawing.Point(530, 449);
+            this.posText.Name = "posText";
+            this.posText.Size = new System.Drawing.Size(50, 28);
+            this.posText.TabIndex = 30;
+            this.posText.Text = "(0,0)";
             // 
             // Fractal
             // 
@@ -358,6 +389,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.ClientSize = new System.Drawing.Size(800, 532);
+            this.Controls.Add(this.posText);
+            this.Controls.Add(this.juliaOrMandelbrot);
             this.Controls.Add(this.renderTime);
             this.Controls.Add(this.loadingBar);
             this.Controls.Add(this.topLeft);
@@ -423,5 +456,7 @@
         private Label renderTime;
         private Label label8;
         private TextBox threadBox;
+        private ComboBox juliaOrMandelbrot;
+        private Label posText;
     }
 }

@@ -15,6 +15,7 @@ public sealed class FunctionAttribute : Attribute
     public int Priority { get; set; } = 0;
     public bool HandlesInfinity { get; set; } = false;
     public bool StringArguments { get; set; } = false;
+    public bool StaticFunction { get; set; } = true;
 
     public OperatorStyle OperatorStyle { get; set; } = OperatorStyle.LeftAndRight;
 

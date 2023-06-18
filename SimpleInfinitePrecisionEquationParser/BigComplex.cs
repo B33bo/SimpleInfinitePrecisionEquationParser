@@ -92,6 +92,7 @@ public struct BigComplex
     public static implicit operator BigComplex(BigRational a) => new(a, 0);
     public static implicit operator BigComplex(int a) => new(a, 0);
     public static implicit operator BigComplex(bool a) => a ? True : False;
+    public static implicit operator BigComplex(BigInteger a) => new((BigRational)a, 0);
     public static explicit operator BigRational(BigComplex a) => a.Real;
 
     public static BigComplex operator /(BigComplex left, BigComplex right)

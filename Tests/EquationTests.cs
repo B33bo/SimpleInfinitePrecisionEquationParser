@@ -22,9 +22,9 @@ public class EquationTests
     [TestMethod]
     public void VariableTests()
     {
-        Assert.AreEqual(new BigComplex(2, 0), new Equation("one+one").Solve());
-        Assert.AreEqual(new BigComplex(1, 0), new Equation("one").Solve());
-        Assert.AreEqual(new BigComplex(25, 0), new Equation("num*num", new Dictionary<string, BigComplex>() { { "num", new BigComplex(5, 0)}  }).Solve());
+        Assert.AreEqual(new BigComplex(0, 2), new Equation("i+i").Solve());
+        Assert.AreEqual(new BigComplex(0, 1), new Equation("i").Solve());
+        Assert.AreEqual(new BigComplex(25, 0), new Equation("num*num", new Dictionary<string, Variable>() { { "num", new BigComplex(5, 0)}  }).Solve());
     }
 
     [TestMethod]
@@ -54,7 +54,7 @@ public class EquationTests
         e.Solve();
         e.LoadString("x + 5");
         Assert.AreEqual(new BigComplex(10, 0), e.Solve());
-        e.Variables["x"] = 3;
+        e.Variables["x"] = (BigComplex)3;
         Assert.AreEqual(new BigComplex(8, 0), e.Solve());
     }
 

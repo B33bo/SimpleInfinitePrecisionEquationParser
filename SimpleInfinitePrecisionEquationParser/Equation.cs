@@ -5,11 +5,11 @@ namespace SIPEP;
 
 public class Equation
 {
-    public static bool Radians = true;
-    public const int Version = 11;
+    public static bool Radians { get; set; } = true;
+    public const int Version = 12;
     public static int DecimalPrecision { get => BigRational.MaxDigits; set => BigRational.MaxDigits = value; }
 
-    public Dictionary<string, BigComplex> Variables = Constants.Vars;
+    public Dictionary<string, Variable> Variables = Constants.Vars;
     public string[] positionalVars = Array.Empty<string>();
 
     private List<(SectionType, object)> _data = new();
@@ -25,7 +25,7 @@ public class Equation
         AssignVariable // (x) = 3
     }
 
-    public Equation(string equationStr, Dictionary<string, BigComplex> variables = null)
+    public Equation(string equationStr, Dictionary<string, Variable> variables = null)
     {
         FunctionLoader.ReloadFunctions();
         if (variables is not null)
@@ -67,9 +67,13 @@ public class Equation
     public void SetVariable(string name, BigComplex data)
     {
         if (Variables.ContainsKey(name))
-            Variables[name] = data;
+        {
+            if (Variables[name].IsConstant)
+                return;
+            Variables[name] = new Variable(data, false);
+        }
         else
-            Variables.Add(name, data);
+            Variables.Add(name, new Variable(data, false));
     }
 
     private void Instructional(string str, ref List<(SectionType, object)> data)
@@ -160,8 +164,10 @@ public class Equation
                 {
                     // A thing in brackets could either be a nested equation: 1 + (2+2) OR parameters rand(0,5+5)
                     SectionType paramsOrEquation = SectionType.NestedEquation;
+
                     if (_data.Count != 0 && _data[^1].Item1 == SectionType.Function)
                         paramsOrEquation = SectionType.Parameters;
+
                     _data.Add((paramsOrEquation, current));
                     current = "";
                     continue;
@@ -266,17 +272,17 @@ public class Equation
             if (currentData[i].Item2 is not char operatorChar)
                 continue;
 
-            var operInfo = FunctionLoader.GetOperator(operatorChar);
-            if (operInfo.info.Priority != currentPemdas)
+            var (operatorInfo, methodInfo) = FunctionLoader.GetOperator(operatorChar);
+            if (operatorInfo.Priority != currentPemdas)
                 continue;
 
-            if (operInfo.info.OperatorStyle == OperatorStyle.None)
+            if (operatorInfo.OperatorStyle == OperatorStyle.None)
                 continue; //why even bother
 
             // 1 + 2
-            if (CheckOperatorStyle(OperatorStyle.LeftAndRight, operInfo.info.OperatorStyle, i, currentData))
+            if (CheckOperatorStyle(OperatorStyle.LeftAndRight, operatorInfo.OperatorStyle, i, currentData))
             {
-                var result = operInfo.method.Invoke(null, GetAsObjArray(ToNumber(i - 1, currentData), ToNumber(i + 1, currentData)));
+                var result = methodInfo.Invoke(null, GetAsObjArray(ToNumber(i - 1, currentData), ToNumber(i + 1, currentData)));
                 currentData[i] = (SectionType.Number, result);
                 currentData.RemoveAt(i - 1);
                 currentData.RemoveAt(i);
@@ -285,9 +291,9 @@ public class Equation
             }
 
             // 5!
-            if (CheckOperatorStyle(OperatorStyle.Left, operInfo.info.OperatorStyle, i, currentData))
+            if (CheckOperatorStyle(OperatorStyle.Left, operatorInfo.OperatorStyle, i, currentData))
             {
-                var result = operInfo.method.Invoke(null, GetAsObjArray(ToNumber(i - 1, currentData)));
+                var result = methodInfo.Invoke(null, GetAsObjArray(ToNumber(i - 1, currentData)));
                 currentData[i] = (SectionType.Number, result);
                 currentData.RemoveAt(i - 1);
                 i--;
@@ -295,9 +301,9 @@ public class Equation
             }
 
             // -45
-            if (CheckOperatorStyle(OperatorStyle.Right, operInfo.info.OperatorStyle, i, currentData))
+            if (CheckOperatorStyle(OperatorStyle.Right, operatorInfo.OperatorStyle, i, currentData))
             {
-                var result = operInfo.method.Invoke(null, GetAsObjArray(ToNumber(i + 1, currentData)));
+                var result = methodInfo.Invoke(null, GetAsObjArray(ToNumber(i + 1, currentData)));
                 currentData[i] = (SectionType.Number, result);
                 currentData.RemoveAt(i + 1);
                 i--;
@@ -352,10 +358,7 @@ public class Equation
             if (currentData[i + 1].Item2 is not BigComplex number)
                 throw new InvalidEquationException();
 
-            if (Variables.ContainsKey(varName))
-                Variables[varName] = number;
-            else
-                Variables.Add(varName, number);
+            SetVariable(varName, number);
             currentData.RemoveAt(i);
             i--;
         }
@@ -379,7 +382,7 @@ public class Equation
     {
         if (index < 0 || index >= data.Count)
             return false;
-        return data[index].Item1 == SectionType.Number || data[index].Item1 == SectionType.Variable || data[index].Item1 == SectionType.NestedEquation;
+        return data[index].Item1 != SectionType.Operators;
     }
 
     public bool SolveBoolean()
@@ -407,7 +410,7 @@ public class Equation
     private BigComplex GetVariable(string name)
     {
         if (name.StartsWith("-"))
-            return -Variables[name[1..]];
+            return -Variables[name[1..]].Data;
         return Variables[name];
     }
 
