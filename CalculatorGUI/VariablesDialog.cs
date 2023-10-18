@@ -44,7 +44,7 @@ namespace CalculatorGUI
             {
                 if (add.Result == "")
                     return;
-                Calculator.currentEquation.LoadString($"let {add.Result}");
+                Calculator.currentEquation.Parse($"let {add.Result}");
 
                 if (!Calculator.currentEquation.SolveBoolean())
                 {
@@ -91,7 +91,7 @@ namespace CalculatorGUI
                 if (edit.Result == "")
                     return;
 
-                Calculator.currentEquation.LoadString(edit.Result);
+                Calculator.currentEquation.Parse(edit.Result);
 
                 if (!Calculator.currentEquation.SolveBoolean())
                     return;

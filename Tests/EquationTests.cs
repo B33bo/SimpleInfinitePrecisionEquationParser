@@ -10,6 +10,7 @@ public class EquationTests
     {
         Assert.AreEqual(new BigComplex(2, 0), new Equation("1+    1").Solve());
         Assert.AreEqual(new BigComplex(2, 0), new Equation("Add(1,1)").Solve());
+        Assert.AreEqual(new BigComplex(3, 0), new Equation("3,-2").Solve());
     }
 
     [TestMethod]
@@ -39,11 +40,11 @@ public class EquationTests
     {
         var e = new Equation("let x = 3");
         Assert.AreEqual(new BigComplex(3, 0), e.Solve());
-        e.LoadString("let y = x + 1");
+        e.Parse("let y = x + 1");
         Assert.AreEqual(new BigComplex(4, 0), e.Solve());
-        e.LoadString("let f(q) = y + q");
+        e.Parse("let f(q) = y + q");
         e.Solve();
-        e.LoadString("f(4)");
+        e.Parse("f(4)");
         Assert.AreEqual(new BigComplex(8, 0), e.Solve());
     }
 
@@ -52,7 +53,7 @@ public class EquationTests
     {
         Equation e = new("let x = 5");
         e.Solve();
-        e.LoadString("x + 5");
+        e.Parse("x + 5");
         Assert.AreEqual(new BigComplex(10, 0), e.Solve());
         e.Variables["x"] = (BigComplex)3;
         Assert.AreEqual(new BigComplex(8, 0), e.Solve());
@@ -63,5 +64,49 @@ public class EquationTests
     {
         Equation e = new("stringlength(f(3,2), 3)");
         Assert.AreEqual(6, e.Solve());
+    }
+
+    [TestMethod]
+    public void Const()
+    {
+        Assert.IsTrue(new Equation("1+1").IsConstant);
+        Assert.IsTrue(new Equation("1+pi").IsConstant);
+        Assert.IsTrue(new Equation("1+(1+1)").IsConstant);
+        Assert.IsFalse(new Equation("1+(1+x)").IsConstant);
+        Assert.IsFalse(new Equation("x+(1+x)").IsConstant);
+    }
+
+    [TestMethod]
+    public void Simplify()
+    {
+        var eq = new Equation("(1+1)+x");
+        eq.Simplify();
+        Assert.AreEqual((BigComplex)2, eq.Data[0].data);
+
+        eq.Parse("(5 * 2)+x");
+        eq.Simplify();
+        Assert.AreEqual((BigComplex)10, eq.Data[0].data);
+
+        eq.Parse("deka+x");
+        eq.Simplify();
+        Assert.AreEqual((BigComplex)10, eq.Data[0].data);
+
+        eq.Parse("(2*2)+4+x");
+        eq.Simplify();
+        Assert.AreEqual((BigComplex)4, eq.Data[0].data);
+
+        eq.Parse("(2*deka)+4+x");
+        eq.Simplify();
+        Assert.AreEqual((BigComplex)20, eq.Data[0].data);
+
+        eq.Parse("(2*x)+4+x");
+        eq.Simplify();
+        Assert.AreEqual(Equation.SectionType.NestedEquation, eq.Data[0].type);
+    }
+
+    [TestMethod]
+    public void Capitilisation()
+    {
+        Assert.AreEqual(new Equation("ConvertTemperature()").Solve(), new Equation("convertTemperature()").Solve());
     }
 }

@@ -410,6 +410,7 @@
             // 
             // renderAxis
             // 
+            this.renderAxis.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.renderAxis.AutoSize = true;
             this.renderAxis.Checked = true;
             this.renderAxis.CheckState = System.Windows.Forms.CheckState.Checked;
@@ -424,6 +425,7 @@
             // 
             // resBox
             // 
+            this.resBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.resBox.Location = new System.Drawing.Point(618, 187);
             this.resBox.Maximum = new decimal(new int[] {
             1000000000,

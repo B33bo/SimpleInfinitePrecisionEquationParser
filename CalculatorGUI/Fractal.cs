@@ -157,6 +157,7 @@ public partial class Fractal : Form
         sectionsDone = 0;
 
         Equation eq = new Equation(equationBox.Text);
+        eq.Simplify();
         eq.SetVariable("z", 0);
 
         int lengthOfThread = pixelScale / threads;

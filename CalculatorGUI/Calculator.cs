@@ -10,7 +10,7 @@ public partial class Calculator : Form
 #nullable disable //it was annoying me
     public static Calculator Instance { get; set; }
     public static Equation currentEquation;
-    public const int Version = 12;
+    public const int Version = 13;
     private static bool answerPreview = true;
     private bool debugMode;
     private int OutputDP;
@@ -34,7 +34,7 @@ public partial class Calculator : Form
             return;
         try
         {
-            currentEquation.LoadString(equationTextBox.Text);
+            currentEquation.Parse(equationTextBox.Text);
             AnswerLabel.Text = currentEquation.Solve().ToString(OutputDP);
             precision.Value = Equation.DecimalPrecision;
         }
@@ -44,7 +44,7 @@ public partial class Calculator : Form
         }
     }
 
-    private void GetAnswer(object sender, EventArgs e)
+    private void GetAnswerClicked(object sender, EventArgs e)
     {
         BigComplex answer;
 
@@ -82,7 +82,7 @@ public partial class Calculator : Form
         var argsString = s.Split(':')[0];
         var args = argsString.Split(',');
 
-        currentEquation.LoadString(s.Substring(argsString.Length + 1));
+        currentEquation.Parse(s.Substring(argsString.Length + 1));
 
         double max = 100;
         int depth = 20;
@@ -115,7 +115,8 @@ public partial class Calculator : Form
 
     private static BigComplex GetAnswer(string s)
     {
-        currentEquation.LoadString(s);
+        currentEquation.Parse(s);
+        currentEquation.Simplify();
         return currentEquation.Solve();
     }
 
@@ -153,7 +154,7 @@ public partial class Calculator : Form
         {
             try
             {
-                currentEquation.LoadString(equationTextBox.Text);
+                currentEquation.Parse(equationTextBox.Text);
                 AnswerLabel.Text = currentEquation.Solve().ToString(OutputDP);
             }
             catch (Exception) { }
@@ -197,21 +198,21 @@ public partial class Calculator : Form
         if (FunctionLoader.loadedFunctions is null)
             throw new Exception();
 #nullable disable
-        FunctionLoader.loadedFunctions.Add((new FunctionAttribute("Close"), typeof(CustomFunctions).GetMethod("Close")));
+        FunctionLoader.loadedFunctions.Add(new Function(new FunctionAttribute("Close"), typeof(CustomFunctions).GetMethod("Close")));
 
-        FunctionAttribute ChangeColor = new FunctionAttribute("ChangeColor")
+        FunctionAttribute ChangeColor = new("ChangeColor")
         {
             Args = "ChangeColor(R, G, B)",
         };
 
-        FunctionLoader.loadedFunctions.Add((ChangeColor, typeof(CustomFunctions).GetMethod("ChangeColor")));
+        FunctionLoader.loadedFunctions.Add(new Function(ChangeColor, typeof(CustomFunctions).GetMethod("ChangeColor")));
 
-        FunctionAttribute ChangeTextColor = new FunctionAttribute("ChangeTextColor")
+        FunctionAttribute ChangeTextColor = new("ChangeTextColor")
         {
             Args = "ChangeTextColor(R, G, B)",
         };
 
-        FunctionLoader.loadedFunctions.Add((ChangeTextColor, typeof(CustomFunctions).GetMethod("ChangeTextColor")));
+        FunctionLoader.loadedFunctions.Add(new Function(ChangeTextColor, typeof(CustomFunctions).GetMethod("ChangeTextColor")));
 #nullable enable
     }
 

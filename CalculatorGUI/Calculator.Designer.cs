@@ -64,7 +64,6 @@
             this.equationTextBox.Name = "equationTextBox";
             this.equationTextBox.Size = new System.Drawing.Size(551, 52);
             this.equationTextBox.TabIndex = 0;
-            this.equationTextBox.Text = "1+1";
             this.equationTextBox.TextChanged += new System.EventHandler(this.EquationChanged);
             // 
             // AnswerLabel
@@ -91,7 +90,7 @@
             this.GetAnswerButton.TabIndex = 1;
             this.GetAnswerButton.Text = "=";
             this.GetAnswerButton.UseVisualStyleBackColor = true;
-            this.GetAnswerButton.Click += new System.EventHandler(this.GetAnswer);
+            this.GetAnswerButton.Click += new System.EventHandler(this.GetAnswerClicked);
             // 
             // IndentCountLabel
             // 

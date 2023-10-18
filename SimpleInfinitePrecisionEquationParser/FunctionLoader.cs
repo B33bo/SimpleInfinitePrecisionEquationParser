@@ -1,87 +1,116 @@
-﻿using System.Reflection;
+﻿using System.Linq;
+using System.Reflection;
 
 namespace SIPEP;
 
 public static class FunctionLoader
 {
-    public static string Operators = "";
-    public static int HighestOperatorOrder = 0;
+    public static string Operators { get; private set; } = "";
+    public static int HighestOperatorOrder { get; private set; } = 0;
 
-    public static List<(FunctionAttribute, MethodInfo)> loadedFunctions = null;
-    public static Dictionary<string, (string equation, string varNameArgs)> customFunctions = new()
+    public static List<Function> loadedFunctions = null;
+    public static Dictionary<string, CustomFunction> customFunctions = new()
     {
-        {"quadraticpos", (@"(-b+\(b^2-4*a*c))/(2*a)", "a,b,c") },
-        {"quadraticneg", (@"(-b-\(b^2-4*a*c))/(2*a)", "a,b,c") },
+        {"quadraticpos", new CustomFunction(@"(-b+\(b^2-4*a*c))/(2*a)", "a,b,c") },
+        {"quadraticneg", new CustomFunction(@"(-b-\(b^2-4*a*c))/(2*a)", "a,b,c") },
     };
     private static Dictionary<char, int> getOperator = new();
 
     public static void AddFunction(string name, string variableNameArgs, string equation)
     {
         if (customFunctions.ContainsKey(name))
-            customFunctions[name] = (equation, variableNameArgs);
+            customFunctions[name] = new CustomFunction(equation, variableNameArgs);
         else
-            customFunctions.Add(name, (equation, variableNameArgs));
+            customFunctions.Add(name, new CustomFunction(equation, variableNameArgs));
     }
 
-    public static BigComplex DoFunction(string functionName, string args, Dictionary<string, Variable> variables)
+    public static bool IsStringFunction(string name)
     {
-        loadedFunctions ??= LoadFunctions();
-        int indexOfFunction = -1;
+        int index = IndexOfFunction(name);
 
+        if (index < 0)
+            return false;
+        return loadedFunctions[index].FunctionInfo.StringArguments;
+    }
+
+    private static int IndexOfFunction(string functionName)
+    {
+        functionName = functionName.ToLower();
         for (int i = 0; i < loadedFunctions.Count; i++)
         {
-            if (loadedFunctions[i].Item1.FunctionName.ToLower() != functionName.ToLower())
+            if (functionName != loadedFunctions[i].FunctionInfo.FunctionName.ToLower())
                 continue;
-            indexOfFunction = i;
-            break;
+            return i;
         }
+        return -1;
+    }
 
-        var equations = SplitWithNonNestedEntries(args);
-        if (indexOfFunction >= 0)
-        {
-            if (loadedFunctions[indexOfFunction].Item1.StringArguments)
-            {
-                var stringFunctionAnswer = loadedFunctions[indexOfFunction].Item2.Invoke(null, new object[] { variables, equations });
-                if (stringFunctionAnswer is BigComplex stringFunctionAnswerBC)
-                    return stringFunctionAnswerBC;
-                throw new InvalidEquationException();
-            }
-        }
+    public static BigComplex DoStringFunction(string functionName, Dictionary<string, Variable> variables, string argsS)
+    {
+        int index = IndexOfFunction(functionName);
 
-        BigComplex[] answers = new BigComplex[equations.Length];
+        if (index < 0)
+            throw new InvalidEquationException();
 
-        for (int i = 0; i < equations.Length; i++)
-            answers[i] = new Equation(equations[i], variables).Solve();
+        var args = SplitWithNonNestedEntries(argsS);
+
+        var stringFunctionAnswer = loadedFunctions[index].Method.Invoke(null, new object[] { variables, args });
+
+        if (stringFunctionAnswer is not BigComplex stringFunctionAnswerBC)
+            throw new InvalidEquationException();
+
+        return stringFunctionAnswerBC;
+    }
+
+    public static BigComplex DoFunction(string functionName, string equation, Dictionary<string, Variable> variables)
+    {
+        loadedFunctions ??= LoadFunctions();
+        int indexOfFunction = IndexOfFunction(functionName);
+
+        BigComplex[] args = new Equation(equation, variables).SolveValues();
 
         if (customFunctions.ContainsKey(functionName))
-            return SolveCustomFunction(customFunctions[functionName].varNameArgs, customFunctions[functionName].equation, answers, variables);
+            return SolveCustomFunction(customFunctions[functionName], args, variables);
 
         if (indexOfFunction < 0)
             throw new InvalidEquationException();
 
-        if (!loadedFunctions[indexOfFunction].Item1.HandlesInfinity)
+        if (!loadedFunctions[indexOfFunction].FunctionInfo.HandlesInfinity)
         {
-            for (int i = 0; i < answers.Length; i++)
+            for (int i = 0; i < args.Length; i++)
             {
-                if (answers[i].IsInfinity)
+                if (args[i].IsInfinity)
                     return BigComplex.NaN;
             }
         }
 
-        if (loadedFunctions[indexOfFunction].Item2.Invoke(null, new object[] { answers }) is BigComplex answer)
+        if (loadedFunctions[indexOfFunction].Method.Invoke(null, new object[] { args }) is BigComplex answer)
             return answer;
 
         throw new InvalidEquationException();
     }
 
-    public static BigComplex SolveCustomFunction(string variableNameArgs, string equation, BigComplex[] args, Dictionary<string, Variable> variables)
+    public static bool IsFunctionStatic(string functionName)
+    {
+        if (customFunctions.ContainsKey(functionName))
+            return false;
+
+        int index = IndexOfFunction(functionName);
+
+        if (index < 0)
+            return false;
+
+        return loadedFunctions[index].FunctionInfo.StaticFunction;
+    }
+
+    public static BigComplex SolveCustomFunction(CustomFunction customFunction, BigComplex[] args, Dictionary<string, Variable> variables)
     {
         Equation realEquation = new("", variables);
         string[] varNameArgs;
-        if (string.IsNullOrEmpty(variableNameArgs))
+        if (string.IsNullOrEmpty(customFunction.VarNameArgs))
             varNameArgs = Array.Empty<string>();
         else
-            varNameArgs = variableNameArgs.Split(',');
+            varNameArgs = customFunction.VarNameArgs.Split(',');
 
         for (int i = 0; i < varNameArgs.Length; i++)
         {
@@ -91,11 +120,11 @@ public static class FunctionLoader
                 realEquation.Variables.Add(varNameArgs[i], args[i]);
         }
 
-        realEquation.LoadString(equation);
+        realEquation.Parse(customFunction.Equation);
         return realEquation.Solve();
     }
 
-    public static (FunctionAttribute info, MethodInfo method) GetOperator(char op)
+    public static Function GetOperator(char op)
     {
         loadedFunctions ??= LoadFunctions();
         return loadedFunctions[getOperator[op]];
@@ -106,36 +135,34 @@ public static class FunctionLoader
         loadedFunctions ??= LoadFunctions();
     }
 
-    private static string[] SplitWithNonNestedEntries(string s)
+    private static string[] SplitWithNonNestedEntries(string str)
     {
         List<string> val = new();
         string current = "";
         int nestCount = 0;
 
-        for (int i = 0; i < s.Length; i++)
+        for (int i = 0; i < str.Length; i++)
         {
-            if (s[i] == '(')
-            {
+            if (str[i] == '(')
                 nestCount++;
-            }
 
-            if (s[i] == ')')
+            if (str[i] == ')')
                 nestCount--;
 
             if (nestCount >= 1)
             {
-                current += s[i];
+                current += str[i];
                 continue;
             }
 
-            if (s[i] == ',')
+            if (str[i] == ',')
             {
                 val.Add(current);
                 current = "";
                 continue;
             }
 
-            current += s[i];
+            current += str[i];
         }
 
         if (current != "")
@@ -143,35 +170,32 @@ public static class FunctionLoader
         return val.ToArray();
     }
 
-    private static List<(FunctionAttribute, MethodInfo)> LoadFunctions()
+    private static List<Function> LoadFunctions()
     {
         getOperator = new Dictionary<char, int>();
-        List<(FunctionAttribute, MethodInfo)> functions = new();
+        List<Function> functions = new();
 
         foreach (var type in Assembly.GetExecutingAssembly().GetTypes())
         {
-            if (type.Namespace is null)
-                continue;
-            if (!type.Namespace.StartsWith("SIPEP.Functions"))
-                continue;
-
             foreach (var method in type.GetMethods())
             {
                 var attribute = method.GetCustomAttribute<FunctionAttribute>();
                 if (attribute is null)
                     continue;
-                if (attribute.Operator != '\0')
-                {
-                    getOperator.Add(attribute.Operator, functions.Count);
-                    Operators += attribute.Operator;
-                    if (attribute.Priority > HighestOperatorOrder)
-                        HighestOperatorOrder = attribute.Priority;
-                }
+                functions.Add(new Function(attribute, method));
 
-                functions.Add((attribute, method));
+                if (attribute.Operator == '\0')
+                    continue;
+
+                getOperator.Add(attribute.Operator, functions.Count - 1);
+                Operators += attribute.Operator;
+                if (attribute.Priority > HighestOperatorOrder)
+                    HighestOperatorOrder = attribute.Priority;
             }
         }
 
         return functions;
     }
 }
+public record class Function(FunctionAttribute FunctionInfo, MethodInfo Method);
+public record class CustomFunction(string Equation, string VarNameArgs);

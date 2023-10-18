@@ -58,14 +58,23 @@ public class Operators
     [TestMethod]
     public void MultiplyOperator()
     {
-        var c = new Equation("MultiplyOperator(180)").Solve();
-        var d = new Equation("180*").Solve();
-
         Assert.AreEqual(new BigComplex(80, 0), new Equation("MultiplyOperator(40, 2)").Solve());
-        Assert.IsTrue(c.Real > 3.1 && c.Real < 3.2);
-        Assert.IsTrue(d.Real > 3.1 && d.Real < 3.2);
+
+        Assert.AreEqual(new Equation("MultiplyOperator(5)").Solve(), (BigComplex)5);
+        Assert.AreEqual(new Equation("MultiplyOperator(2+3*i)").Solve(), new BigComplex(2, -3));
+
         Assert.AreEqual(new BigComplex(1, 0), new Equation("MultiplyOperator()").Solve());
         Assert.AreEqual(new BigComplex(6, 0), new Equation("MultiplyOperator(1, 2, 3)").Solve());
+    }
+
+    [TestMethod]
+    public void Conjugate()
+    {
+        Assert.AreEqual(new BigComplex(40, 0), new Equation("Conjugate(40)").Solve());
+        Assert.AreEqual(new BigComplex(2, 0), new Equation("Conjugate(2,3)").Solve());
+        Assert.AreEqual(new BigComplex(3, -1), new Equation("Conjugate(3i1)").Solve());
+        Assert.AreEqual(new BigComplex(2, 3), new Equation("Conjugate(2 - (3*i))").Solve());
+        Assert.AreEqual(new BigComplex(0, 0), new Equation("Conjugate()").Solve());
     }
 
     [TestMethod]
@@ -94,26 +103,20 @@ public class Operators
     [TestMethod]
     public void Pow()
     {
-        var pow1 = new Equation("4^3").Solve().Real;
-        var pow2 = new Equation("Pow(2,3)").Solve().Real;
-        var pow3 = new Equation("Pow(0i1,2)").Solve().Real;
-        var pow4 = new Equation("Pow(2,2,3)").Solve().Real;
-        var pow5 = new Equation("Pow(2)").Solve().Real;
-        var pow6 = new Equation("Pow()").Solve().Real;
-        var pow7 = new Equation("Pow(3i5, 2)").Solve(); //-16 30
-
-        Assert.IsTrue(pow1 > 63.9 && pow1 < 64.1);
-        Assert.IsTrue(pow2 > 7.9 && pow2 < 8.1);
-        Assert.IsTrue(pow3 > -1.1 && pow3 < -.9);
-        Assert.IsTrue(pow4 > 63.9 && pow4 < 64.1);
-        Assert.IsTrue(pow5 > 1.9 && pow5 < 2.1);
-        Assert.IsTrue(pow6 > -.1 && pow6 < .1);
-        Assert.IsTrue(pow7.Real > -16.1 && pow7.Real < -15.9 && pow7.Imaginary < 30.1 && pow7.Imaginary > -29.9);
+        Assert.AreEqual(new BigComplex(-16, 30), new Equation("pow(3i5, 2)").Solve());
+        Assert.AreEqual(1, new Equation("pow()").Solve().Real);
+        Assert.AreEqual(64, new Equation("pow(2,2,3)").Solve().Real);
+        Assert.AreEqual(-1, new Equation("pow(0i1,2)").Solve().Real);
+        Assert.AreEqual(64, new Equation("4^3").Solve().Real);
         Assert.AreEqual(25, new Equation("5^2").Solve());
+        Assert.AreEqual(8, new Equation("pow(2,3)").Solve().Real);
         Assert.AreEqual(BigComplex.Infinity, new Equation("inf^2").Solve());
         Assert.AreEqual(BigComplex.Infinity, new Equation("inf^2.1").Solve());
         Assert.AreEqual(-BigComplex.Infinity, new Equation("-inf^2.1").Solve());
         Assert.AreEqual(BigComplex.Infinity, new Equation("2^inf").Solve());
+
+        var pow = new Equation("pow(2, 2.5)").Solve(); //-16 30
+        Assert.IsTrue(pow.Real > 5.6 && pow.Real < 5.7);
     }
 
     [TestMethod]

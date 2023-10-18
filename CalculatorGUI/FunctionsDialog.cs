@@ -15,7 +15,7 @@ public partial class FunctionsDialog : Form
         functionNames = new (FunctionLoader.customFunctions.Count);
         foreach (var item in FunctionLoader.customFunctions)
         {
-            funcs.Items.Add($"{item.Key}({item.Value.varNameArgs})");
+            funcs.Items.Add($"{item.Key}({item.Value.VarNameArgs})");
             functionNames.Add(item.Key);
         }
 
@@ -27,7 +27,7 @@ public partial class FunctionsDialog : Form
 
         foreach (var item in FunctionLoader.loadedFunctions)
         {
-            funcs.Items.Add(item.Item1.ToString());
+            funcs.Items.Add(item.FunctionInfo.ToString());
         }
     }
 
@@ -47,7 +47,7 @@ public partial class FunctionsDialog : Form
         {
             if (add.Result == "")
                 return;
-            Calculator.currentEquation.LoadString($"let {add.Result}");
+            Calculator.currentEquation.Parse($"let {add.Result}");
 
             if (!Calculator.currentEquation.SolveBoolean())
                 SystemSounds.Beep.Play();
@@ -92,7 +92,7 @@ public partial class FunctionsDialog : Form
             selected -= FunctionLoader.customFunctions.Count;
             if (FunctionLoader.loadedFunctions is null)
                 return;
-            str = FunctionLoader.loadedFunctions[selected].Item1.FunctionName + "(";
+            str = FunctionLoader.loadedFunctions[selected].FunctionInfo.FunctionName + "(";
         }
         else
             str = functionNames[selected] + "(";

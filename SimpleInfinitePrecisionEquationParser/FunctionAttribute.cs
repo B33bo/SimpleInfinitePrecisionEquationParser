@@ -9,7 +9,7 @@ public sealed class FunctionAttribute : Attribute
     }
 
     public string FunctionName { get; set; }
-    public string InverseFunctionName { get; set; } = "Invalid";
+    public string InverseFunctionName { get; set; } = "";
     public char Operator { get; set; } = '\0';
     public string Args { get; set; } = "";
     public int Priority { get; set; } = 0;

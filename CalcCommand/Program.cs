@@ -11,10 +11,6 @@ public static class Program
     {
         FunctionLoader.ReloadFunctions();
 
-        FunctionLoader.loadedFunctions?.Add((new FunctionAttribute("Exit"), typeof(Program).GetMethod("Exit")));
-        FunctionLoader.loadedFunctions?.Add((new FunctionAttribute("TextColor"), typeof(Program).GetMethod("TextColor")));
-        FunctionLoader.loadedFunctions?.Add((new FunctionAttribute("BGColor"), typeof(Program).GetMethod("BGColor")));
-
         if (args.Length == 0)
         {
             ForeverMode();
@@ -39,7 +35,7 @@ public static class Program
                     continue;
                 }
 
-                e.LoadString(equations[i]);
+                e.Parse(equations[i]);
                 Console.WriteLine(e.Solve());
             }
             catch (Exception)
@@ -81,7 +77,7 @@ public static class Program
         var argsString = s.Split(':')[0];
         var args = argsString.Split(',');
 
-        e.LoadString(s[(argsString.Length + 1)..]);
+        e.Parse(s[(argsString.Length + 1)..]);
 
         double max = 100;
         int depth = 20;
@@ -108,18 +104,21 @@ public static class Program
         return finalStr.Remove(finalStr.Length - 2, 2).ToString();
     }
 
+    [Function("Exit", StaticFunction = false)]
     public static BigComplex Exit(params BigComplex[] args)
     {
         KeepOpen = false;
         return 0;
     }
 
+    [Function("TextColor", StaticFunction = false)]
     public static BigComplex TextColor(params BigComplex[] args)
     {
         Console.ForegroundColor = (ConsoleColor)(int)args[0].Real;
         return 0;
     }
 
+    [Function("BGColor", StaticFunction = false)]
     public static BigComplex BGColor(params BigComplex[] args)
     {
         Console.BackgroundColor = (ConsoleColor)(int)args[0].Real;

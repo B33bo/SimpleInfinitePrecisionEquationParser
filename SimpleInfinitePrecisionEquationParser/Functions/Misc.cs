@@ -147,71 +147,7 @@ public static class Misc
     [Function("Echo", HandlesInfinity = true)]
     public static BigComplex Echo(params BigComplex[] args) => args.Length > 0 ? args[0] : 0;
 
-    [Function("Min", HandlesInfinity = true)]
-    public static BigComplex Min(params BigComplex[] args)
-    {
-        if (args.Length == 0)
-            return 0;
-
-        var min = args[0];
-
-        if (min.IsInfinity && min.Real < 0)
-            return min;
-
-        BigRational minLength = AbsSigned(min).Real;
-
-        for (int i = 1; i < args.Length; i++)
-        {
-            if (args[i].IsInfinity && args[i].Real < 0)
-                return args[i];
-            var current = AbsSigned(args[i]).Real;
-            if (current > minLength)
-                continue;
-
-            min = args[i];
-            minLength = current;
-        }
-        return min;
-    }
-
-    [Function("Max", HandlesInfinity = true)]
-    public static BigComplex Max(params BigComplex[] args)
-    {
-        if (args.Length == 0)
-            return 0;
-
-        var max = args[0];
-
-        if (max.IsInfinity && max.Real > 0)
-            return max;
-
-        BigRational maxLength = AbsSigned(max).Real;
-
-        for (int i = 1; i < args.Length; i++)
-        {
-            if (args[i].IsInfinity && args[i].Real > 0)
-                return args[i];
-
-            var current = AbsSigned(args[i]).Real;
-            if (current < maxLength)
-                continue;
-
-            max = args[i];
-            maxLength = current;
-        }
-        return max;
-    }
-
-    [Function("Mean", HandlesInfinity = true)]
-    public static BigComplex Mean(params BigComplex[] args)
-    {
-        if (args.Length == 0)
-            return 0;
-        var total = Operators.Add(args);
-        return total / args.Length;
-    }
-
-    [Function("Len", HandlesInfinity = true)]
+    [Function("Length", HandlesInfinity = true)]
     public static BigComplex Len(params BigComplex[] args) => args.Length;
 
     [Function("Re")]
@@ -441,11 +377,11 @@ public static class Misc
         if (args.Length == 2)
         {
             if (istrue)
-                return new Equation(args[1]).Solve();
+                return new Equation(args[1], vars).Solve();
             return istrue;
         }
 
-        return istrue ? new Equation(args[1]).Solve() : new Equation(args[2]).Solve();
+        return istrue ? new Equation(args[1], vars).Solve() : new Equation(args[2], vars).Solve();
     }
 
     [Function("DataVal", Args = "DataVal(Real, Imaginary, Is Boolean, Is Infinity)", HandlesInfinity = true)]
@@ -453,25 +389,17 @@ public static class Misc
     {
         BigComplex data = new();
 
-        switch (args.Length)
-        {
-            default:
-                if (args.Length < 4)
-                    break;
-                goto case 4;
-            case 4:
-                data.IsInfinity = args[3].BoolValue;
-                goto case 3;
-            case 3:
-                data.IsBoolean = args[2].BoolValue;
-                goto case 2;
-            case 2:
-                data.Imaginary = args[1].Real;
-                goto case 1;
-            case 1:
-                data.Real = args[0].Real;
-                break;
-        }
+        if (args.Length >= 1)
+            data.Real = args[0].Real;
+
+        if (args.Length >= 2)
+            data.Imaginary = args[1].Real;
+
+        if (args.Length >= 3)
+            data.IsBoolean = args[2].BoolValue;
+
+        if (args.Length >= 4)
+            data.IsInfinity = args[3].BoolValue;
 
         return data;
     }
@@ -622,17 +550,17 @@ public static class Misc
 
         Equation eq = new(args[0], vars); //let i = 0
         eq.Solve();
-        eq.LoadString(keepRunning);
+        eq.Parse(keepRunning);
 
         while (eq.SolveBoolean())
         {
-            eq.LoadString(equation);
+            eq.Parse(equation);
             current = eq.Solve();
             eq.Variables[varname] = current;
 
-            eq.LoadString(afterIteration);
+            eq.Parse(afterIteration);
             eq.Solve();
-            eq.LoadString(keepRunning);
+            eq.Parse(keepRunning);
         }
 
         return current;
@@ -700,5 +628,25 @@ public static class Misc
                 return num1;
             return CalculateGCD(num2, num1 % num2);
         }
+    }
+
+    [Function("nCr", Args = "NCR(n, r)")]
+    public static BigComplex NCR(params BigComplex[] args)
+    {
+        if (args.Length == 0)
+            return 0;
+        if (args.Length == 1)
+            return 0;
+        return NPR(args[0], args[1]) / Operators.Factorial(args[1]);
+    }
+
+    [Function("nPr", Args = "NPR(n, r)")]
+    public static BigComplex NPR(params BigComplex[] args)
+    {
+        if (args.Length == 0)
+            return 0;
+        if (args.Length == 1)
+            return 0;
+        return Operators.Factorial(args[0]) / Operators.Factorial(args[0] - args[1]);
     }
 }

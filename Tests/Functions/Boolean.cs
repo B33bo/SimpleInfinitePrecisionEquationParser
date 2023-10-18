@@ -136,4 +136,70 @@ public class Boolean
         Assert.IsFalse(new Equation("inf~-inf").SolveBoolean());
         Assert.IsFalse(new Equation("inf~1").SolveBoolean());
     }
+
+    [TestMethod]
+    public void Domain()
+    {
+        Assert.IsTrue(new Equation("domain(1,*)").SolveBoolean());
+
+        Assert.IsTrue(new Equation("domain(inf,INF)").SolveBoolean());
+        Assert.IsFalse(new Equation("domain(3,#)").SolveBoolean());
+
+        Assert.IsTrue(new Equation("domain(true,BOOL)").SolveBoolean());
+        Assert.IsTrue(new Equation("domain(false,B)").SolveBoolean());
+        Assert.IsFalse(new Equation("domain(3,BOOL)").SolveBoolean());
+
+        Assert.IsTrue(new Equation("domain(NaN,NAN)").SolveBoolean());
+        Assert.IsTrue(new Equation("domain(NaN,?)").SolveBoolean());
+
+        Assert.IsTrue(new Equation("domain(0,Natural)").SolveBoolean());
+        Assert.IsTrue(new Equation("domain(1,Natural)").SolveBoolean());
+        Assert.IsTrue(new Equation("domain(2,N)").SolveBoolean());
+        Assert.IsFalse(new Equation("domain(-1,N)").SolveBoolean());
+        Assert.IsFalse(new Equation("domain(2.5,N)").SolveBoolean());
+        Assert.IsFalse(new Equation("domain(i,N)").SolveBoolean());
+
+        Assert.IsFalse(new Equation("domain(0,N1)").SolveBoolean());
+        Assert.IsTrue(new Equation("domain(1,Natural-1)").SolveBoolean());
+        Assert.IsTrue(new Equation("domain(2,N)").SolveBoolean());
+        Assert.IsFalse(new Equation("domain(-1,N)").SolveBoolean());
+        Assert.IsFalse(new Equation("domain(2.5,N)").SolveBoolean());
+        Assert.IsFalse(new Equation("domain(i,N)").SolveBoolean());
+
+        Assert.IsTrue(new Equation("domain(0,Z)").SolveBoolean());
+        Assert.IsTrue(new Equation("domain(1,Integer)").SolveBoolean());
+        Assert.IsTrue(new Equation("domain(2,Z)").SolveBoolean());
+        Assert.IsTrue(new Equation("domain(-1,Z)").SolveBoolean());
+        Assert.IsFalse(new Equation("domain(2.5,Z)").SolveBoolean());
+        Assert.IsFalse(new Equation("domain(i,Z)").SolveBoolean());
+
+        Assert.IsTrue(new Equation("domain(0,Q)").SolveBoolean());
+        Assert.IsTrue(new Equation("domain(1/3,Rational)").SolveBoolean());
+        Assert.IsFalse(new Equation("domain(pi,Q)").SolveBoolean());
+        Assert.IsTrue(new Equation("domain(-1,Q)").SolveBoolean());
+        Assert.IsTrue(new Equation("domain(2.5,Q)").SolveBoolean());
+        Assert.IsFalse(new Equation("domain(i,Q)").SolveBoolean());
+
+        Assert.IsTrue(new Equation("domain(0,R)").SolveBoolean());
+        Assert.IsTrue(new Equation("domain(1,Real)").SolveBoolean());
+        Assert.IsTrue(new Equation("domain(2,R)").SolveBoolean());
+        Assert.IsTrue(new Equation("domain(-1,R)").SolveBoolean());
+        Assert.IsTrue(new Equation("domain(2.5,R)").SolveBoolean());
+        Assert.IsFalse(new Equation("domain(i,R)").SolveBoolean());
+
+        Assert.IsTrue(new Equation("domain(0,I)").SolveBoolean());
+        Assert.IsFalse(new Equation("domain(1,Imaginary)").SolveBoolean());
+        Assert.IsFalse(new Equation("domain(2,I)").SolveBoolean());
+        Assert.IsTrue(new Equation("domain(3*i,I)").SolveBoolean());
+        Assert.IsFalse(new Equation("domain(3*i + 2,I)").SolveBoolean());
+
+        Assert.IsTrue(new Equation("domain(0,C)").SolveBoolean());
+        Assert.IsTrue(new Equation("domain(1,Complex)").SolveBoolean());
+        Assert.IsTrue(new Equation("domain(2,C)").SolveBoolean());
+        Assert.IsTrue(new Equation("domain(-1,C)").SolveBoolean());
+        Assert.IsTrue(new Equation("domain(2.5,C)").SolveBoolean());
+        Assert.IsTrue(new Equation("domain(i,C)").SolveBoolean());
+
+        Assert.IsFalse(new Equation("domain(i,P)").SolveBoolean());
+    }
 }

@@ -4,9 +4,7 @@ namespace SIPEP;
 
 public static class Conversions
 {
-    public static bool Added = false;
-
-    private static Dictionary<string, BigComplex>? all;
+    private static Dictionary<string, BigComplex> all;
 
     public static Dictionary<string, BigComplex> All
     {
@@ -27,26 +25,39 @@ public static class Conversions
                     all.Add(unit.Key, unit.Value);
                 foreach (var unit in Time)
                     all.Add(unit.Key, unit.Value);
+                foreach (var unit in Metric)
+                    all.Add(unit.Key, unit.Value);
             }
             
             return all;
         }
     }
 
-    public static Dictionary<string, BigComplex> Length = new()
+    private static readonly Dictionary<string, BigComplex> Metric = new()
+    {
+        { "exa", (BigRational)1_000_000_000_000_000_000 },
+        { "peta", (BigRational)1_000_000_000_000_000 },
+        { "tera", (BigRational)1_000_000_000_000 },
+        { "giga", 1_000_000_000 },
+        { "mega", 1_000_000 },
+        { "kilo", 1000 },
+        { "hecto", 100 },
+        { "deka", 10 },
+        { "una", 1 },
+        { "deci", BigRational.Parse(".1") },
+        { "centi", BigRational.Parse(".01") },
+        { "milli", BigRational.Parse("1e-3") },
+        { "micro", BigRational.Parse("1e-6") },
+        { "nano", BigRational.Parse("1e-9") },
+        { "pico", BigRational.Parse("1e-12") },
+        { "femto", BigRational.Parse("1e-15") },
+        { "atto", BigRational.Parse("1e-18") },
+    };
+
+    private static readonly Dictionary<string, BigComplex> Length = new()
     {
         { "meter", 1 },
         { "metre", 1 },
-        { "centimeter", BigRational.Parse(".01") },
-        { "centimetre", BigRational.Parse(".01") },
-        { "kilometer", 1000 },
-        { "kilometre", 1000 },
-        { "millimeter", BigRational.Parse(".001") },
-        { "millimetre", BigRational.Parse(".001") },
-        { "micrometer", BigRational.Parse("1e-6") },
-        { "micrometre", BigRational.Parse("1e-6") },
-        { "nanometre", BigRational.Parse("1e-9") },
-        { "nanometer", BigRational.Parse("1e-9") },
         { "mile", BigRational.Parse("1609.34") },
         { "yard", BigRational.Parse("0.9144") },
         { "foot", BigRational.Parse("0.3048") },
@@ -55,10 +66,10 @@ public static class Conversions
         { "lightyear", BigRational.Parse("9.461e+15") },
         { "au", BigRational.Parse("1.496e+11") },
         { "plancklength", BigRational.Parse("1.6e-35") },
-        { "universediameter", BigRational.Parse("8.79999305638e+26") },
+        { "universe", BigRational.Parse("8.79999305638e+26") },
     };
 
-    public static Dictionary<string, BigComplex> DataStorage = new()
+    private static readonly Dictionary<string, BigComplex> DataStorage = new()
     {
         { "bit", 1 },
         { "nibble", 4 },
@@ -78,24 +89,19 @@ public static class Conversions
     public static Dictionary<string, BigComplex> Energy = new()
     {
         { "joule", 1 },
-        { "kilojoule", 1000 },
         { "calorie", BigRational.Parse("4.184") },
         { "kilocalorie", 4184 },
         { "watthour", 3600 },
-        { "kilowatthour", BigRational.Parse("3.6e+6") },
         { "electronvolt", BigRational.Parse("1.6022e-19") },
         { "britishthermalunit", BigRational.Parse("1055.06") },
         { "usthermalunit", BigRational.Parse("1.055e+8") },
         { "footpound", BigRational.Parse("1.35582") },
     };
 
-    public static Dictionary<string, BigComplex> Mass = new()
+    private static readonly Dictionary<string, BigComplex> Mass = new()
     {
         { "gram", 1 },
-        { "kilogram", 1000 },
         { "tonne", 1000000 },
-        { "milligram", BigRational.Parse(".001") }, //what 1 mg does to an mf
-        { "microgram", BigRational.Parse("1e-6") },
         { "imperialton", BigRational.Parse("1.016e+6") },
         { "uston", BigRational.Parse("907185") },
         { "stone", BigRational.Parse("6350.29") },
@@ -103,7 +109,7 @@ public static class Conversions
         { "ounce", BigRational.Parse("28.3495") },
     };
 
-    public static Dictionary<string, BigComplex> Angle = new()
+    private static readonly Dictionary<string, BigComplex> Angle = new()
     {
         { "degree", 1 },
         { "radian", Constants.Pi / 180 },
@@ -113,7 +119,7 @@ public static class Conversions
         { "gradian", 200 / (BigRational)180 },
     };
 
-    public static Dictionary<string, BigComplex> Time = new()
+    private static readonly Dictionary<string, BigComplex> Time = new()
     {
         { "second", 1 },
         { "millisecond", BigRational.Parse(".001") },

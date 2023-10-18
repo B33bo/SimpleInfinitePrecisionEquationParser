@@ -121,39 +121,11 @@ public class Misc
     }
 
     [TestMethod]
-    public void Min()
-    {
-        Assert.AreEqual(new BigComplex(2, 0), new Equation("Min(pi,12, 2, 14)").Solve());
-        Assert.AreEqual(new BigComplex(2, 0), new Equation("Min(2)").Solve());
-        Assert.AreEqual(0, new Equation("Min()").Solve());
-        Assert.AreEqual(-BigComplex.Infinity, new Equation("Min(3, -inf, 5)").Solve());
-    }
-
-    [TestMethod]
-    public void Max()
-    {
-        Assert.AreEqual(new BigComplex(14, 0), new Equation("Max(pi,12, 2, 14)").Solve());
-        Assert.AreEqual(new BigComplex(2, 0), new Equation("Max(2)").Solve());
-        Assert.AreEqual(0, new Equation("Max()").Solve());
-        Assert.AreEqual(BigComplex.Infinity, new Equation("Max(3, inf, 5)").Solve());
-    }
-
-    [TestMethod]
-    public void Mean()
-    {
-        Assert.AreEqual(new BigComplex(BigRational.Parse("5"), 0), new Equation("Mean(2,5, 8)").Solve());
-        Assert.AreEqual(new BigComplex(BigRational.Parse("7.125"), 0), new Equation("Mean(.5,12, 2, 14)").Solve());
-        Assert.AreEqual(new BigComplex(2, 0), new Equation("Mean(2)").Solve());
-        Assert.AreEqual(0, new Equation("Mean()").Solve());
-        Assert.AreEqual(BigComplex.Infinity, new Equation("Mean(0, 2, inf)").Solve());
-    }
-
-    [TestMethod]
     public void Len()
     {
-        Assert.AreEqual(new BigComplex(5, 0), new Equation("Len(.5, 12, 2, 14, pi)").Solve());
-        Assert.AreEqual(new BigComplex(1, 0), new Equation("Len(2)").Solve());
-        Assert.AreEqual(0, new Equation("Len()").Solve());
+        Assert.AreEqual(new BigComplex(5, 0), new Equation("Length(.5, 12, 2, 14, pi)").Solve());
+        Assert.AreEqual(new BigComplex(1, 0), new Equation("Length(2)").Solve());
+        Assert.AreEqual(0, new Equation("Length()").Solve());
     }
 
     [TestMethod]
@@ -201,16 +173,16 @@ public class Misc
     [TestMethod]
     public void Ceil()
     {
-        Assert.AreEqual(new BigComplex(1, 0), new Equation("Ceiling(.9)").Solve());
-        Assert.AreEqual(new BigComplex(1, 0), new Equation("Ceiling(.2)").Solve());
-        Assert.AreEqual(new BigComplex(6, 0), new Equation("Ceiling(4.5, 3)").Solve());
-        Assert.AreEqual(new BigComplex(6, 6), new Equation("Ceiling(4.5i4, 3)").Solve());
-        Assert.AreEqual(new BigComplex(2, 0), new Equation("Ceiling(.5, 2)").Solve());
-        Assert.AreEqual(0, new Equation("Ceiling()").Solve());
+        Assert.AreEqual(new BigComplex(1, 0), new Equation("ceiling(.9)").Solve());
+        Assert.AreEqual(new BigComplex(1, 0), new Equation("ceiling(.2)").Solve());
+        Assert.AreEqual(new BigComplex(6, 0), new Equation("ceiling(4.5, 3)").Solve());
+        Assert.AreEqual(new BigComplex(6, 6), new Equation("ceiling(4.5i4, 3)").Solve());
+        Assert.AreEqual(new BigComplex(2, 0), new Equation("ceiling(.5, 2)").Solve());
+        Assert.AreEqual(0, new Equation("ceiling()").Solve());
 
-        Assert.AreEqual(BigComplex.Infinity, new Equation("Ceiling(inf)").Solve());
-        Assert.AreEqual(BigComplex.Infinity, new Equation("Ceiling(2, inf)").Solve());
-        Assert.AreEqual(0, new Equation("Ceiling(-1, inf)").Solve());
+        Assert.AreEqual(BigComplex.Infinity, new Equation("ceiling(inf)").Solve());
+        Assert.AreEqual(BigComplex.Infinity, new Equation("ceiling(2, inf)").Solve());
+        Assert.AreEqual(0, new Equation("ceiling(-1, inf)").Solve());
     }
 
     [TestMethod]
@@ -239,26 +211,26 @@ public class Misc
     [TestMethod]
     public void Convert()
     {
-        Assert.AreEqual(new BigComplex(10, 0), new Equation("Convert(1, centimeter, millimeter)").Solve());
-        Assert.AreEqual(BigComplex.ImaginaryOne * 10, new Equation("Convert(i, centimeter, millimeter)").Solve());
-        Assert.AreEqual(new BigComplex(500, 0), new Equation("Convert(5, centimeter)").Solve());
-        Assert.AreEqual(new BigComplex(5, 0), new Equation("Convert(5)").Solve());
-        Assert.AreEqual(0, new Equation("Convert()").Solve());
+        Assert.AreEqual(new BigComplex(10, 0), new Equation("convert(1, centi, milli)").Solve());
+        Assert.AreEqual(BigComplex.ImaginaryOne * 10, new Equation("convert(i, centi, milli)").Solve());
+        Assert.AreEqual(new BigComplex(500, 0), new Equation("convert(5, centi)").Solve());
+        Assert.AreEqual(new BigComplex(5, 0), new Equation("convert(5)").Solve());
+        Assert.AreEqual(0, new Equation("convert()").Solve());
     }
 
     [TestMethod]
     public void ConvertTemperature()
     {
-        var ans1 = new Equation("ConvertTemperature(1, fahrenheit, kelvin)").Solve();
-        var ans2 = new Equation("ConvertTemperature(1, celsius, kelvin)").Solve();
-        var ans3 = new Equation("ConvertTemperature(5, kelvin)").Solve();
+        var ans1 = new Equation("convertTemperature(1, fahrenheit, kelvin)").Solve();
+        var ans2 = new Equation("convertTemperature(1, celsius, kelvin)").Solve();
+        var ans3 = new Equation("convertTemperature(5, kelvin)").Solve();
 
         Assert.IsTrue(ans1.Real > 255 && ans1.Real < 256);
         Assert.IsTrue(ans2.Real > 274 && ans2.Real < 275);
         Assert.IsTrue(ans3.Real > 278 && ans3.Real < 279);
-        Assert.AreEqual(new BigComplex(5, 0), new Equation("ConvertTemperature(5)").Solve());
-        Assert.AreEqual(0, new Equation("ConvertTemperature()").Solve());
-        Assert.AreEqual(BigComplex.Infinity, new Equation("ConvertTemperature(inf, fahrenheit, kelvin)").Solve());
+        Assert.AreEqual(new BigComplex(5, 0), new Equation("convertTemperature(5)").Solve());
+        Assert.AreEqual(0, new Equation("convertTemperature()").Solve());
+        Assert.AreEqual(BigComplex.Infinity, new Equation("convertTemperature(inf, fahrenheit, kelvin)").Solve());
     }
 
     [TestMethod]
@@ -334,10 +306,10 @@ public class Misc
     [TestMethod]
     public void Product()
     {
-        Assert.AreEqual(0, new Equation("Product(i = 0, 5, i)").Solve());
-        Assert.AreEqual(120, new Equation("Product(i = 1, 5, i)").Solve());
-        Assert.AreEqual(64, new Equation("Product(i = 0, 5, 2)").Solve());
-        Assert.AreEqual(14400, new Equation("Product(i = 1, 5, i^2)").Solve());
+        Assert.AreEqual(0, new Equation("product(n = 0, 5, n)").Solve());
+        Assert.AreEqual(120, new Equation("product(n = 1, 5, n)").Solve());
+        Assert.AreEqual(64, new Equation("product(n = 0, 5, 2)").Solve());
+        Assert.AreEqual(14400, new Equation("product(n = 1, 5, n^2)").Solve());
     }
 
     [TestMethod]
@@ -376,5 +348,27 @@ public class Misc
         Assert.AreEqual(2, new Equation("gcd(2)").Solve());
         Assert.AreEqual(1, new Equation("gcd()").Solve());
         Assert.AreEqual(3, new Equation("gcd(9,6,12)").Solve());
+    }
+
+    [TestMethod]
+    public void NcR()
+    {
+        Assert.AreEqual(1, new Equation("nCr(5,0)").Solve());
+        Assert.AreEqual(10, new Equation("nCr(5,2)").Solve());
+        Assert.AreEqual(3, new Equation("nCr(3,2)").Solve());
+        Assert.AreEqual(1, new Equation("nCr(5,5)").Solve());
+        Assert.AreEqual(1, new Equation("nCr(6,0)").Solve());
+        Assert.AreEqual(0, new Equation("nCr(6)").Solve());
+        Assert.AreEqual(0, new Equation("nCr()").Solve());
+    }
+
+    [TestMethod]
+    public void NpR()
+    {
+        Assert.AreEqual(5, new Equation("nPr(5,1)").Solve());
+        Assert.AreEqual(20, new Equation("nPr(5,2)").Solve());
+        Assert.AreEqual(6, new Equation("nPr(3,2)").Solve());
+        Assert.AreEqual(0, new Equation("nPr(6)").Solve());
+        Assert.AreEqual(0, new Equation("nPr()").Solve());
     }
 }

@@ -41,9 +41,12 @@ public static class Operators
     public static BigComplex MultiplyOperator(params BigComplex[] args)
     {
         if (args.Length == 1)
-            return args[0] * BigRational.Pi(Equation.DecimalPrecision) / 180; //to radians
+            return args[0].Conjugate; //to radians
         return Multiply(args);
     }
+
+    [Function("Conjugate")]
+    public static BigComplex Conjugate(params BigComplex[] args) => args.Length == 0 ? 0 : args[0].Conjugate;
 
     [Function("Divide", Operator = '/', Priority = 2, HandlesInfinity = true)]
     public static BigComplex Divide(params BigComplex[] args)
@@ -61,7 +64,7 @@ public static class Operators
     public static BigComplex Pow(params BigComplex[] args)
     {
         if (args.Length == 0)
-            return 0;
+            return 1;
         if (args.Length == 1)
             return args[0];
 

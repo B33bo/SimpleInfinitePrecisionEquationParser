@@ -134,6 +134,7 @@ public partial class Graph : Form
                 try
                 {
                     eq = new(equation, Calculator.currentEquation.Variables);
+                    eq.Simplify();
                 }
                 catch (Exception)
                 {
@@ -196,6 +197,7 @@ public partial class Graph : Form
         try
         {
             eq = new(equation, Calculator.currentEquation.Variables);
+            eq.Simplify();
         }
         catch (Exception)
         {
@@ -334,8 +336,8 @@ public partial class Graph : Form
 
     private void ChangeEquationNumber(object sender, EventArgs e)
     {
-        //I don't know what I did, but I fixed the weird combobox issue
-        //fuck comboboxes
+        // I don't know what I did, but I fixed the weird combobox issue
+        // fuck comboboxes
         oldIndex = equationBox.SelectedIndex;
 
         if (equationBox.SelectedIndex < 0)
@@ -395,16 +397,16 @@ public partial class Graph : Form
     {
         try
         {
-            Calculator.currentEquation.LoadString(XOffset.Text);
+            Calculator.currentEquation.Parse(XOffset.Text);
             xoffset = Calculator.currentEquation.Solve().Real;
 
-            Calculator.currentEquation.LoadString(YOffset.Text);
+            Calculator.currentEquation.Parse(YOffset.Text);
             yoffset = Calculator.currentEquation.Solve().Real;
 
-            Calculator.currentEquation.LoadString(widthText.Text);
+            Calculator.currentEquation.Parse(widthText.Text);
             width = Calculator.currentEquation.Solve().Real;
 
-            Calculator.currentEquation.LoadString(heightText.Text);
+            Calculator.currentEquation.Parse(heightText.Text);
             height = Calculator.currentEquation.Solve().Real;
         }
         catch (Exception)

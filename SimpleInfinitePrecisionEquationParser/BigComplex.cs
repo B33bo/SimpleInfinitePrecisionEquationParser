@@ -16,10 +16,13 @@ public struct BigComplex
 
     public BigRational Real { get; set; }
     public BigRational Imaginary { get; set; }
+    public BigRational ModulusSquared => Real * Real + Imaginary * Imaginary;
+    public BigRational Modulus => Operators.Root(2, ModulusSquared).Real;
     public bool BoolValue { get => Real > 0; set => Real = value ? 1 : -1; }
     public bool IsInfinity { get; set; }
     public bool IsBoolean = false;
     public bool IsInteger => Imaginary == 0 && Real % 1 == 0;
+    public BigComplex Conjugate => new(Real, -Imaginary);
 
     public BigComplex(BigRational real, BigRational imaginary)
     {
@@ -95,31 +98,22 @@ public struct BigComplex
     public static implicit operator BigComplex(BigInteger a) => new((BigRational)a, 0);
     public static explicit operator BigRational(BigComplex a) => a.Real;
 
-    public static BigComplex operator /(BigComplex left, BigComplex right)
+    public static BigComplex operator /(BigComplex numerator, BigComplex denominator)
     {
-        if (left.IsInfinity)
-            return new BigComplex(true, left.Real * right.Real, left.Imaginary);
+        if (numerator.IsInfinity)
+            return new BigComplex(true, numerator.Real * denominator.Real, numerator.Imaginary);
 
-        if (right.IsInfinity)
+        if (denominator.IsInfinity)
             return 0;
 
-        // Division : Smith's formula.
-        BigRational a = left.Real;
-        BigRational b = left.Imaginary;
-        BigRational c = right.Real;
-        BigRational d = right.Imaginary;
+        // z* = conjugate (a - bi)
+        // (a/z) * (z*/z*)
 
-        // Computing c * c + d * d will overflow even in cases where the actual result of the division does not overflow.
-        if (BigRational.Abs(d) < BigRational.Abs(c))
-        {
-            BigRational doc = d / c;
-            return new BigComplex((a + b * doc) / (c + d * doc), (b - a * doc) / (c + d * doc));
-        }
-        else
-        {
-            BigRational cod = c / d;
-            return new BigComplex((b + a * cod) / (d + c * cod), (-a + b * cod) / (d + c * cod));
-        }
+        numerator *= denominator.Conjugate;
+        // shorthand for multiplying by conjugate
+        BigRational realDenominator = denominator.Real * denominator.Real + denominator.Imaginary * denominator.Imaginary;
+
+        return new BigComplex(numerator.Real / realDenominator, numerator.Imaginary / realDenominator);
     }
 
     public static bool operator ==(BigComplex left, BigComplex right)

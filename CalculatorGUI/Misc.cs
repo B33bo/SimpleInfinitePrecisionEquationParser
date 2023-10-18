@@ -108,7 +108,7 @@ public partial class Misc : Form
             else
                 equationStr = $"Convert({conversionInput.Text},{conversionFromUnit.Text},{conversionToUnit.Text})";
 
-            Calculator.currentEquation.LoadString(equationStr);
+            Calculator.currentEquation.Parse(equationStr);
             conversionOutput.Text = Calculator.currentEquation.Solve().ToString();
         }
         catch (Exception)

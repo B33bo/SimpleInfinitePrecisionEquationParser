@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Numerics;
 
 namespace SIPEP.Functions;
 
@@ -128,5 +123,59 @@ public static class Boolean
         bool imag = diffImag <= args[2].Real;
 
         return real && imag;
+    }
+
+    [Function("Domain", StringArguments = true)]
+    public static BigComplex Domain(Dictionary<string, Variable> vars, string[] args)
+    {
+        if (args.Length == 0)
+            return false;
+        if (args.Length == 1)
+            return true;
+        var numbers = new Equation(args[0], vars).SolveValues();
+
+        for (int i = 0; i < numbers.Length; i++)
+        {
+            if (!IsInDomain(numbers[i], args[1]))
+                return false;
+        }
+        return true;
+
+        static bool IsInDomain(BigComplex number, string domain)
+        {
+            domain = domain.ToUpper().Trim();
+            if (domain == "*")
+                return true;
+
+            if (number.IsInfinity)
+                return domain == "INF" || domain == "#";
+            if (number.IsBoolean)
+                return domain == "BOOL" || domain == "B";
+            // Bigrational.IsNan doesn't work
+            if (number.Real.ToString() == "NaN" || number.Imaginary.ToString() == "NaN")
+                return domain == "NAN" || domain == "?";
+
+            return domain switch
+            {
+                "N" or "NATURAL" => number.Real >= 0 && number.Imaginary == 0 && number.Real % 1 == 0,
+                "N1" or "NATURAL-1" => number.Real > 0 && number.Imaginary == 0 && number.Real % 1 == 0,
+                "Z" or "INTEGER" => number % 1 == 0 && number.Imaginary == 0,
+                "Q" or "RATIONAL" => number.Imaginary == 0 && !IsPiOrE(number.Real), // can't rlly find a good way to implement
+                "R" or "REAL" => number.Imaginary == 0,
+                "I" or "IMAGINARY" => number.Real == 0,
+                "C" or "COMPLEX" => true,
+                _ => false,
+            };
+        }
+
+        static bool IsPiOrE(BigRational r)
+        {
+            if (r == 0) return false;
+            if ((r / Constants.Pi).IsInteger) return true;
+            if ((r * Constants.Pi).IsInteger) return true;
+            if ((r / Constants.E).IsInteger) return true;
+            if ((r * Constants.E).IsInteger) return true;
+            return false;
+        }
     }
 }
